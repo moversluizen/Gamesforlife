@@ -1,0 +1,21 @@
+{
+  "appId": "com.gamesforlife.roadtoagi",
+  "appName": "Road to AGI",
+  "webDir": "www",
+  "backgroundColor": "#060914",
+  "ios": {
+    "contentInset": "never",
+    "backgroundColor": "#060914"
+  },
+  "plugins": {
+    "SplashScreen": {
+      "launchShowDuration": 1200,
+      "backgroundColor": "#060914",
+      "showSpinner": false
+    },
+    "StatusBar": {
+      "style": "DARK",
+      "overlaysWebView": true
+    }
+  }
+}

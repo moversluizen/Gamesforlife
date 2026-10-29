@@ -1,0 +1,107 @@
+<!doctype html>
+<html lang="nl">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1, user-scalable=no, viewport-fit=cover">
+<meta name="theme-color" content="#060914">
+<meta name="apple-mobile-web-app-capable" content="yes">
+<meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
+<title>Road to AGI</title>
+<link rel="icon" href="img/icon.svg" type="image/svg+xml">
+<link rel="stylesheet" href="css/style.css">
+</head>
+<body>
+<div id="app">
+  <header id="top">
+    <div class="bank">
+      <div class="tokens"><span id="tokens">0</span><small>tokens</small></div>
+      <div class="tps"><span id="tps">0</span> per seconde</div>
+    </div>
+    <div class="agi">
+      <div class="agi-label"><span id="eraName">Het begin</span><span id="agiPct">0%</span></div>
+      <div class="bar"><i id="agiBar"></i></div>
+    </div>
+    <div id="buffs"></div>
+  </header>
+
+  <section id="stage">
+    <canvas id="fx"></canvas>
+    <button id="core" aria-label="Train het model">
+      <svg viewBox="0 0 200 200" aria-hidden="true">
+        <defs>
+          <radialGradient id="orbGrad" cx="45%" cy="38%" r="65%">
+            <stop offset="0" style="stop-color:#ffffff"/>
+            <stop offset=".25" style="stop-color:var(--c1)"/>
+            <stop offset=".75" style="stop-color:var(--c2)"/>
+            <stop offset="1" style="stop-color:#0a0f24"/>
+          </radialGradient>
+          <filter id="glow" x="-50%" y="-50%" width="200%" height="200%">
+            <feGaussianBlur stdDeviation="6" result="b"/>
+            <feMerge><feMergeNode in="b"/><feMergeNode in="SourceGraphic"/></feMerge>
+          </filter>
+        </defs>
+        <g class="ring r1"><circle cx="100" cy="100" r="92" fill="none" stroke="var(--c1)" stroke-width="1.5" stroke-dasharray="4 10" opacity=".7"/></g>
+        <g class="ring r2"><circle cx="100" cy="100" r="82" fill="none" stroke="var(--c2)" stroke-width="3" stroke-dasharray="60 30 10 30" opacity=".8"/></g>
+        <g class="ring r3"><circle cx="100" cy="100" r="72" fill="none" stroke="var(--c1)" stroke-width="1" stroke-dasharray="1 6" opacity=".9"/></g>
+        <circle class="orb" cx="100" cy="100" r="60" fill="url(#orbGrad)" filter="url(#glow)"/>
+        <g class="net" stroke="rgba(255,255,255,.55)" stroke-width="1.2" fill="#fff">
+          <line x1="72" y1="80" x2="100" y2="68"/><line x1="72" y1="80" x2="100" y2="100"/><line x1="72" y1="120" x2="100" y2="100"/>
+          <line x1="72" y1="120" x2="100" y2="132"/><line x1="72" y1="80" x2="100" y2="132"/><line x1="72" y1="120" x2="100" y2="68"/>
+          <line x1="100" y1="68" x2="128" y2="90"/><line x1="100" y1="100" x2="128" y2="90"/><line x1="100" y1="100" x2="128" y2="112"/>
+          <line x1="100" y1="132" x2="128" y2="112"/><line x1="100" y1="68" x2="128" y2="112"/><line x1="100" y1="132" x2="128" y2="90"/>
+          <circle cx="72" cy="80" r="4"/><circle cx="72" cy="120" r="4"/>
+          <circle cx="100" cy="68" r="4"/><circle cx="100" cy="100" r="4"/><circle cx="100" cy="132" r="4"/>
+          <circle cx="128" cy="90" r="4"/><circle cx="128" cy="112" r="4"/>
+        </g>
+      </svg>
+    </button>
+    <div id="floaters"></div>
+    <div id="ticker"><span id="tickerText"></span></div>
+  </section>
+
+  <main id="panel">
+    <section class="tab active" id="tab-models">
+      <div class="tabhead">
+        <h2>Modellen</h2>
+        <div class="seg" id="buyMode">
+          <button data-m="1" class="on">×1</button><button data-m="10">×10</button><button data-m="100">×100</button><button data-m="max">Max</button>
+        </div>
+      </div>
+      <div id="genList"></div>
+    </section>
+    <section class="tab" id="tab-research">
+      <div class="tabhead"><h2>Onderzoek</h2><span class="muted" id="researchCount"></span></div>
+      <div id="upgList"></div>
+    </section>
+    <section class="tab" id="tab-sing">
+      <div class="tabhead"><h2>Singulariteit</h2></div>
+      <div id="singBody"></div>
+    </section>
+    <section class="tab" id="tab-ach">
+      <div class="tabhead"><h2>Prestaties</h2><span class="muted" id="achCount"></span></div>
+      <div id="achGrid"></div>
+    </section>
+    <section class="tab" id="tab-more">
+      <div class="tabhead"><h2>Meer</h2></div>
+      <div id="moreBody"></div>
+    </section>
+  </main>
+
+  <nav id="tabs">
+    <button data-tab="models" class="on"><b>🧠</b><span>Modellen</span></button>
+    <button data-tab="research"><b>🔬</b><span>Onderzoek</span><i class="dot" id="dotResearch"></i></button>
+    <button data-tab="sing"><b>🌀</b><span>Singulariteit</span><i class="dot" id="dotSing"></i></button>
+    <button data-tab="ach"><b>🏆</b><span>Prestaties</span></button>
+    <button data-tab="more"><b>⚙️</b><span>Meer</span></button>
+  </nav>
+</div>
+
+<div id="modal" class="hidden" role="dialog" aria-modal="true"><div class="card" id="modalCard"></div></div>
+<div id="toasts"></div>
+
+<script src="js/data.js"></script>
+<script src="js/engine.js"></script>
+<script src="js/fx.js"></script>
+<script src="js/ui.js"></script>
+</body>
+</html>

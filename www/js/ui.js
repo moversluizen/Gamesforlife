@@ -1,0 +1,391 @@
+// Interface en spellus.
+(function () {
+  const G = window.G;
+  const $ = id => document.getElementById(id);
+  const el = (tag, cls, html) => { const e = document.createElement(tag); if (cls) e.className = cls; if (html != null) e.innerHTML = html; return e; };
+
+  let currentTab = 'models';
+  const genEls = [];
+
+  // ---------- modellen ----------
+  function buildGens() {
+    const list = $('genList');
+    list.innerHTML = '';
+    G.GENS.forEach((g, i) => {
+      const card = el('div', 'gen');
+      card.innerHTML = `
+        <div class="gicon"><span class="ge">${g.icon}</span><span class="own">0</span></div>
+        <div class="ginfo"><div class="gname"></div><div class="grate"></div><div class="mbar"><i></i></div></div>
+        <button class="gbuy"><span class="q"></span><span class="c"></span></button>`;
+      card.addEventListener('click', () => buyGen(i, card));
+      list.appendChild(card);
+      genEls[i] = {
+        card, own: card.querySelector('.own'), name: card.querySelector('.gname'), rate: card.querySelector('.grate'),
+        mbar: card.querySelector('.mbar i'), q: card.querySelector('.q'), c: card.querySelector('.c'),
+      };
+    });
+  }
+
+  function buyGen(i, card) {
+    if (!G.isRevealed(i)) return;
+    const k = G.buyGen(i);
+    if (k) {
+      G.sfx.buy(); G.haptic('LIGHT');
+      card.animate([{ transform: 'scale(1.03)' }, { transform: 'scale(1)' }], { duration: 160 });
+      refresh(true);
+    } else { G.sfx.error(); }
+  }
+
+  function updateGens() {
+    const S = G.S, tps = G.tps() || 1;
+    let shownLocked = false;
+    G.GENS.forEach((g, i) => {
+      const e = genEls[i], rev = G.isRevealed(i);
+      if (!rev && shownLocked) { e.card.style.display = 'none'; return; }
+      e.card.style.display = '';
+      if (!rev) shownLocked = true;
+      e.card.classList.toggle('locked', !rev);
+      const k = G.buyQty(i), cost = G.costOf(i, k);
+      e.card.classList.toggle('can', rev && S.tokens >= cost);
+      e.own.textContent = S.owned[i];
+      e.own.style.display = S.owned[i] ? '' : 'none';
+      e.name.textContent = rev ? g.name : '???';
+      if (!rev) e.rate.textContent = 'Nog niet ontdekt';
+      else if (S.owned[i]) {
+        const r = G.genRate(i);
+        e.rate.textContent = `+${G.fmt(r)}/s · ${Math.round(r / tps * 100)}% van totaal`;
+      } else e.rate.textContent = g.desc;
+      const next = G.nextMilestone(S.owned[i]);
+      const prevIdx = G.MILESTONES.indexOf(next) - 1, prev = prevIdx >= 0 ? G.MILESTONES[prevIdx] : 0;
+      e.mbar.style.width = next ? ((S.owned[i] - prev) / (next - prev) * 100) + '%' : '100%';
+      e.mbar.parentElement.title = next ? `2× productie bij ${next}` : '';
+      e.q.textContent = rev ? `×${k}` + (next && S.owned[i] + k >= next ? ' ⭐' : '') : '';
+      e.c.textContent = G.fmt(cost);
+    });
+  }
+
+  // ---------- onderzoek ----------
+  let lastUpgKey = '';
+  function updateResearch(force) {
+    const avail = G.availableUpgrades();
+    const key = avail.map(u => u.id).join(',');
+    const list = $('upgList');
+    if (force || key !== lastUpgKey) {
+      lastUpgKey = key;
+      list.innerHTML = '';
+      if (!avail.length) list.appendChild(el('div', 'empty', 'Nog geen onderzoek beschikbaar.<br>Koop meer modellen om nieuwe doorbraken te ontgrendelen.'));
+      for (const u of avail) {
+        const row = el('div', 'upg');
+        row.dataset.id = u.id;
+        row.innerHTML = `<div class="ui">${u.icon}</div><div><div class="us">${u.sub}</div><div class="un">${u.name}</div><div class="ud">${u.desc}</div></div><button>${G.fmt(u.cost)}</button>`;
+        row.querySelector('button').addEventListener('click', () => {
+          if (G.buyUpgrade(u.id)) { G.sfx.upgrade(); G.haptic('MEDIUM'); toast(u.icon, u.name, u.desc); refresh(true); }
+          else G.sfx.error();
+        });
+        list.appendChild(row);
+      }
+    }
+    let any = false;
+    for (const row of list.querySelectorAll('.upg')) {
+      const u = G.UPGRADES.find(x => x.id === row.dataset.id), can = G.S.tokens >= u.cost;
+      row.classList.toggle('can', can);
+      any = any || can;
+    }
+    $('dotResearch').classList.toggle('show', any);
+    $('researchCount').textContent = `${Object.keys(G.S.upgrades).length} / ${G.UPGRADES.length}`;
+  }
+
+  // ---------- singulariteit ----------
+  function updateSing() {
+    const S = G.S, p = G.pendingInsights();
+    const nextAt = Math.pow(G.insightsFor(S.lifeEarned) + 1, 2) * 1e9;
+    const agiHtml = G.agiUnlocked()
+      ? `<div class="big-card"><div style="font-size:44px">✨</div><h3>Project AGI</h3>
+          <p>Combineer alles wat je hebt gebouwd tot één algemene intelligentie.<br>Beloning: <b>alle productie permanent ×2</b>.</p>
+          <div class="big-num">${G.fmt(G.agiCost())}</div>
+          <button class="cta gold" id="agiBtn" ${S.tokens >= G.agiCost() ? '' : 'disabled'}>Bouw AGI</button></div>`
+      : `<div class="big-card"><div style="font-size:44px">${S.agi ? '✅' : '🔒'}</div><h3>Project AGI</h3>
+          <p>${S.agi ? 'Je hebt AGI gebouwd in deze cyclus! Activeer de singulariteit om opnieuw te beginnen met een nóg slimmer startpunt.'
+                     : `Ontgrendel het laatste model (${G.GENS[G.GENS.length - 1].name}) om AGI te kunnen bouwen.`}</p>
+          <p>AGI gebouwd: <b>${S.agiCount}×</b> (bonus ×${G.fmt(G.mods.agiBonus)})</p></div>`;
+    $('singBody').innerHTML = agiHtml + `
+      <div class="big-card"><div style="font-size:44px">🌀</div><h3>Singulariteit</h3>
+        <p>Reset je modellen, onderzoek en tokens. In ruil krijg je <b>Inzichten</b>: elk inzicht geeft permanent <b>+2% productie</b>.</p>
+        <p>Inzichten nu: <b>${S.insights}</b> (+${Math.round((G.mods.insightBonus - 1) * 100)}%)</p>
+        <div class="big-num">+${G.fmt(p)}</div>
+        <p>${p >= 1 ? 'inzichten bij activeren' : `Volgend inzicht bij ${G.fmt(nextAt)} totaal verdiende tokens`}</p>
+        <button class="cta" id="singBtn" ${p >= 1 ? '' : 'disabled'}>Activeer singulariteit</button></div>`;
+    const ab = $('agiBtn');
+    if (ab) ab.onclick = buildAGI;
+    $('singBtn').onclick = confirmPrestige;
+    $('dotSing').classList.toggle('show', (G.agiUnlocked() && S.tokens >= G.agiCost()) || p >= Math.max(10, S.insights));
+  }
+
+  function confirmPrestige() {
+    const p = G.pendingInsights();
+    if (p < 1) return;
+    modal('🌀', 'Singulariteit activeren?', `Je begint opnieuw, maar met <b>${G.fmt(p)}</b> extra inzichten (+${G.fmt(p * 2)}% productie). Prestaties blijven behouden.`, [
+      { label: 'Annuleren' },
+      { label: 'Activeren', cls: 'primary', onClick: () => {
+        G.prestige(); G.sfx.big(); G.haptic('HEAVY'); flashScreen();
+        buildGens(); refresh(true); G.save();
+        toast('🌀', 'Een nieuwe cyclus begint', `Productie nu ×${G.mods.perm.toFixed(2).replace('.', ',')}`);
+      } },
+    ]);
+  }
+
+  function buildAGI() {
+    if (!G.buyAGI()) return;
+    G.sfx.big(); G.haptic('HEAVY'); flashScreen();
+    setTimeout(() => modal('✨', 'AGI bereikt!',
+      `Van één perceptron naar algemene intelligentie. De mensheid kijkt vol ontzag toe.<br><br>Je productie is nu permanent <b>×${G.fmt(G.mods.agiBonus)}</b>.<br>Activeer de singulariteit om het nóg sneller te doen. Het volgende AGI-project is 10× zo groot.`,
+      [{ label: 'Doorgaan', cls: 'primary' }]), 900);
+    refresh(true); G.save();
+  }
+
+  function flashScreen() {
+    const f = el('div', 'agi-burst');
+    document.body.appendChild(f);
+    setTimeout(() => f.remove(), 2600);
+    G.fx.wave(); G.fx.wave();
+  }
+
+  // ---------- prestaties ----------
+  function updateAch() {
+    const grid = $('achGrid');
+    if (!grid.children.length) {
+      for (const a of G.ACHS) {
+        const b = el('button', 'ach');
+        b.dataset.id = a.id;
+        b.addEventListener('click', () => {
+          const got = G.S.ach[a.id];
+          toast(got ? a.icon : '🔒', got ? a.name : '???', a.desc);
+        });
+        grid.appendChild(b);
+      }
+    }
+    for (const b of grid.children) {
+      const a = G.ACHS.find(x => x.id === b.dataset.id), got = !!G.S.ach[a.id];
+      b.classList.toggle('got', got);
+      b.textContent = got ? a.icon : '?';
+    }
+    $('achCount').textContent = `${G.mods.achCount} / ${G.ACHS.length} · +${G.mods.achCount}% productie`;
+  }
+
+  // ---------- meer ----------
+  function updateMore() {
+    const S = G.S;
+    const played = (Date.now() - S.started) / 1000;
+    $('moreBody').innerHTML = `
+      <div class="section-title">Statistieken</div>
+      <div class="row"><span>Tokens deze cyclus</span><b>${G.fmt(S.runEarned)}</b></div>
+      <div class="row"><span>Tokens totaal</span><b>${G.fmt(S.lifeEarned)}</b></div>
+      <div class="row"><span>Per tik</span><b>${G.fmt(G.clickValue())}</b></div>
+      <div class="row"><span>Aantal tikken</span><b>${S.clicks.toLocaleString('nl-NL')}</b></div>
+      <div class="row"><span>Verdiend met tikken</span><b>${G.fmt(S.clickEarned)}</b></div>
+      <div class="row"><span>Eureka-momenten</span><b>${S.eurekas}</b></div>
+      <div class="row"><span>Singulariteiten</span><b>${S.prestiges}</b></div>
+      <div class="row"><span>Totale bonus</span><b>×${G.fmt(G.mods.perm)}</b></div>
+      <div class="row"><span>Offline productie</span><b>${Math.round(G.mods.offline * 100)}%</b></div>
+      <div class="row"><span>Speeltijd</span><b>${G.fmtTime(played)}</b></div>
+      <div class="section-title">Instellingen</div>
+      <div class="row"><span>Geluid</span><button class="switch ${S.settings.sound ? 'on' : ''}" data-set="sound" aria-label="Geluid"></button></div>
+      <div class="row"><span>Trillen</span><button class="switch ${S.settings.haptics ? 'on' : ''}" data-set="haptics" aria-label="Trillen"></button></div>
+      <div class="section-title">Hoe speel je?</div>
+      <div class="small-print">Tik op de kern om tokens te verdienen. Koop modellen die automatisch tokens maken; bij 10, 25, 50, 100… stuks verdubbelt hun productie. Onderzoek geeft extra boosts. Tik op een gouden 💡 voor een Eureka-moment. Bouw uiteindelijk AGI en activeer de singulariteit voor permanente bonussen. Ook als de app dicht is gaat de training door.</div>
+      <button class="danger" id="wipeBtn">Voortgang wissen</button>
+      <div class="small-print">Road to AGI · versie 1.0<br>Dit spel verzamelt geen persoonsgegevens. Je voortgang wordt alleen op dit apparaat opgeslagen.</div>`;
+    for (const sw of $('moreBody').querySelectorAll('.switch')) {
+      sw.onclick = () => { const k = sw.dataset.set; S.settings[k] = !S.settings[k]; sw.classList.toggle('on', S.settings[k]); G.haptic(); G.save(); };
+    }
+    $('wipeBtn').onclick = () => modal('⚠️', 'Alles wissen?', 'Al je voortgang, inzichten en prestaties worden definitief verwijderd.', [
+      { label: 'Annuleren' },
+      { label: 'Wissen', cls: 'bad', onClick: async () => { await G.wipe(); buildGens(); $('achGrid').innerHTML = ''; refresh(true); switchTab('models'); } },
+    ]);
+  }
+
+  // ---------- tabs ----------
+  function switchTab(t) {
+    currentTab = t;
+    document.querySelectorAll('#tabs button').forEach(b => b.classList.toggle('on', b.dataset.tab === t));
+    document.querySelectorAll('.tab').forEach(s => s.classList.toggle('active', s.id === 'tab-' + t));
+    refresh(true);
+  }
+  document.querySelectorAll('#tabs button').forEach(b => b.addEventListener('click', () => { G.haptic(); switchTab(b.dataset.tab); }));
+  document.querySelectorAll('#buyMode button').forEach(b => b.addEventListener('click', () => {
+    G.S.buyMode = b.dataset.m === 'max' ? 'max' : +b.dataset.m;
+    G.haptic(); refresh(true);
+  }));
+
+  // ---------- modal & toast ----------
+  function modal(emoji, title, html, buttons) {
+    const card = $('modalCard');
+    card.innerHTML = `<div class="emoji">${emoji}</div><h3>${title}</h3><p>${html}</p><div class="btns"></div>`;
+    const box = card.querySelector('.btns');
+    for (const b of buttons) {
+      const btn = el('button', b.cls || '', b.label);
+      btn.onclick = () => { $('modal').classList.add('hidden'); b.onClick && b.onClick(); };
+      box.appendChild(btn);
+    }
+    $('modal').classList.remove('hidden');
+  }
+  function toast(icon, title, sub) {
+    const box = $('toasts');
+    while (box.children.length >= 2) box.firstChild.remove();
+    const t = el('div', 'toast', `<span class="ti">${icon}</span><div><b>${title}</b><small>${sub || ''}</small></div>`);
+    box.appendChild(t);
+    setTimeout(() => { t.classList.add('out'); setTimeout(() => t.remove(), 400); }, 2600);
+  }
+  G.ui = { modal, toast };
+
+  // ---------- kern tikken ----------
+  const stage = $('stage'), core = $('core'), floaters = $('floaters');
+  core.addEventListener('pointerdown', e => {
+    e.preventDefault();
+    const v = G.clickValue();
+    G.earn(v); G.S.clicks++; G.S.clickEarned += v;
+    const r = stage.getBoundingClientRect();
+    const x = e.clientX - r.left, y = e.clientY - r.top;
+    const crit = G.buffMult('click') > 1;
+    if (floaters.children.length < 30) {
+      const f = el('div', 'floater' + (crit ? ' crit' : ''), '+' + G.fmt(v));
+      f.style.left = (x + (Math.random() - 0.5) * 30) + 'px';
+      f.style.top = (y - 10) + 'px';
+      floaters.appendChild(f);
+      setTimeout(() => f.remove(), 900);
+    }
+    G.fx.burst(x, y, crit ? 18 : 8);
+    core.classList.add('hit');
+    setTimeout(() => core.classList.remove('hit'), 70);
+    G.sfx.tap(); G.haptic('LIGHT');
+  });
+
+  // ---------- Eureka ----------
+  let eurekaEl = null;
+  function spawnEureka() {
+    const r = stage.getBoundingClientRect();
+    eurekaEl = el('button', 'eureka', '💡');
+    eurekaEl.setAttribute('aria-label', 'Eureka!');
+    eurekaEl.style.left = (20 + Math.random() * Math.max(10, r.width - 104)) + 'px';
+    eurekaEl.style.top = (20 + Math.random() * Math.max(10, r.height - 120)) + 'px';
+    const me = eurekaEl;
+    me.addEventListener('pointerdown', e => {
+      e.preventDefault(); e.stopPropagation();
+      const res = G.claimEureka();
+      const er = me.getBoundingClientRect();
+      G.fx.burst(er.left - r.left + 32, er.top - r.top + 32, 40, 45);
+      G.fx.wave();
+      G.sfx.eureka(); G.haptic('HEAVY');
+      toast('💡', res.title, res.text);
+      me.remove(); eurekaEl = null;
+      refresh(true);
+    });
+    stage.appendChild(me);
+    setTimeout(() => {
+      if (eurekaEl !== me) return;
+      me.classList.add('fade');
+      setTimeout(() => me.remove(), 1000);
+      eurekaEl = null;
+      G.scheduleEureka();
+    }, 13000);
+  }
+
+  // ---------- bovenbalk, buffs, tijdperk ----------
+  function topIndex() { let t = -1; G.S.owned.forEach((n, i) => { if (n > 0) t = i; }); return t; }
+
+  function updateTop() {
+    const S = G.S;
+    $('tokens').textContent = G.fmt(S.tokens);
+    $('tps').textContent = G.fmt(G.tps());
+    const p = G.agiProgress();
+    $('agiBar').style.width = (p * 100).toFixed(1) + '%';
+    $('agiPct').textContent = S.agi ? 'AGI ✨' : `AGI ${(p * 100).toFixed(p < 0.1 ? 1 : 0).replace('.', ',')}%`;
+    const ti = topIndex();
+    $('eraName').textContent = S.agi ? 'Tijdperk van AGI' : (ti >= 0 ? G.GENS[ti].era : 'Het begin');
+    const hue = S.agi ? 290 : 195 + Math.max(0, ti) * 9;
+    document.documentElement.style.setProperty('--hue', hue % 360);
+    G.fx.setHue(hue % 360);
+    const owned = S.owned.reduce((a, b) => a + b, 0);
+    G.fx.setActivity(Math.min(1, 0.05 + Math.log10(1 + G.tps()) / 12), Math.min(80, 22 + Math.floor(Math.sqrt(owned) * 3)));
+
+    const now = Date.now();
+    const active = S.buffs.filter(b => b.until > now);
+    $('buffs').innerHTML = active.map(b => `<span class="buff">${b.name} ×${b.mult} · ${Math.ceil((b.until - now) / 1000)}s</span>`).join('');
+  }
+
+  // ---------- nieuws ----------
+  function nextNews() {
+    const ti = G.S.agi ? 99 : topIndex();
+    const pool = G.NEWS.filter(([e]) => e <= ti || (e === 0 && ti < 0));
+    const recent = pool.filter(([e]) => e >= ti - 2);
+    const pick = (recent.length && Math.random() < 0.75 ? recent : pool);
+    const txt = pick.length ? pick[(Math.random() * pick.length) | 0][1] : '';
+    const t = $('tickerText');
+    t.style.opacity = 0;
+    setTimeout(() => { t.textContent = '📰 ' + txt; t.style.opacity = 1; }, 500);
+  }
+
+  // ---------- verversen ----------
+  function refresh(force) {
+    updateTop();
+    if (currentTab === 'models' || force) updateGens();
+    updateResearch(force);
+    if (force) updateSing();
+    if (currentTab === 'ach' && force) updateAch();
+    if (currentTab === 'more' && force) updateMore();
+    document.querySelectorAll('#buyMode button').forEach(b => b.classList.toggle('on', String(G.S.buyMode) === b.dataset.m));
+  }
+
+  G.on('milestone', ({ i }) => {
+    G.sfx.milestone();
+    toast(G.GENS[i].icon, `${G.GENS[i].name} ×2!`, `Mijlpaal bereikt: ${G.S.owned[i]} stuks`);
+  });
+
+  function showOffline(off) {
+    if (off.secs < 60 || off.amt < 1) return;
+    modal('🌙', 'Welkom terug!', `Terwijl je weg was (${G.fmtTime(off.secs)}) bleven je modellen trainen.<br><br><b style="color:var(--gold);font-size:26px">+${G.fmt(off.amt)}</b> tokens`, [{ label: 'Ophalen', cls: 'primary', onClick: () => { G.sfx.eureka(); G.fx.wave(); } }]);
+  }
+
+  // ---------- spellus ----------
+  let lastFrame = performance.now(), uiTimer = 0, achTimer = 0, saveTimer = 0, newsTimer = 0;
+  function frame(t) {
+    const dt = Math.min(0.1, (t - lastFrame) / 1000);
+    lastFrame = t;
+    const off = G.tick();
+    if (off) { showOffline(off); refresh(true); }
+    G.fx.frame(dt, t);
+
+    uiTimer += dt; achTimer += dt; saveTimer += dt; newsTimer += dt;
+    if (uiTimer > 0.15) { uiTimer = 0; refresh(false); }
+    if (achTimer > 1) {
+      achTimer = 0;
+      for (const a of G.checkAchievements()) { toast(a.icon, 'Prestatie: ' + a.name, a.desc + ' (+1% productie)'); G.sfx.achievement(); }
+      if (!eurekaEl && Date.now() > G.nextEureka) spawnEureka();
+      if (currentTab === 'ach') updateAch();
+      updateSing();
+    }
+    if (saveTimer > 10) { saveTimer = 0; G.save(); }
+    if (newsTimer > 9) { newsTimer = 0; nextNews(); }
+    requestAnimationFrame(frame);
+  }
+
+  document.addEventListener('visibilitychange', () => { if (document.hidden) G.save(); });
+  window.addEventListener('pagehide', () => G.save());
+
+  // ---------- start ----------
+  (async () => {
+    await G.load();
+    G.fx.init($('fx'));
+    buildGens();
+    G.scheduleEureka();
+    G.nextEureka = Math.min(G.nextEureka, Date.now() + 45000);
+    const off = G.tick();
+    refresh(true);
+    nextNews();
+    if (off) showOffline(off);
+    else if (G.S.lifeEarned === 0) {
+      modal('🧠', 'Road to AGI', 'Jij leidt een klein AI-lab met één perceptron. <b>Tik op de kern</b> om je model te trainen, koop steeds slimmere modellen en bouw uiteindelijk de eerste <b>algemene intelligentie</b>.', [{ label: 'Start training', cls: 'primary' }]);
+    }
+    requestAnimationFrame(frame);
+  })();
+})();
