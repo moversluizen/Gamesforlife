@@ -17,5 +17,9 @@
       "style": "DARK",
       "overlaysWebView": true
     }
+  },
+  "android": {
+    "backgroundColor": "#060914",
+    "adjustMarginsForEdgeToEdge": "auto"
   }
 }

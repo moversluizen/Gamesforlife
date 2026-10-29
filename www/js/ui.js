@@ -372,6 +372,27 @@
   document.addEventListener('visibilitychange', () => { if (document.hidden) G.save(); });
   window.addEventListener('pagehide', () => G.save());
 
+  // ---------- native (Capacitor) ----------
+  const Cap = window.Capacitor;
+  if (Cap && Cap.isNativePlatform && Cap.isNativePlatform()) {
+    const P = Cap.Plugins;
+    const safe = f => { try { const r = f(); if (r && r.catch) r.catch(() => {}); } catch (e) {} };
+    if (Cap.getPlatform() === 'android' && P.StatusBar) {
+      safe(() => P.StatusBar.setOverlaysWebView({ overlay: false }));
+      safe(() => P.StatusBar.setBackgroundColor({ color: '#060914' }));
+    }
+    if (P.StatusBar) safe(() => P.StatusBar.setStyle({ style: 'DARK' }));
+    if (P.App) {
+      safe(() => P.App.addListener('backButton', () => {
+        if (!$('modal').classList.contains('hidden')) { $('modal').classList.add('hidden'); return; }
+        if (currentTab !== 'models') { switchTab('models'); return; }
+        G.save();
+        safe(() => P.App.minimizeApp());
+      }));
+      safe(() => P.App.addListener('pause', () => G.save()));
+    }
+  }
+
   // ---------- start ----------
   (async () => {
     await G.load();

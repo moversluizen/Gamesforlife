@@ -34,6 +34,8 @@ www/                 het spel (HTML/CSS/JS, geen build nodig)
   js/ui.js           interface en spellus
 resources/           bron voor app-icoon en splash (1024px / 2732px)
 ios/                 Xcode-project (Capacitor, Swift Package Manager)
+android/             Android Studio-project (Capacitor)
+.github/workflows/   automatische Android-build (APK + AAB)
 capacitor.config.json
 ```
 
@@ -53,4 +55,31 @@ Benodigd: een Mac met Xcode 16+, Node.js 20+ en een Apple Developer-account (€
 Na wijzigingen in `www/` draai je steeds `npx cap sync ios`.
 Wil je een nieuw icoon? Vervang `resources/icon.png` en draai `npm run assets`.
 
-Android werkt op dezelfde manier: `npx cap add android` en daarna `npm run android`.
+## Android
+
+### APK downloaden en installeren (testen)
+
+Bij elke push bouwt GitHub automatisch de app (workflow *Android build*).
+
+1. Ga op GitHub naar **Actions → Android build** en open de laatste groene run.
+2. Download onder *Artifacts* **road-to-agi-apk** en pak de zip uit.
+3. Zet `app-debug.apk` op je Android-telefoon en open het bestand. Sta "installeren uit onbekende bronnen" toe als je telefoon daarom vraagt.
+
+### Naar Google Play
+
+Benodigd: een Google Play Console-account (eenmalig $25).
+
+1. Maak één keer een upload-sleutel aan (op je eigen computer, met Java):
+   ```
+   keytool -genkeypair -v -keystore road-to-agi.keystore -alias roadtoagi -keyalg RSA -keysize 2048 -validity 10000
+   ```
+   Bewaar dit bestand en de wachtwoorden goed: zonder deze sleutel kun je geen updates meer uitbrengen.
+2. Zet de sleutel als base64 om: `base64 -w0 road-to-agi.keystore` (macOS: `base64 -i road-to-agi.keystore`).
+3. Voeg op GitHub onder **Settings → Secrets and variables → Actions** vier secrets toe:
+   `ANDROID_KEYSTORE_BASE64`, `ANDROID_KEYSTORE_PASSWORD`, `ANDROID_KEY_ALIAS` (`roadtoagi`) en `ANDROID_KEY_PASSWORD`.
+4. Start de workflow opnieuw (*Actions → Android build → Run workflow*). Je krijgt nu ook het artifact **road-to-agi-play-store-aab**.
+5. Maak in de Play Console een app aan, upload `app-release.aab` (eerst bij *Interne test*), en vul de winkelvermelding, contentclassificatie en het formulier voor gegevensbeveiliging in ("geen gegevens verzameld").
+
+Het versienummer (`versionCode`) loopt automatisch op met elke build, dus elke nieuwe AAB kan direct als update geüpload worden.
+
+Lokaal bouwen kan ook met Android Studio: `npm run android`.
