@@ -39,7 +39,7 @@
   }
 
   function updateGens() {
-    const S = G.S, tps = G.tps() || 1;
+    const S = G.S;
     let shownLocked = false;
     G.GENS.forEach((g, i) => {
       const e = genEls[i], rev = G.isRevealed(i);
@@ -55,11 +55,9 @@
       e.name.textContent = rev ? g.name : '???';
       if (!rev) e.rate.textContent = 'Nog niet ontdekt';
       else if (tech) e.rate.textContent = `Eerst onderzoeken: ${tech.name}`;
-      else if (S.owned[i]) {
-        const r = G.genRate(i);
-        e.rate.textContent = `${G.fmtRate(r)} · ${Math.round(r / tps * 100)}% van totaal`;
-      } else e.rate.textContent = g.desc;
       const next = G.nextMilestone(S.owned[i]);
+      // Eén regel: wat het oplevert en wanneer de volgende verdubbeling komt (de balk loopt ernaartoe).
+      if (rev && !tech) e.rate.textContent = S.owned[i] ? `${G.fmtRate(G.genRate(i))}${next ? ` · 2× bij ${next}` : ''}` : g.desc;
       const prevIdx = G.MILESTONES.indexOf(next) - 1, prev = prevIdx >= 0 ? G.MILESTONES[prevIdx] : 0;
       e.mbar.style.width = next ? ((S.owned[i] - prev) / (next - prev) * 100) + '%' : '100%';
       const ml = !rev ? '' : next ? `2× productie bij ${next}${G.milestoneLevel(S.owned[i]) ? ` · nu ×${G.fmt(Math.pow(2, G.milestoneLevel(S.owned[i])))}` : ''}` : 'Alle mijlpalen gehaald';
@@ -71,26 +69,45 @@
 
   // ---------- onderzoek ----------
   let lastUpgKey = '';
+  // Boosts: losse verbeteringen per soort, steeds alleen de goedkoopste die nu kan (per model één).
+  const BOOST_GROUPS = [
+    ['Modellen', u => u.kind === 'gen'],
+    ['Tikken', u => u.kind === 'click' || u.kind === 'clickPct'],
+    ['Infrastructuur', u => u.kind === 'global'],
+    ['Veiligheid', u => u.kind === 'safety'],
+    ['Eureka en offline', u => /^eureka|^offline/.test(u.kind)],
+  ];
+  const boostName = u => (u.kind === 'gen' ? `${u.sub}: ${u.name.toLowerCase()}` : u.name);
+  const boostDesc = u => (u.kind === 'gen' ? '2× productie van dit model.' : u.desc);
   function updateResearch(force) {
-    // Eén kaart per icoon: alleen de goedkoopste van elke soort, zodat de lijst kort en rustig blijft.
-    const seen = new Set();
-    const avail = G.availableUpgrades().sort((x, y) => x.cost - y.cost).filter(u => !seen.has(u.icon) && seen.add(u.icon));
-    const key = avail.map(u => u.id).join(',');
+    const all = G.UPGRADES.filter(u => !u.tree);
+    const avail = G.availableUpgrades().sort((x, y) => x.cost - y.cost);
+    const groups = BOOST_GROUPS.map(([title, f]) => {
+      const seen = new Set();
+      const list = avail.filter(f).filter(u => { const k = u.kind === 'gen' ? u.gen : u.kind; return !seen.has(k) && seen.add(k); });
+      const items = all.filter(f);
+      return { title, list: title === 'Modellen' ? list.slice(0, 4) : list.slice(0, 1), done: items.filter(u => G.S.upgrades[u.id]).length, total: items.length };
+    });
+    const key = groups.map(g => g.list.map(u => u.id).join()).join('|');
     const list = $('upgList');
     if (force || key !== lastUpgKey) {
       lastUpgKey = key;
       list.innerHTML = '';
-      if (!avail.length) list.appendChild(el('div', 'empty', 'Nog geen onderzoek beschikbaar.<br>Koop meer modellen om nieuwe doorbraken te ontgrendelen.'));
-      for (const u of avail) {
-        // Zelfde kaart als in de bomen: één tik onderzoekt meteen.
-        const row = el('div', 'gen res-card upg');
-        row.dataset.id = u.id;
-        row.innerHTML = `<div class="gicon"><span>${u.icon}</span></div><div class="ginfo"><div class="gname">${u.name}</div><div class="grate">${u.desc}</div>${u.desc.includes(u.sub) ? '' : `<div class="mlabel">${u.sub}</div>`}</div><button class="gbuy"><span class="q">onderzoeken</span><span class="c">${G.fmt(u.cost)}</span></button>`;
-        row.addEventListener('click', () => {
-          if (G.buyUpgrade(u.id)) { G.sfx.upgrade(); G.haptic('MEDIUM'); toast(u.icon, u.name, u.desc); refresh(true); }
-          else G.sfx.error();
-        });
-        list.appendChild(row);
+      if (!avail.length) list.appendChild(el('div', 'empty', 'Nu even geen boosts. Koop meer modellen om nieuwe vrij te spelen.'));
+      for (const g of groups) {
+        if (!g.list.length) continue;
+        list.appendChild(el('div', 'subhead', `${g.title} <span class="muted">· ${g.done} van ${g.total}</span>`));
+        for (const u of g.list) {
+          // Zelfde kaart als in de bomen: één tik onderzoekt meteen.
+          const row = el('div', 'gen res-card upg');
+          row.dataset.id = u.id;
+          row.innerHTML = `<div class="gicon"><span>${u.icon}</span></div><div class="ginfo"><div class="gname">${boostName(u)}</div><div class="grate">${boostDesc(u)}</div></div><button class="gbuy"><span class="q">kopen</span><span class="c">${G.fmt(u.cost)}</span></button>`;
+          row.addEventListener('click', () => {
+            if (G.buyUpgrade(u.id)) { G.sfx.upgrade(); G.haptic('MEDIUM'); toast(u.icon, boostName(u), boostDesc(u)); refresh(true); }
+            else G.sfx.error();
+          });
+          list.appendChild(row);
+        }
       }
     }
     let any = false;
@@ -117,7 +134,7 @@
           <p>AGI gebouwd: <b>${S.agiCount}×</b> (bonus ${G.fmtMult(G.mods.agiBonus)})</p></div>`;
     $('singBody').innerHTML = agiHtml + `
       <div class="big-card"><div style="font-size:44px">🌀</div><h3>Singulariteit</h3>
-        <p>Reset je modellen, onderzoek, chips, apps, team en tokens. In ruil krijg je <b>Inzichten</b>: elk inzicht geeft permanent <b>+2% productie</b>.</p>
+        <p>Je modellen, chips, apps, team en tokens beginnen opnieuw; je lab blijft. In ruil krijg je <b>inzichten</b>: elk inzicht geeft permanent <b>+2% productie</b>.</p>
         <p>Inzichten nu: <b>${S.insights}</b> (+${Math.round((G.mods.insightBonus - 1) * 100)}%)</p>
         <div class="big-num">+${G.fmt(p)}</div>
         <p>${p >= 1 ? 'inzichten bij activeren' : `Volgend inzicht bij ${G.fmt(nextAt)} totaal verdiende tokens`}</p>
@@ -230,17 +247,17 @@
   // ---------- tabs ----------
   const TAB_ORDER = ['models', 'chips', 'apps', 'research', 'team'];
   const TAB_META = {
-    models:   ['🧠', 'Modellen', 'De basis: je modellen maken tokens'],
-    chips:    ['💾', 'Chips', 'Rekenkracht die al je modellen versnelt'],
-    apps:     ['📱', 'Apps', 'Gebruikers leveren data voor je modellen'],
+    models:   ['🧠', 'Modellen', 'Je modellen maken tokens'],
+    chips:    ['💾', 'Chips', 'Rekenkracht voor je modellen'],
+    apps:     ['📱', 'Apps', 'Gebruikers leveren data'],
     research: ['🔬', 'Onderzoek', 'Elke stap opent iets nieuws'],
-    team:     ['👥', 'Team', 'Helpers die het werk voor je doen'],
-    more:     ['🌀', 'Meer', 'Singulariteit, prestaties en instellingen'],
+    team:     ['👥', 'Team', 'Helpers die voor je werken'],
+    more:     ['☰', 'Menu', 'Singulariteit en instellingen'],
   };
   let prevTab = 'models';
   // Modellen, Chips en Apps hebben een eigen speelveld; de rest is een volledig scherm.
   const SCREENS = { models: 'models', chips: 'chips', apps: 'apps' };
-  const TAB_NAMES = { models: 'Modellen', research: 'Onderzoek', chips: 'Chips', apps: 'Apps', team: 'Team', more: 'Meer' };
+  const TAB_NAMES = { models: 'Modellen', research: 'Onderzoek', chips: 'Chips', apps: 'Apps', team: 'Team', more: 'Menu' };
   // Volgende (dir 1) of vorige (dir -1) tab die al open is.
   function neighbor(dir) {
     if (currentTab === 'more') return null;
@@ -288,6 +305,7 @@
     $('shSub').textContent = sub;
     $('pdots').innerHTML = currentTab === 'more' ? '' : TAB_ORDER.map(t => `<i class="${t === currentTab ? 'on' : ''}${G.tabUnlocked(t) ? '' : ' lk'}"></i>`).join('');
     $('shClose').classList.toggle('hidden', currentTab !== 'more');
+    $('buyCycle').classList.toggle('hidden', currentTab !== 'models');
     $('moreBtn').classList.toggle('on', currentTab === 'more');
   }
   $('moreBtn').addEventListener('click', () => { G.haptic(); switchTab(currentTab === 'more' ? prevTab : 'more'); });
@@ -333,7 +351,7 @@
   // ---------- wat versterkt je modellen ----------
   function updateBoosts() {
     const tiles = [
-      { tab: 'research', icon: '🔬', label: 'Onderzoek', v: G.mods.global },
+      { tab: 'research', icon: '🔬', label: 'Boosts', v: G.mods.global },
       { tab: 'chips', icon: '💾', label: 'Chips', v: G.computeBonus() },
       { tab: 'apps', icon: '📊', label: 'Data', v: G.dataBonus() },
       { tab: 'more', icon: '🌀', label: 'Bonus', v: G.mods.perm * G.buffMult('prod') },
@@ -341,8 +359,7 @@
     ];
     const box = $('boosts');
     if (!box.children.length) {
-      box.innerHTML = `<p class="boost-intro">Je modellen zijn de basis. Alles eromheen vermenigvuldigt hun productie:</p>
-        <div class="boost-grid">${tiles.map(t => `<button class="boost" data-tab="${t.tab}"><span class="bi">${t.icon}</span><span class="bl">${t.label}</span><span class="bv"></span></button>`).join('')}</div>`;
+      box.innerHTML = `<div class="boost-grid">${tiles.map(t => `<button class="boost" data-tab="${t.tab}"><span class="bi">${t.icon}</span><span class="bl">${t.label}</span><span class="bv"></span></button>`).join('')}</div>`;
       box.addEventListener('click', e => { const b = e.target.closest('.boost'); if (b) { G.haptic(); switchTab(b.dataset.tab); } });
     }
     box.querySelectorAll('.boost').forEach((b, i) => {
@@ -362,6 +379,12 @@
     refresh(true);
   }
   document.querySelectorAll('#moreSeg button').forEach(b => b.addEventListener('click', () => { G.haptic(); switchSub(b.dataset.s); }));
+  // Eén knop in de kop die rondgaat: ×1 → ×10 → ×100 → max.
+  const MODES = [1, 10, 100, 'max'];
+  $('buyCycle').addEventListener('click', () => {
+    G.S.buyMode = MODES[(MODES.indexOf(G.S.buyMode) + 1) % MODES.length];
+    G.haptic(); refresh(true);
+  });
   document.querySelectorAll('#buyMode button').forEach(b => b.addEventListener('click', () => {
     G.S.buyMode = b.dataset.m === 'max' ? 'max' : +b.dataset.m;
     G.haptic(); refresh(true);
@@ -442,7 +465,7 @@
     if (performance.now() - lastTap > 450) flow = Math.max(0, flow - dt * 0.4);
     $('flowRing').style.strokeDashoffset = 615.8 * (1 - flow);
     core.classList.toggle('flowing', flow >= 1);
-    const fl = flow > 0.03 ? (flow >= 1 ? 'FLOW ×3!' : `Flow ×${flowMult().toFixed(1).replace('.', ',')}`) : 'Tik snel voor flow';
+    const fl = flow > 0.03 ? (flow >= 1 ? 'FLOW ×3!' : `Flow ×${flowMult().toFixed(1).replace('.', ',')}`) : '';
     if ($('flowLbl').textContent !== fl) $('flowLbl').textContent = fl;
     $('flowLbl').classList.toggle('max', flow >= 1);
   }
@@ -557,12 +580,14 @@
     if (force) updatePager();
     document.querySelectorAll('#tabs button').forEach(b => b.classList.toggle('locked', !G.tabUnlocked(b.dataset.tab)));
     document.querySelectorAll('#buyMode button').forEach(b => b.classList.toggle('on', String(G.S.buyMode) === b.dataset.m));
+    const bm = G.S.buyMode === 'max' ? 'max' : '×' + G.S.buyMode;
+    if ($('buyCycle').textContent !== bm) $('buyCycle').textContent = bm;
   }
 
   G.uiRefresh = refresh;
   G.on('chipDone', c => {
     G.sfx.big(); G.haptic('HEAVY'); G.fx.wave();
-    toast(c.icon, `${c.name} ontwikkeld!`, `Al je chips zijn geüpgraded: ×${G.fmt(c.power)} rekenkracht per chip.`);
+    toast(c.icon, `${c.name} ontwikkeld!`, `Nieuwe chips vervangen je oude geleidelijk: ×${G.fmt(c.power)} rekenkracht per chip.`);
   });
   G.on('appLive', a => {
     G.sfx.milestone(); G.haptic('HEAVY');
@@ -586,7 +611,7 @@
   G.on('trendOffer', o => {
     const a = G.APPS.find(x => x.id === o.id);
     G.sfx.eureka();
-    if (currentTab !== 'apps') toast('🔥', `${a.name} gaat viraal!`, 'Ga naar Apps en tik op de app om de hype te benutten.');
+    if (currentTab !== 'apps') toast('🔥', `${a.name} gaat viraal!`, 'Tik op de app in Apps om de hype te benutten.');
   });
   G.on('autoCampaign', () => { if (currentTab === 'apps') toast('📣', 'De marketeer startte een campagne', ''); });
   // ---------- verhaal ----------
@@ -607,14 +632,14 @@
   G.on('labDone', u => {
     G.sfx.big(); G.fx.wave();
     const h = G.HELPERS.find(x => G.HELPER_LAB[x.id] === u.id);
-    if (h && u.id !== 'lab_hr') toast(h.icon, `Nieuwe helper: ${h.name}`, 'Neem hem aan in Team.');
+    if (h && u.id !== 'lab_hr') toast(h.icon, `Nieuwe helper: ${h.name}`, 'Je vindt deze helper in Team.');
     updatePager();
   });
   const seenTabs = {};
   function checkUnlocks() {
     for (const t of Object.keys(G.TAB_UNLOCK)) {
       const u = G.tabUnlocked(t);
-      if (u && seenTabs[t] === false) { G.sfx.achievement(); toast('🔓', `Nieuw: ${TAB_NAMES[t]}!`, { chips: 'Bouw je eigen chip-supply chain.', apps: 'Bouw apps met je modellen.', team: 'Neem helpers aan.' }[t]); }
+      if (u && seenTabs[t] === false) { G.sfx.achievement(); toast('🔓', `Nieuw: ${TAB_NAMES[t]}!`, { chips: 'Bouw je eigen chipketen en een datacenter.', apps: 'Bouw apps met je modellen.', team: 'Neem helpers aan.' }[t]); }
       if (u !== seenTabs[t]) updatePager();
       seenTabs[t] = u;
     }

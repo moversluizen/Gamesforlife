@@ -1067,3 +1067,106 @@ button:focus-visible { outline: 2px solid var(--c1); outline-offset: 2px; }
 .res-card .tag, .stars { display: none; }
 .res-card .mlabel { -webkit-line-clamp: 1; }
 #appList .gen .grate { white-space: normal; display: -webkit-box; -webkit-line-clamp: 1; -webkit-box-orient: vertical; overflow: hidden; }
+
+/* ===== Compact en bereikbaar (v5, naar het voorbeeld van idle-fabrieksgames) =====
+   Doel: minstens drie kaarten tegelijk in beeld, elke knop minstens 40 px, alle tekst minstens 11 px.
+   Wat niet leesbaar past, verdwijnt. */
+#app { grid-template-rows: auto minmax(130px, 28%) minmax(0, 1fr) auto; }
+@media (max-height: 760px) { #app { grid-template-rows: auto minmax(110px, 25%) minmax(0, 1fr) auto; } }
+@media (max-height: 660px) { #app { grid-template-rows: auto minmax(100px, 23.5%) minmax(0, 1fr) auto; } }
+.pdots, #ticker, #tab-models .tabhead, #tab-team .tabhead, .boost .bi, .boost-intro { display: none !important; }
+
+#chapterChip { min-height: 40px; min-width: 52px; }
+#moreBtn { width: 44px; height: 44px; }
+#moreBtn svg { width: 22px; height: 22px; stroke-width: 2.4; }
+
+#quest .qt small { display: block !important; font-size: 11px; }
+#quest .qt > span { white-space: normal; display: -webkit-box; -webkit-line-clamp: 2; -webkit-box-orient: vertical; overflow: hidden; line-height: 1.25; }
+#quest { min-height: 44px; }
+
+#scrHead { padding-top: 8px; padding-bottom: 8px; gap: 10px; }
+#scrHead h2 { font-size: 17px; }
+#scrHead small { font-size: 12px; }
+.sh-act { flex: none; min-width: 56px; height: 40px; border-radius: 12px; font-weight: 800; font-size: 15px;
+  background: hsla(var(--hue), 100%, 62%, .18); color: var(--c1); box-shadow: inset 0 0 0 1px hsla(var(--hue), 100%, 70%, .35); }
+.sh-close { width: 44px; height: 44px; }
+
+.boost-grid { gap: 5px; margin-bottom: 8px; }
+.boost { min-height: 44px; padding: 5px 2px; gap: 0; justify-content: center; }
+.boost .bl { font-size: 11px; text-transform: none; letter-spacing: 0; }
+.boost .bv { font-size: 14px; }
+
+.gen, .upg { min-height: 62px; padding: 7px 8px 7px 7px; margin-bottom: 6px; gap: 10px; align-items: center; }
+.gen .gicon { width: 46px; height: 46px; }
+.gname { font-size: 15px; }
+.gen .grate { font-size: 12.5px; margin-top: 2px; }
+.gen .mbar { margin-top: 6px; height: 5px; }
+.gbuy { min-height: 48px; min-width: 92px; }
+.gbuy .q { font-size: 11px; }
+#genList .mlabel, #chipBody .mlabel, #teamList .helper:not(.locked-h) .mlabel { display: none; }
+
+.subhead { margin: 10px 4px 6px; font-size: 13px; }
+.ind-card { padding: 10px 12px; margin-bottom: 8px; }
+.ind-card .stats3 { margin-bottom: 6px; }
+.ind-card p.muted:empty { display: none; }
+.ind-card p.muted { margin: 8px 0 0; }
+
+.req-row { display: flex; width: 100%; min-height: 44px; align-items: center; justify-content: space-between; gap: 8px; margin-top: 8px;
+  padding: 0 12px; border-radius: 12px; background: rgba(255, 255, 255, .06); font-size: 13px; text-align: left; color: var(--fg); }
+.req-row i { font-style: normal; font-size: 20px; color: var(--c1); }
+.cta.soft { margin-top: 10px; width: 100%; min-height: 44px; background: rgba(255, 255, 255, .08); color: var(--fg); box-shadow: none; }
+.cta.soft:not(:disabled) { background: hsla(var(--hue), 100%, 62%, .22); color: var(--c1); }
+.rnd-now { margin: 6px 0 0; font-size: 13px; color: var(--mute); }
+.rnd-now b { color: var(--fg); }
+.rnd-line { display: flex; flex-direction: column; gap: 2px; margin: 10px 0 0; font-size: 13px; color: var(--mute); }
+.rnd-line b { color: var(--fg); font-size: 15px; }
+.rnd .cta { margin-top: 10px; min-height: 48px; }
+.rnd-run { display: block; width: 100%; text-align: left; margin-top: 8px; padding: 10px; border-radius: 12px; background: rgba(255, 255, 255, .05); }
+.rnd-run .rnd-line { margin: 0 0 8px; }
+.rnd-run .bar { display: block; }
+.rnd-run .tapme { display: block; margin-top: 6px; font-size: 12px; color: var(--c1); }
+
+#resSeg button, #moreSeg button { min-height: 40px; font-size: 13px; }
+#resSeg button.dot-on::after { top: 50%; margin-top: -3px; }
+
+.flow.big small, .fnode small { font-size: 11px; }
+.cs-name { font-size: 11px; }
+.as-u { display: none !important; }
+.as-ic { font-size: clamp(16px, 9cqw, 26px) !important; }
+#appList .gen .grate { -webkit-line-clamp: 2; }
+#appList .mlabel { -webkit-line-clamp: 2; }
+
+/* apps-speelveld: cijfers en campagne bovenaan, de telefoon liggend met 5 × 2 apps */
+#scrApps { flex-direction: column; align-items: stretch; justify-content: flex-start; gap: 8px; padding: 6px 16px 10px; }
+.as-side { flex-direction: row; align-items: center; gap: 14px; max-width: none; }
+.as-side > div { display: flex; flex-direction: column; }
+.as-side small { font-size: 11px; text-transform: none; letter-spacing: 0; font-weight: 700; }
+.as-side b { font-size: 20px; margin: 0; line-height: 1.1; }
+.as-mkt { margin-left: auto; min-height: 40px; min-width: 104px; padding: 0 14px; border-radius: 12px; font-weight: 800; font-size: 14px;
+  background: var(--c1); color: #061024; }
+.as-mkt:disabled { background: rgba(255, 255, 255, .08); color: var(--mute); }
+.as-phone { width: 100%; max-width: 520px; height: auto; flex: 1; min-height: 0; aspect-ratio: auto; align-self: center; padding: 8px 10px; border-radius: 20px; }
+.as-grid { grid-template-columns: repeat(5, minmax(0, 1fr)) !important; grid-template-rows: repeat(2, minmax(0, 1fr)) !important; gap: 6px !important; height: 100%; }
+.as-app { justify-content: center; }
+.as-ic { width: min(100%, 52px) !important; height: auto !important; aspect-ratio: 1; max-height: 100%; font-size: clamp(18px, 6cqh, 28px) !important; }
+.as-notch { display: none; }
+#asTrend, #asReview, .as-review { display: none !important; }
+.as-side > div { white-space: nowrap; }
+.cs-stats span:empty { display: none; }
+@media (max-height: 700px) { .as-side b { font-size: 17px; } .as-side { gap: 10px; } #scrApps { gap: 6px; padding-top: 4px; padding-bottom: 6px; } .as-phone { padding: 5px 8px; border-radius: 14px; } }
+.subhead .muted { font-weight: 500; }
+#csFlow .fnode small { font-size: 11px; letter-spacing: -.2px; }
+.as-tip { font-size: 12px; color: var(--mute); font-weight: 600; line-height: 1.25; }
+#asUsers, #asData { display: none !important; }
+@media (max-height: 700px) { #scrHead small { display: none; } #scrHead { padding-top: 6px; padding-bottom: 6px; } }
+@media (max-height: 700px) {
+  .gen, .upg { min-height: 56px; padding-top: 5px; padding-bottom: 5px; margin-bottom: 5px; }
+  .gen .gicon { width: 42px; height: 42px; }
+  .gbuy { min-height: 44px; }
+  .subhead { margin: 6px 4px 4px; }
+  .ind-card { padding: 8px 12px; margin-bottom: 6px; }
+  .gen .mbar { margin-top: 4px; }
+}
+@media (min-width: 900px), (orientation: landscape) and (min-width: 640px) {
+  #app { grid-template-rows: auto 1fr auto; }
+}

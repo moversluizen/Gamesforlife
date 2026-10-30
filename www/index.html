@@ -20,7 +20,7 @@
         <div class="tps" id="tps">+0/s</div>
       </div>
       <button id="moreBtn" aria-label="Meer: singulariteit, prestaties en instellingen">
-        <svg viewBox="0 0 24 24" aria-hidden="true"><ellipse cx="12" cy="12" rx="9.6" ry="4.2" transform="rotate(-28 12 12)"/><circle class="f" cx="12" cy="12" r="3.2"/><circle cx="19.6" cy="7.6" r="1.2" fill="currentColor"/></svg>
+        <svg viewBox="0 0 24 24" aria-hidden="true"><path d="M4 7h16M4 12h16M4 17h16"/></svg>
         <i class="dot" id="dotSing"></i>
       </button>
     </div>
@@ -86,13 +86,14 @@
       <div class="cs-stats"><span id="csCompute"></span><span id="csHint"></span></div>
     </div>
     <div class="scr" id="scrApps">
-      <div class="as-phone"><div class="as-notch"></div><div class="as-grid" id="asGrid"></div></div>
       <div class="as-side">
-        <small>Gebruikers</small><b id="asUsers">0</b>
-        <small>Data voor je modellen</small><b id="asData">×1,00</b>
-        <div id="asTrend"></div>
+        <span class="as-tip">Tik op een app voor extra gebruikers</span>
+        <b id="asUsers" hidden></b><b id="asData" hidden></b>
+        <button class="as-mkt" id="asMkt">campagne</button>
+        <div id="asTrend" hidden></div>
       </div>
-      <div class="as-review" id="asReview"></div>
+      <div class="as-phone"><div class="as-grid" id="asGrid"></div></div>
+      <div class="as-review" id="asReview" hidden></div>
     </div>
     <div id="tapInfo" aria-live="off"><span id="tapVal"></span><span id="flowLbl"></span></div>
     <div id="floaters"></div>
@@ -104,6 +105,7 @@
       <span class="sh-ic" id="shIcon"></span>
       <div class="sh-txt"><h2 id="shTitle"></h2><small id="shSub"></small></div>
       <div class="pdots" id="pdots"></div>
+      <button class="sh-act hidden" id="buyCycle" aria-label="Aantal per aankoop">×1</button>
       <button class="sh-close hidden" id="shClose" aria-label="Sluiten">✕</button>
     </header>
     <section class="tab active" id="tab-models">
@@ -119,17 +121,16 @@
     <section class="tab" id="tab-research">
       <div class="tabhead">
         <div class="seg" id="resSeg">
-          <button data-r="lab" class="on">Lab</button><button data-r="models">Modellen</button><button data-r="chips">Chips</button><button data-r="apps">Apps</button><button data-r="upg">Overig</button>
+          <button data-r="lab" class="on">Lab</button><button data-r="models">Modellen</button><button data-r="chips">Chips</button><button data-r="apps">Apps</button><button data-r="upg">Boosts</button>
         </div>
       </div>
       <div class="ind-card" id="upgSum">
         <div class="stats3">
           <div><small>Onderzocht</small><b id="researchCount"></b></div>
           <div><small>Nu mogelijk</small><b id="upgAvail"></b></div>
-          <div><small>Goedkoopste</small><b id="upgNext"></b></div>
+          <div><small>Vanaf</small><b id="upgNext"></b></div>
         </div>
         <div class="bar"><i id="researchBar"></i></div>
-        <p class="muted">Steeds de goedkoopste verbetering van elke soort.</p>
       </div>
       <div id="treeBody"></div>
       <div id="upgList" class="hidden"></div>
@@ -149,7 +150,7 @@
     <section class="tab" id="tab-more">
       <div class="tabhead">
         <div class="seg" id="moreSeg">
-          <button data-s="sing" class="on">🌀 Singulariteit</button><button data-s="ach">🏆 Prestaties</button><button data-s="set">⚙️ Overig</button>
+          <button data-s="sing" class="on">Singulariteit</button><button data-s="ach">Prestaties</button><button data-s="set">Instellingen</button>
         </div>
       </div>
       <div class="sub" id="sub-sing"><div id="singBody"></div></div>

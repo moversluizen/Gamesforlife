@@ -59,17 +59,18 @@
       <div class="ind-card">
         <div class="stats3">
           <div><small>Rekenkracht</small><b data-f="cmp"></b></div>
-          <div><small>Bonus op modellen</small><b data-f="bonus"></b></div>
+          <div><small>Bonus</small><b data-f="bonus"></b></div>
           <div><small>Chips</small><b data-f="chips"></b></div>
         </div>
         <div class="bar"><i data-f="fill"></i></div>
         <p class="muted" data-f="status"></p>
       </div>
-      <div id="rnd" class="ind-card rnd"></div>
-      <div class="subhead">Keten <span class="muted">· de traagste schakel bepaalt de output</span></div>
+      <div class="subhead">Keten <span class="muted">· de traagste schakel telt</span></div>
       ${OWN_ORDER.map(stageCard).join('')}
       <div class="subhead">Datacenter</div>
-      ${stageCard(4)}`;
+      ${stageCard(4)}
+      <div class="subhead">Chipontwikkeling</div>
+      <div id="rnd" class="ind-card rnd"></div>`;
     const node = i => `<div class="fnode" data-f="fn${i}"><span>${G.CHAIN[i].icon}</span><small data-f="fc${i}"></small></div>`;
     $('csFlow').innerHTML =
       OWN_ORDER.map((i, k) => (k ? `<span class="arrow" data-f="ar${i}"><i></i><i></i></span>` : '') + node(i)).join('') +
@@ -91,7 +92,7 @@
       else if (act === 'design-lab') G.uiRes.open('lab', 'lab_design');
       else if (act === 'rnd-research') G.uiRes.open('chips', 'tc' + (G.S.chipGen + 1));
       else if (act === 'rnd-start') {
-        if (G.startRnd()) { G.sfx.upgrade(); G.haptic('MEDIUM'); G.ui.toast('🔬', 'Ontwikkeling gestart', 'Tik op het project om het te versnellen.'); }
+        if (G.startRnd()) { G.sfx.upgrade(); G.haptic('MEDIUM'); G.ui.toast('🔬', 'Ontwikkeling gestart', 'Tik op de chip bovenin om het te versnellen.'); }
         else G.sfx.error();
         G.uiRefresh(true);
       } else if (act === 'rnd-boost') {
@@ -111,11 +112,9 @@
     set(body, 'chips', `${G.fmt(Math.floor(S.chips))} / ${G.fmt(slots)}`);
     set(body, 'fill', { w: pct(S.chips, slots) });
     const share = G.newShare();
-    let status;
-    if (!active || !S.chain[4]) status = 'Bouw alle vier schakels en een datacenter. Chips geven rekenkracht, en rekenkracht maakt al je modellen sneller.';
-    else if (share < 0.999) status = `${G.chip().name}: ${Math.floor(share * 100)}% van je chips vervangen · ${rate(G.chipRate())} chips/s`;
-    else if (G.chipsFull()) status = 'Datacenter vol. Breid uit voor meer rekenkracht.';
-    else status = `${rate(G.chipRate())} chips/s · ${G.chip().name} · ${G.fmtMult(G.chip().power)} per chip`;
+    // Alleen een statusregel als er iets te doen is.
+    const status = !active || !S.chain[4] ? 'Bouw alle vier schakels en een datacenter.'
+      : G.chipsFull() && share > 0.999 ? 'Datacenter vol: breid uit voor meer rekenkracht.' : '';
     set(body, 'status', status);
     G.CHAIN.forEach((c, i) => {
       const cost = G.chainCost(i);
@@ -124,8 +123,8 @@
       if (i > 0 && i <= 4) set(flow, 'ar' + i, { cls: { live: i === 4 ? S.chain[4] > 0 && G.chipRate() > 0 : active } });
       set(body, 'st' + i, { cls: { can: S.tokens >= cost } });
       set(body, 'lv' + i, S.chain[i]);
-      set(body, 'sr' + i, i === 4 ? `${G.fmt(slots)} plekken` : `${rate(G.stageCap(i))} chips/s${active && i === b ? ' · traagste schakel' : ''}`);
       const nx = G.stageNextMs(i), pv = G.CHAIN_MS[G.CHAIN_MS.indexOf(nx) - 1] || 0;
+      set(body, 'sr' + i, (i === 4 ? `${G.fmt(slots)} plekken` : `${rate(G.stageCap(i))} chips/s`) + (active && i === b ? ' · traagste' : nx ? ` · 2× bij ${nx}` : ''));
       set(body, 'sm' + i, { w: nx ? ((S.chain[i] - pv) / (nx - pv) * 100) + '%' : '100%' });
       set(body, 'sl' + i, nx ? `2× ${i === 4 ? 'ruimte' : 'capaciteit'} bij niveau ${nx}` : 'Alle mijlpalen gehaald');
       set(body, 'sq' + i, (S.chain[i] ? 'uitbreiden' : 'bouwen') + (nx === S.chain[i] + 1 ? ' ⭐' : ''));
@@ -135,41 +134,40 @@
     // speelveld
     const c = G.chip();
     if ($('csIcon').textContent !== c.icon) { $('csIcon').textContent = c.icon; $('csName').textContent = `${c.name} · ${c.node}`; }
-    $('csCompute').textContent = `${G.fmt(G.compute())} rekenkracht · modellen ${G.fmtMult(G.computeBonus())}`;
+    $('csCompute').textContent = '';
     $('csHint').textContent = S.rnd
       ? `${G.CHIPS[S.rnd.gen].name}: nog ${G.fmtTime(Math.ceil(Math.max(0, S.rnd.end - Date.now()) / 1000))} · tik op de chip om te versnellen`
-      : share < 0.999 ? `Nieuwe chips vervangen de oude: ${Math.floor(share * 100)}%` : 'Tik op de chip voor tokens';
+      : share < 0.999 ? `Nieuwe chips vervangen de oude: ${Math.floor(share * 100)}%` : '';
     $('csChip').classList.toggle('busy', !!S.rnd);
   }
 
+  // Chipontwikkeling: de balk met generaties, daaronder alleen wat je nodig hebt voor de volgende.
   function updateRnd() {
     const el = $('rnd'), S = G.S, cur = G.chip(), nx = G.nextChip();
     const track = `<div class="track">${G.CHIPS.map((c, i) => `<span class="${i < S.chipGen ? 'done' : i === S.chipGen ? 'cur' : S.rnd && S.rnd.gen === i ? 'busy' : ''}" title="${c.name}">${c.icon}</span>`).join('<i></i>')}</div>
-      <div class="track-label">Generatie ${S.chipGen + 1} van ${G.CHIPS.length}</div>`;
-    // Iconen staan alleen in de balk; de rest is tekst.
-    const curHtml = track + `<div class="rnd-row"><div><small>Huidige chip</small><b>${cur.name}</b><span>${cur.node} · ×${G.fmt(cur.power)} per chip</span></div></div>`;
+      <p class="rnd-now">Nu: <b>${cur.name}</b> · ×${G.fmt(cur.power)} per chip</p>`;
     if (S.rnd) {
       const t = G.CHIPS[S.rnd.gen];
-      keyed(el, 'run' + S.rnd.gen, track + `<div class="rnd-run" data-act="rnd-boost">
-        <div class="rnd-row"><div><small>In ontwikkeling</small><b>${t.name}</b><span data-f="rleft"></span></div></div>
-        <div class="bar big"><i data-f="rbar"></i></div>
-        <p class="tapme">Tik hier om te versnellen</p></div>`);
+      keyed(el, 'run' + S.rnd.gen, track + `<button class="rnd-run" data-act="rnd-boost">
+        <span class="rnd-line"><b>${t.name}</b><span data-f="rleft"></span></span>
+        <span class="bar big"><i data-f="rbar"></i></span>
+        <span class="tapme">Tik om te versnellen</span></button>`);
       const left = Math.max(0, S.rnd.end - Date.now());
       set(el, 'rleft', 'nog ' + G.fmtTime(Math.ceil(left / 1000)));
       set(el, 'rbar', { w: (100 * (1 - left / S.rnd.total)) + '%' });
       return;
     }
-    if (!nx) { keyed(el, 'max', curHtml + '<p class="muted">Je hebt de krachtigste chip die er bestaat.</p>'); return; }
+    if (!nx) { keyed(el, 'max', track + '<p class="muted">Je hebt de krachtigste chip die er bestaat.</p>'); return; }
     const litho = S.chain[2] >= nx.litho, aff = S.tokens >= nx.cost, tech = G.chipTech(S.chipGen + 1), known = G.techDone(tech.id), design = !G.chipNeedsDesign(S.chipGen + 1);
-    keyed(el, ['ready', S.chipGen, S.chain[2], litho, aff, known, design, G.hl('design')].join('|'), curHtml + `
+    const req = [];
+    if (!known) req.push(`<button class="req-row" data-act="rnd-research"><span>Eerst onderzoeken: <b>${tech.name}</b></span><i>›</i></button>`);
+    if (!design) req.push(`<button class="req-row" data-act="design-lab"><span>Eerst lab: <b>Chipontwerpstudio</b></span><i>›</i></button>`);
+    if (!litho) req.push(`<p class="req no">Nodig: ${nx.litho} EUV-machines (je hebt er ${S.chain[2]})</p>`);
+    keyed(el, ['ready', S.chipGen, S.chain[2], litho, aff, known, design, G.hl('design')].join('|'), track + `
       <div class="rnd-next">
-        <div class="rnd-row"><div><small>Volgende generatie</small><b>${nx.name}</b>
-          <span>${nx.node} · ×${G.fmt(nx.power)} per chip · ontwikkeltijd ${G.fmtTime(nx.time * G.mods.rndTime)}</span></div></div>
-        <p class="muted chipdesc">${nx.desc}</p>
-        <p class="req ${known ? 'ok' : 'no'}">${known ? '✓' : '✗'} Onderzoek: ${tech.name}${known ? '' : ' <button class="pill mini" data-act="rnd-research">naar onderzoek</button>'}</p>
-        ${S.chipGen + 1 >= 3 ? `<p class="req ${design ? 'ok' : 'no'}">${design ? '✓' : '✗'} Lab: Chipontwerpstudio${design ? '' : ' <button class="pill mini" data-act="design-lab">naar lab</button>'}</p>` : ''}
-        ${nx.litho ? `<p class="req ${litho ? 'ok' : 'no'}">${litho ? '✓' : '✗'} Vereist ${nx.litho} EUV-machines (je hebt er ${S.chain[2]})</p>` : ''}
-        <button class="cta" data-act="rnd-start" ${litho && aff && known && design ? '' : 'disabled'}>Ontwikkel · ${G.fmt(nx.cost)}</button>
+        <p class="rnd-line"><b>Volgende: ${nx.name}</b><span>×${G.fmt(nx.power)} per chip · ${G.fmtTime(nx.time * G.mods.rndTime)}</span></p>
+        ${req.join('')}
+        <button class="cta" data-act="rnd-start" ${litho && aff && known && design ? '' : 'disabled'}>ontwikkelen · ${G.fmt(nx.cost)}</button>
       </div>`);
   }
 
@@ -189,26 +187,21 @@
       const tech = G.appTech(a), known = !G.appNeedsTech(a), model = G.S.owned[a.model] >= a.n;
       return `<div class="gen locked-h" ${known ? '' : `data-act="app-research" data-id="${a.id}"`}>${icon}
         <div class="ginfo"><div class="gname">${a.name}</div>
-          <div class="grate">${a.desc}</div>
-          <div class="mlabel">Eerst: ${[known ? '' : tech.name, model ? '' : `${a.n}× ${G.GENS[a.model].name}`].filter(Boolean).join(' en ')}</div></div>
+          <div class="grate">Eerst: ${[known ? '' : tech.name, model ? '' : `${a.n}× ${G.GENS[a.model].name}`].filter(Boolean).join(' en ')}</div></div>
         ${known ? '<span></span>' : `<button class="gbuy"><span class="q">onderzoeken</span><span class="c">${G.fmt(tech.cost)}</span></button>`}</div>`;
     }
     if (st === 'new') return `<div class="gen" data-act="app-build" data-id="${a.id}" data-f="ap-${a.id}">${icon}
-      <div class="ginfo"><div class="gname">${a.name}</div><div class="grate">${a.desc}</div>
-        <div class="mlabel">Bouwtijd ${G.fmtTime(a.time)} · ${G.fmt(a.cap)} gebruikers</div></div>
+      <div class="ginfo"><div class="gname">${a.name}</div><div class="grate">Bouwtijd ${G.fmtTime(a.time)}</div>
+        <div class="mlabel">${a.desc}</div></div>
       <button class="gbuy"><span class="q">bouwen</span><span class="c">${G.fmt(G.appCost(a))}</span></button></div>`;
     if (st === 'building') return `<div class="gen">${icon}
       <div class="ginfo"><div class="gname">${a.name}</div><div class="grate">In aanbouw · <span data-f="bl-${a.id}"></span></div>
         <div class="mbar"><i data-f="bb-${a.id}"></i></div></div><span></span></div>`;
     return `<div class="gen app-live" data-f="ap-${a.id}">${icon}
       <div class="ginfo"><div class="gname">${a.name} <span class="fire-badge" data-f="ht-${a.id}">🔥</span></div>
-        <div class="grate"><b class="earn" data-f="ar-${a.id}"></b> data · <span data-f="au-${a.id}"></span> gebruikers</div>
-        <div class="mbar users"><i data-f="ab-${a.id}"></i></div>
-        <div class="mlabel">v${s.v + 1} ${G.appFeature(s.v + 1)} · 2× gebruikers</div></div>
-      <div class="app-actions">
-        <button class="gbuy" data-act="app-build" data-id="${a.id}"><span class="q">nieuwe versie</span><span class="c" data-f="avc-${a.id}"></span></button>
-        <button class="gbuy mkt" data-act="app-mkt" data-id="${a.id}" data-f="am-${a.id}"></button>
-      </div></div>`;
+        <div class="grate"><span data-f="au-${a.id}"></span> gebruikers</div>
+        <div class="mbar users"><i data-f="ab-${a.id}"></i></div></div>
+      <button class="gbuy" data-act="app-build" data-id="${a.id}"><span class="q">nieuwe versie</span><span class="c" data-f="avc-${a.id}"></span></button></div>`;
   }
 
   function updateApps() {
@@ -272,8 +265,6 @@
       set(list, 'ar-' + a.id, G.fmt(G.appData(a)));
       set(list, 'ab-' + a.id, { w: pct(s.u, G.appCap(a)) });
       set(list, 'ht-' + a.id, { cls: { on: G.trending(a) } });
-      const cd = Math.max(0, (s.cd || 0) - now);
-      set(list, 'am-' + a.id, { t: cd ? `${Math.ceil(cd / 1000)} s` : 'campagne', dis: cd > 0 });
       set(list, 'avc-' + a.id, G.fmt(G.appCost(a)));
       set(list, 'ap-' + a.id, { cls: { can: S.tokens >= G.appCost(a) } });
     }
@@ -284,10 +275,10 @@
     set(list, 'as-n', `${groups.live.length} / ${G.APPS.length}`);
     set(list, 'as-bar', { w: (groups.live.length ? frac * 100 : 0) + '%' });
     const tr = S.trend && S.trend.until > now ? G.APPS.find(a => a.id === S.trend.id) : null;
-    set(list, 'as-st', !groups.live.length ? 'Lanceer je eerste app. Gebruikers leveren data, en data maakt al je modellen sneller.'
+    set(list, 'as-st', !groups.live.length ? 'Lanceer je eerste app. Gebruikers leveren data, en data maakt je modellen sneller.'
       : tr ? `${tr.name} is trending · nog ${Math.ceil((S.trend.until - now) / 1000)} s`
-      : G.trendOffer ? `${G.APPS.find(a => a.id === G.trendOffer.id).name} gaat viraal! Tik erop in de telefoon.`
-      : `Nog ${G.fmt(Math.pow(10, Math.floor(lg) + 1) - data)} data tot de volgende +0,20 bonus`);
+      : G.trendOffer ? `${G.APPS.find(a => a.id === G.trendOffer.id).name} gaat viraal! Tik erop in de telefoon.` : '');
+
     $('appHead').textContent = '';
   }
 
@@ -335,6 +326,20 @@
       if (s && s.v) { users += s.u; set(grid, 'u-' + a.id, G.fmt(Math.floor(s.u))); }
     }
     $('asUsers').textContent = G.fmt(Math.floor(users));
+    // Campagne: één knop voor al je live apps tegelijk.
+    const live = G.APPS.filter(a => (S.apps[a.id] || {}).v > 0);
+    const cdAll = live.length ? Math.max(0, Math.min(...live.map(a => (S.apps[a.id].cd || 0) - now))) : 0;
+    const mkt = $('asMkt'), mt = !live.length ? 'campagne' : cdAll ? `nog ${Math.ceil(cdAll / 1000)} s` : 'campagne';
+    if (mkt.textContent !== mt) mkt.textContent = mt;
+    mkt.disabled = !live.length || cdAll > 0;
+    if (!mkt.dataset.bound) {
+      mkt.dataset.bound = '1';
+      mkt.addEventListener('click', e => {
+        const n = G.APPS.filter(a => G.campaign(a)).length;
+        if (n) { G.sfx.eureka(); G.haptic('MEDIUM'); floatText(e, '+15% gebruikers'); } else G.sfx.error();
+        G.uiRefresh(true);
+      });
+    }
     $('asData').textContent = G.fmtMult(G.dataBonus());
     const tr = S.trend && S.trend.until > now ? G.APPS.find(a => a.id === S.trend.id) : null;
     const trTxt = tr ? `🔥 ${tr.name} trending · ${Math.ceil((S.trend.until - now) / 1000)} s`
@@ -373,13 +378,13 @@
     const list = $('teamList'), S = G.S;
     const key = G.HELPERS.map(h => G.hl(h.id) + (G.helperUnlocked(h) ? '' : 'x')).join(',') + '|' + G.S.chipGen;
     if (keyed(list, key + '|' + Object.keys(S.lab).length, `<div class="ind-card safety" data-f="safety"></div>
-      <div class="subhead">Organogram</div>${orgChart()}<div class="subhead">Helpers</div>` + G.HELPERS.map(h => {
+      <div class="subhead">Helpers</div>` + G.HELPERS.map(h => {
       if (!G.helperUnlocked(h)) {
         const lab = G.techById(G.HELPER_LAB[h.id]);
         return `<div class="gen helper locked-h" data-act="helper-lab" data-id="${lab.id}">
           <div class="gicon"><span>${h.icon}</span></div>
           <div class="ginfo"><div class="gname">${h.name}</div>
-            <div class="grate">${h.desc}</div><div class="mlabel">Eerst: lab ${lab.name}</div></div>
+            <div class="grate">Eerst: lab ${lab.name}</div></div>
           <button class="gbuy"><span class="q">onderzoeken</span><span class="c">${G.fmt(lab.cost)}</span></button></div>`;
       }
       const l = G.hl(h.id), max = l >= h.max, r = G.rank(h), lv = G.rankLevels(h);
@@ -393,7 +398,7 @@
           <div class="mlabel">${nextTxt}</div></div>
         <button class="gbuy"${max ? ' disabled' : ''}><span class="q">${max ? 'maximaal' : l ? 'promoveren' + (next === l + 1 ? ' ⭐' : '') : 'aannemen'}</span><span class="c">${max ? '–' : G.fmt(G.helperCost(h))}</span></button>
       </div>`;
-    }).join(''))) {
+    }).join('') + `<div class="subhead">Organogram</div>${orgChart()}`)) {
       if (!list.dataset.bound) {
         list.dataset.bound = '1';
         list.addEventListener('click', e => {
@@ -420,7 +425,7 @@
   }
 
   // Organogram: groeit mee met je lab. Open afdelingen, de volgende in opbouw, de rest nog verborgen.
-  const DEPT_SHORT = { lab_product: 'Product', lab_hardware: 'Chipfabriek', lab_hr: 'HR', lab_safety: 'Veiligheid', lab_design: 'Ontwerp',
+  const DEPT_SHORT = { lab_product: 'Product', lab_hardware: 'Chips', lab_hr: 'HR', lab_safety: 'Veiligheid', lab_design: 'Ontwerp',
     lab_mkt: 'Marketing', lab_eng: 'Ingenieurs', lab_talent: 'Talent', lab_finance: 'Financiën', lab_sing: 'Singulariteit' };
   function deptMetric(id) {
     const S = G.S, h = G.HELPERS.find(x => G.HELPER_LAB[x.id] === id);
@@ -460,9 +465,10 @@
     if (el.dataset.k === k) { risk(); return; }
     el.dataset.k = k;
     el.className = 'ind-card safety ' + state;
-    const msg = state === 'none' ? 'Veiligheid is nog niet nodig. Vanaf de LSTM vragen modellen erom.'
-      : def ? `Risico <b data-f="rk"></b> · ${G.fmt(def)} veiligheid tekort. Bij 100% volgt een backlash. <button class="pill mini" data-act="to-research">naar onderzoek</button>`
-      : 'Veiligheid op orde. Houd het bij als je slimmere modellen koopt.';
+    const msg = state === 'none' ? ''
+      : def ? `<p class="muted">Risico <b data-f="rk"></b>: bij 100% volgt een backlash. Neem safety-engineers aan of onderzoek veiligheid.</p>
+        <button class="req-row" data-act="to-research"><span>Veiligheid onderzoeken</span><i>›</i></button>`
+      : '<p class="muted">Veiligheid op orde.</p>';
     el.innerHTML = `
       <div class="stats3">
         <div><small>Helpers</small><b>${roles} / ${G.HELPERS.length}</b></div>
@@ -470,7 +476,7 @@
         <div><small>Veiligheid</small><b class="${state === 'bad' ? 'bad' : ''}">${G.fmt(pts)} / ${G.fmt(need)}</b></div>
       </div>
       <div class="bar ${state === 'none' ? '' : 'risk'}"><i></i></div>
-      <p class="muted">${msg}</p>`;
+      ${msg}`;
     risk();
   }
 
@@ -498,7 +504,7 @@
     el.classList.remove('hidden');
     const [have, need] = q.goal(G.S), done = have >= need;
     $('questNum').textContent = `${G.S.quest + 1}/${G.QUESTS.length}`;
-    $('questText').textContent = q.text + (need > 1 ? ` (${G.fmt(have)}/${G.fmt(need)})` : '');
+    $('questText').textContent = q.text + (need > 1 && have < need ? ` (${G.fmt(have)}/${G.fmt(need)})` : '');
     $('questBar').style.width = pct(have, need);
     $('questReward').textContent = done ? `Claim +${G.fmt(G.questReward(q))}` : `+${G.fmt(G.questReward(q))}`;
     el.classList.toggle('done', done);
@@ -523,7 +529,7 @@
     const S = G.S;
     $('dotChips').classList.toggle('show', G.tabUnlocked('chips') && (G.canStartRnd() || [0, 1, 2, 3, 4].some(i => !S.chain[i] && S.tokens >= G.chainCost(i))));
     $('dotApps').classList.toggle('show', G.tabUnlocked('apps') && G.APPS.some(a => !G.app(a.id).v && !G.app(a.id).b && G.appUnlocked(a) && S.tokens >= G.appCost(a)));
-    $('dotTeam').classList.toggle('show', G.tabUnlocked('team') && (G.safetyDeficit() > 0 || G.HELPERS.some(h => !G.hl(h.id) && S.tokens >= G.helperCost(h))));
+    $('dotTeam').classList.toggle('show', G.tabUnlocked('team') && (G.safetyDeficit() > 0 || G.HELPERS.some(h => G.helperUnlocked(h) && !G.hl(h.id) && S.tokens >= G.helperCost(h))));
   }
 
   G.uiInd = {

@@ -81,6 +81,9 @@ De kern groeit mee: één neuron, staafdiagram, lagen, attention, dicht netwerk,
 3. Elk icoon één keer per scherm; geen emoji in lopende tekst.
 4. Kleur alleen voor wat je nu kunt doen (knop) of wat misgaat (rood getal); geen gekleurde randen of labels.
 5. Hoogstens drie regels tekst per kaart.
+6. Minstens drie kaarten tegelijk in beeld (op een klein scherm minstens 2,5): compact speelveld bovenin, lijst eronder.
+7. Elke knop minstens 40 px hoog, alle tekst minstens 11 px. Wat niet leesbaar past, verdwijnt.
+8. Menubalk: rode stip alleen bij iets nieuws (afdeling, hoofdlijn, nieuwe app of helper), niet bij elke betaalbare boost.
 
 ## Schrijfwijze
 

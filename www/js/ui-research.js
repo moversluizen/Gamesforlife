@@ -18,7 +18,7 @@
     return `<div class="gen res-card" data-act="tech" data-id="${u.id}">
       <div class="gicon"><span>${u.icon}</span></div>
       <div class="ginfo"><div class="gname">${u.name}</div>
-        <div class="grate">${eff}</div>${spine ? `<div class="mlabel">${u.desc}</div>` : ''}</div>
+        <div class="grate">${eff}</div></div>
       <button class="gbuy"><span class="q">onderzoeken</span><span class="c">${G.fmt(u.cost)}</span></button></div>`;
   }
 
@@ -40,20 +40,18 @@
           <div><small>Volgende stap</small><b class="ellip">${next ? next.spine.name : 'Alles klaar'}</b></div>
         </div>
         <div class="bar"><i style="width:${done.length / all.length * 100}%"></i></div>
-        <p class="muted">${next ? next.spine.unlocks : 'Deze boom is helemaal onderzocht.'}</p>
+        ${next ? '' : '<p class="muted">Deze boom is helemaal onderzocht.</p>'}
       </div>
       ${avail.length ? `<div class="subhead">Nu te onderzoeken</div>${avail.map(u => techCard(u, 'avail')).join('')}` : ''}
       ${locked.length ? `<div class="subhead">Daarna</div>${locked.map(u => techCard(u, 'locked')).join('')}` : ''}
       ${done.length ? `<div class="subhead">Onderzocht</div><p class="done-list">${done.map(u => u.name).join(' · ')}</p>` : ''}`;
   }
 
+  // Stipjes alleen voor iets nieuws: een afdeling of hoofdlijn die je nu kunt onderzoeken (geen boosts).
+  const spineReady = tree => G.TREES[tree].some(r => G.techAvailable(r.spine) && G.S.tokens >= r.spine.cost);
   function dots() {
-    const any = !!G.resListAffordable || ['lab', 'models', 'chips', 'apps'].some(G.treeHasAffordable);
-    $('dotResearch').classList.toggle('show', any);
-    for (const b of document.querySelectorAll('#resSeg button')) {
-      const r = b.dataset.r;
-      b.classList.toggle('dot-on', r === 'upg' ? !!G.resListAffordable : G.treeHasAffordable(r));
-    }
+    $('dotResearch').classList.toggle('show', ['lab', 'models', 'chips', 'apps'].some(spineReady));
+    for (const b of document.querySelectorAll('#resSeg button')) b.classList.toggle('dot-on', b.dataset.r !== 'upg' && spineReady(b.dataset.r));
   }
 
   function update() {
