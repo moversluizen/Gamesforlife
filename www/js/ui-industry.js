@@ -425,42 +425,13 @@
         </div>
         <div class="bar"><i style="width:${depts / G.LAB.length * 100}%"></i></div>
       </div>
-      <div class="subhead">Helpers</div>${team.map(helperCard).join('')}
-      <div class="subhead">Organogram</div>${orgChart()}`)) {
+      <div class="subhead">Helpers</div>${team.map(helperCard).join('')}`)) {
       if (!list.dataset.bound) { list.dataset.bound = '1'; list.addEventListener('click', onHelperClick); }
     }
     for (const h of team) set(list, 'hc-' + h.id, { cls: { can: G.hl(h.id) < h.max && S.tokens >= G.helperCost(h) } });
     $('teamHead').textContent = '';
   }
 
-  // Organogram: groeit mee met je lab. Open afdelingen, de volgende in opbouw, de rest nog verborgen.
-  const DEPT_SHORT = { lab_product: 'Product', lab_hardware: 'Chips', lab_hr: 'HR', lab_safety: 'Veiligheid', lab_design: 'Ontwerp',
-    lab_mkt: 'Marketing', lab_eng: 'Ingenieurs', lab_talent: 'Talent', lab_finance: 'Financiën', lab_sing: 'Singulariteit' };
-  function deptMetric(id) {
-    const S = G.S, h = G.HELPERS.find(x => G.HELPER_LAB[x.id] === id);
-    // Alleen tekst: de iconen staan al op de helperkaarten eronder.
-    if (h) return G.hl(h.id) ? `niveau ${G.hl(h.id)}` : 'vacature';
-    if (id === 'lab_product') return `${G.appsLive()} apps`;
-    if (id === 'lab_hardware') return `${G.fmt(Math.floor(S.chips))} chips`;
-    if (id === 'lab_sing') return `${G.fmt(S.insights)} inzichten`;
-    return '';
-  }
-  function orgChart() {
-    const open = G.LAB.filter(([id]) => G.labDone(id)).map(([id]) => id);
-    const next = G.LAB.find(([id]) => !G.labDone(id));
-    const nodes = open.map(id => {
-      const u = G.techById(id);
-      return `<div class="org-dept"><b>${DEPT_SHORT[id]}</b><small>${deptMetric(id)}</small></div>`;
-    });
-    if (next) nodes.push(`<button class="org-dept next" data-act="helper-lab" data-id="${next[0]}"><b>${DEPT_SHORT[next[0]]}</b><small>${G.fmt(next[3])}</small></button>`);
-    return `<div class="org">
-      <div class="org-top"><div class="org-ceo"><span>🧑‍💼</span><b>Jij</b></div><div class="org-ceo ada"><span>🤖</span><b>Ada</b></div></div>
-      <div class="org-bus"></div>
-      <div class="org-grid">${nodes.join('')}</div>
-      </div>`;
-  }
-
-  // Overzicht van Team, in dezelfde opbouw als Chips: drie cijfers, een balk (risico) en één statusregel.
   // ---------- veiligheid ----------
   // Overzicht (veiligheid, risico, backlashes), dan de safety-engineer, veiligheidsonderzoek en protocollen.
   const SAFETY_RES = () => G.UPGRADES.filter(u => u.kind === 'safety');

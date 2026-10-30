@@ -33,7 +33,6 @@ De mechanismen komen uit de populairste idle games (Cookie Clicker, AdVenture Ca
 | Mijlpalen in de keten | Elke ketenschakel verdubbelt bij 10, 25, 50, 100 … niveaus |
 | Opdrachten | Ada, je AI-assistent, geeft 22 opdrachten met beloningen die je door het hele spel leiden |
 | Verhaallijn | Negen hoofdstukken die de echte AI-geschiedenis volgen (perceptron 1958 → gaming-GPU's 2012 → Transformer 2017 → chatbots → agents → AGI); de kern groeit visueel mee |
-| Organogram | Team toont je organisatie, die meegroeit met elke Lab-afdeling |
 | Balans | Getest met `scripts/sim.js`; tempo en kostenregels staan in `docs/balans.md` |
 
 ## Lokaal spelen
