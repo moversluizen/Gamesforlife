@@ -60,7 +60,8 @@
       ${G.CHAIN.map((c, i) => `
         <div class="gen" data-act="chain" data-i="${i}" data-f="st${i}">
           <div class="gicon"><span>${c.icon}</span><span class="own" data-f="lv${i}"></span></div>
-          <div class="ginfo"><div class="gname">${c.name}</div><div class="grate" data-f="sr${i}"></div></div>
+          <div class="ginfo"><div class="gname">${c.name}</div><div class="grate" data-f="sr${i}"></div>
+            <div class="mbar"><i data-f="sm${i}"></i></div><div class="mlabel" data-f="sl${i}"></div></div>
           <button class="gbuy"><span class="q" data-f="sq${i}"></span><span class="c" data-f="sc${i}"></span></button>
         </div>`).join('')}`;
     body.addEventListener('click', e => {
@@ -104,7 +105,10 @@
       set(body, 'sr' + i, i < 4
         ? `${rate(G.stageCap(i))} chips/s${built && i === b ? ' · ⚠️ bottleneck' : ''} · ${c.desc}`
         : `${G.fmt(slots)} plekken · ${c.desc}`);
-      set(body, 'sq' + i, S.chain[i] ? 'uitbreiden' : 'bouwen');
+      const nx = G.stageNextMs(i), pv = G.CHAIN_MS[G.CHAIN_MS.indexOf(nx) - 1] || 0;
+      set(body, 'sm' + i, { w: nx ? ((S.chain[i] - pv) / (nx - pv) * 100) + '%' : '100%' });
+      set(body, 'sl' + i, nx ? `2× ${i < 4 ? 'capaciteit' : 'ruimte'} bij niveau ${nx}${G.stageMs(i) ? ` · nu ×${Math.pow(2, G.stageMs(i))}` : ''}` : `Alle mijlpalen · ×${Math.pow(2, G.stageMs(i))}`);
+      set(body, 'sq' + i, (S.chain[i] ? 'uitbreiden' : 'bouwen') + (nx === S.chain[i] + 1 ? ' ⭐' : ''));
       set(body, 'sc' + i, G.fmt(cost));
     });
     updateRnd();
@@ -112,10 +116,12 @@
 
   function updateRnd() {
     const el = $('rnd'), S = G.S, cur = G.chip(), nx = G.nextChip();
-    const curHtml = `<div class="rnd-row"><span class="ri">${cur.icon}</span><div><small>Huidige chip</small><b>${cur.name}</b><span>${cur.node} · ×${G.fmt(cur.power)} per chip</span></div></div>`;
+    const track = `<div class="track">${G.CHIPS.map((c, i) => `<span class="${i < S.chipGen ? 'done' : i === S.chipGen ? 'cur' : S.rnd && S.rnd.gen === i ? 'busy' : ''}" title="${c.name}">${c.icon}</span>`).join('<i></i>')}</div>
+      <div class="track-label">Generatie ${S.chipGen + 1} van ${G.CHIPS.length}</div>`;
+    const curHtml = track + `<div class="rnd-row"><span class="ri">${cur.icon}</span><div><small>Huidige chip</small><b>${cur.name}</b><span>${cur.node} · ×${G.fmt(cur.power)} per chip</span></div></div>`;
     if (S.rnd) {
       const t = G.CHIPS[S.rnd.gen];
-      keyed(el, 'run' + S.rnd.gen, `<div class="rnd-run" data-act="rnd-boost">
+      keyed(el, 'run' + S.rnd.gen, track + `<div class="rnd-run" data-act="rnd-boost">
         <div class="rnd-row"><span class="ri spin">${t.icon}</span><div><small>In ontwikkeling</small><b>${t.name}</b><span data-f="rleft"></span></div></div>
         <div class="bar big"><i data-f="rbar"></i></div>
         <p class="tapme">👆 Tik hier om de ontwikkeling te versnellen</p></div>`);
@@ -211,46 +217,74 @@
   function updateTeam() {
     const list = $('teamList'), S = G.S;
     const key = G.HELPERS.map(h => G.hl(h.id)).join(',') + '|' + G.S.chipGen;
-    if (keyed(list, key, G.HELPERS.map(h => {
-      const l = G.hl(h.id), max = l >= h.max;
+    if (keyed(list, key, `<div class="ind-card safety" data-f="safety"></div>` + G.HELPERS.map(h => {
+      const l = G.hl(h.id), max = l >= h.max, r = G.rank(h), lv = G.rankLevels(h);
+      const next = lv[r + 1], prev = lv[r];
+      const nextTxt = next == null ? 'Hoogste rang bereikt' : `${G.rankName(h, r + 1)} bij niveau ${next}${h.ranks ? ' · 2× zo slim' : ' · effect +50%'}`;
       return `<div class="gen helper" data-act="hire" data-id="${h.id}" data-f="hc-${h.id}">
-        <div class="gicon"><span>${h.icon}</span>${l ? `<span class="own">${l}</span>` : ''}</div>
-        <div class="ginfo"><div class="gname">${h.name} <span class="muted">niv. ${l}/${h.max}</span></div>
+        <div class="gicon"><span>${G.rankIcon(h)}</span>${l ? `<span class="own">${l}</span>` : ''}</div>
+        <div class="ginfo"><div class="gname">${l ? G.rankName(h) : h.name}${r ? ` <span class="stars">${'★'.repeat(r)}</span>` : ''}</div>
           <div class="grate">${h.desc}</div>
-          <div class="grate eff">${l ? 'Nu: ' + h.eff(l) : ''}${max ? '' : `${l ? ' → ' : 'Effect: '}${h.eff(l + 1)}`}</div></div>
-        <button class="gbuy"${max ? ' disabled' : ''}><span class="q">${max ? 'maximaal' : l ? 'promoveren' : 'aannemen'}</span><span class="c">${max ? '★' : G.fmt(G.helperCost(h))}</span></button>
+          <div class="grate eff">${l ? 'Nu: ' + h.eff(G.effAt(h, l), l) : ''}${max ? '' : `${l ? ' → ' : 'Effect: '}${h.eff(G.effAt(h, l + 1), l + 1)}`}</div>
+          <div class="mbar"><i style="width:${next == null ? 100 : (l - prev) / (next - prev) * 100}%"></i></div>
+          <div class="mlabel">${nextTxt}</div></div>
+        <button class="gbuy"${max ? ' disabled' : ''}><span class="q">${max ? 'maximaal' : l ? 'promoveren' + (next === l + 1 ? ' ⭐' : '') : 'aannemen'}</span><span class="c">${max ? '★' : G.fmt(G.helperCost(h))}</span></button>
       </div>`;
     }).join(''))) {
       if (!list.dataset.bound) {
         list.dataset.bound = '1';
         list.addEventListener('click', e => {
+          if (e.target.closest('[data-act="to-research"]')) { G.ui.switchTab('research'); return; }
           const t = e.target.closest('[data-act="hire"]');
           if (!t) return;
-          const h = G.HELPERS.find(x => x.id === t.dataset.id), first = !G.hl(h.id);
+          const h = G.HELPERS.find(x => x.id === t.dataset.id), first = !G.hl(h.id), r0 = G.rank(h);
           if (G.hire(h)) {
             G.sfx.milestone(); G.haptic('MEDIUM');
-            G.ui.toast(h.icon, first ? `${h.name} aangenomen!` : `${h.name} → niveau ${G.hl(h.id)}`, h.eff(G.hl(h.id)));
-            buildOrbit();
+            const l = G.hl(h.id);
+            if (G.rank(h) > r0) { G.sfx.big(); G.fx.wave(); G.ui.toast(G.rankIcon(h), `Promotie: ${G.rankName(h)}!`, h.eff(G.effAt(h, l), l)); }
+            else G.ui.toast(G.rankIcon(h), first ? `${h.name} aangenomen!` : `${G.rankName(h)} → niveau ${l}`, h.eff(G.effAt(h, l), l));
+            buildOrbit(true);
           } else G.sfx.error();
           G.uiRefresh(true);
         });
       }
     }
     for (const h of G.HELPERS) set(list, 'hc-' + h.id, { cls: { can: G.hl(h.id) < h.max && S.tokens >= G.helperCost(h) } });
+    updateSafetyCard(list.querySelector('[data-f="safety"]'));
     const n = Object.keys(S.helpers).length;
     $('teamHead').textContent = n ? `${n} van ${G.HELPERS.length} rollen bezet` : '';
+  }
+
+  function updateSafetyCard(el) {
+    const S = G.S, need = G.safetyNeed(), pts = G.safetyPoints(), def = G.safetyDeficit();
+    const state = need === 0 ? 'none' : def ? 'bad' : 'ok';
+    const k = [state, Math.round(pts * 10), need].join('|');
+    const risk = () => { el.querySelector('.risk i').style.width = S.risk + '%'; el.querySelector('[data-f="rk"]').textContent = Math.floor(S.risk) + '%'; };
+    if (el.dataset.k === k) { risk(); return; }
+    el.dataset.k = k;
+    el.className = 'ind-card safety ' + state;
+    const msg = state === 'none' ? 'Je modellen zijn nog simpel. Vanaf de RNN vragen slimmere modellen om veiligheid.'
+      : def ? `Je loopt ${G.fmt(def)} achter. Het risico stijgt; bij 100% volgt een backlash: productie −50% en gebruikers haken af.`
+      : 'Je veiligheid is op orde. Blijf investeren als je slimmere modellen koopt.';
+    el.innerHTML = `
+      <div class="sf-top"><span class="sf-ic">${state === 'bad' ? '⚠️' : '🛡️'}</span>
+        <div><small>Veiligheid</small><b>${G.fmt(pts)} / ${G.fmt(need)} nodig</b></div>
+        <button class="pill" data-act="to-research">🛡️ Onderzoek</button></div>
+      <div class="sf-row"><span>Risico</span><div class="bar risk"><i></i></div><b data-f="rk"></b></div>
+      <p class="muted">${msg}</p>`;
+    risk();
   }
 
   // ---------- helpers rond de kern ----------
   let orbitKey = '';
   function buildOrbit() {
     const ids = G.HELPERS.filter(h => G.hl(h.id)).map(h => h.id);
-    const key = ids.join(',');
+    const key = ids.map(id => id + G.rank(G.HELPERS.find(h => h.id === id))).join(',');
     if (key === orbitKey) return;
     orbitKey = key;
     $('orbit').innerHTML = ids.map((id, i) => {
       const h = G.HELPERS.find(x => x.id === id);
-      return `<span class="hav" data-id="${id}" style="--a:${(360 / ids.length) * i}deg"><i>${h.icon}</i></span>`;
+      return `<span class="hav" data-id="${id}" style="--a:${(360 / ids.length) * i}deg"><i>${G.rankIcon(h)}</i></span>`;
     }).join('');
   }
   G.helperPos = id => {
@@ -289,7 +323,7 @@
     const S = G.S;
     $('dotChips').classList.toggle('show', G.tabUnlocked('chips') && (G.canStartRnd() || G.CHAIN.some((c, i) => !S.chain[i] && S.tokens >= G.chainCost(i))));
     $('dotApps').classList.toggle('show', G.tabUnlocked('apps') && G.APPS.some(a => !G.app(a.id).v && !G.app(a.id).b && G.appUnlocked(a) && S.tokens >= G.appCost(a)));
-    $('dotTeam').classList.toggle('show', G.tabUnlocked('team') && G.HELPERS.some(h => !G.hl(h.id) && S.tokens >= G.helperCost(h)));
+    $('dotTeam').classList.toggle('show', G.tabUnlocked('team') && (G.safetyDeficit() > 0 || G.HELPERS.some(h => !G.hl(h.id) && S.tokens >= G.helperCost(h))));
   }
 
   G.uiInd = {
@@ -302,5 +336,6 @@
       if (tab === 'team') updateTeam();
     },
     reset() { for (const k in last) delete last[k]; orbitKey = ''; $('chipBody').removeAttribute('data-built'); buildOrbit(); },
+    buildOrbit,
   };
 })();

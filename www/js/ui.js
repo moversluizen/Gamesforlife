@@ -15,13 +15,13 @@
       const card = el('div', 'gen');
       card.innerHTML = `
         <div class="gicon"><span class="ge">${g.icon}</span><span class="own">0</span></div>
-        <div class="ginfo"><div class="gname"></div><div class="grate"></div><div class="mbar"><i></i></div></div>
+        <div class="ginfo"><div class="gname"></div><div class="grate"></div><div class="mbar"><i></i></div><div class="mlabel"></div></div>
         <button class="gbuy"><span class="q"></span><span class="c"></span></button>`;
       card.addEventListener('click', () => buyGen(i, card));
       list.appendChild(card);
       genEls[i] = {
         card, own: card.querySelector('.own'), name: card.querySelector('.gname'), rate: card.querySelector('.grate'),
-        mbar: card.querySelector('.mbar i'), q: card.querySelector('.q'), c: card.querySelector('.c'),
+        mbar: card.querySelector('.mbar i'), ml: card.querySelector('.mlabel'), q: card.querySelector('.q'), c: card.querySelector('.c'),
       };
     });
   }
@@ -58,7 +58,8 @@
       const next = G.nextMilestone(S.owned[i]);
       const prevIdx = G.MILESTONES.indexOf(next) - 1, prev = prevIdx >= 0 ? G.MILESTONES[prevIdx] : 0;
       e.mbar.style.width = next ? ((S.owned[i] - prev) / (next - prev) * 100) + '%' : '100%';
-      e.mbar.parentElement.title = next ? `2× productie bij ${next}` : '';
+      const ml = !rev ? '' : next ? `2× productie bij ${next}${G.milestoneLevel(S.owned[i]) ? ` · nu ×${G.fmt(Math.pow(2, G.milestoneLevel(S.owned[i])))}` : ''}` : 'Alle mijlpalen gehaald';
+      if (e.ml.textContent !== ml) e.ml.textContent = ml;
       e.q.textContent = rev ? `×${k}` + (next && S.owned[i] + k >= next ? ' ⭐' : '') : '';
       e.c.textContent = G.fmt(cost);
     });
@@ -92,7 +93,9 @@
       any = any || can;
     }
     $('dotResearch').classList.toggle('show', any);
-    $('researchCount').textContent = `${Object.keys(G.S.upgrades).length} / ${G.UPGRADES.length}`;
+    const nUp = Object.keys(G.S.upgrades).length;
+    $('researchCount').textContent = `${nUp} / ${G.UPGRADES.length}`;
+    $('researchBar').style.width = (nUp / G.UPGRADES.length * 100) + '%';
   }
 
   // ---------- singulariteit ----------
@@ -294,6 +297,7 @@
       { tab: 'chips', icon: '⚡', label: 'Chips', v: G.computeBonus() },
       { tab: 'apps', icon: '📊', label: 'Data', v: G.dataBonus() },
       { tab: 'more', icon: '🌀', label: 'Bonus', v: G.mods.perm * G.buffMult('prod') },
+      { tab: 'team', icon: '🛡️', label: 'Veilig', v: null },
     ];
     const box = $('boosts');
     if (!box.children.length) {
@@ -304,7 +308,8 @@
     box.querySelectorAll('.boost').forEach((b, i) => {
       const t = tiles[i], open = G.tabUnlocked(t.tab);
       b.classList.toggle('lk', !open);
-      const txt = open ? '×' + (t.v < 100 ? t.v.toFixed(2).replace('.', ',') : G.fmt(t.v)) : '🔒';
+      const txt = !open ? '🔒' : t.v === null ? (G.safetyDeficit() ? `⚠ ${Math.floor(G.S.risk)}%` : '✓') : '×' + (t.v < 100 ? t.v.toFixed(2).replace('.', ',') : G.fmt(t.v));
+      b.classList.toggle('warn', t.v === null && open && G.safetyDeficit() > 0);
       const v = b.querySelector('.bv');
       if (v.textContent !== txt) v.textContent = txt;
     });
@@ -347,7 +352,7 @@
   const stage = $('stage'), core = $('core'), floaters = $('floaters');
   // auto = getikt door een helper (telt niet mee als eigen tik)
   function tapAt(cx, cy, auto) {
-    const v = G.clickValue();
+    const v = G.clickValue() * (auto ? G.internPower() : 1);
     G.earn(v); G.S.clickEarned += v;
     if (!auto) G.S.clicks++;
     const r = stage.getBoundingClientRect();
@@ -436,7 +441,10 @@
 
     const now = Date.now();
     const active = S.buffs.filter(b => b.until > now);
-    $('buffs').innerHTML = active.map(b => `<span class="buff">${b.name} ×${b.mult} · ${Math.ceil((b.until - now) / 1000)}s</span>`).join('');
+    const def = G.safetyDeficit();
+    const html = active.map(b => `<span class="buff${b.mult < 1 ? ' bad' : ''}">${b.name} ×${String(b.mult).replace('.', ',')} · ${Math.ceil((b.until - now) / 1000)}s</span>`).join('')
+      + (def && S.risk >= 10 ? `<button class="buff risk" id="riskPill">⚠️ Risico ${Math.floor(S.risk)}%</button>` : '');
+    if ($('buffs').innerHTML !== html) $('buffs').innerHTML = html;
   }
 
   // ---------- nieuws ----------
@@ -474,6 +482,21 @@
   G.on('appLive', a => {
     G.sfx.milestone(); G.haptic('HEAVY');
     toast(a.icon, `${a.name} is live!`, 'Gebruikers leveren nu trainingsdata voor je modellen.');
+  });
+  $('buffs').addEventListener('click', e => { if (e.target.closest('#riskPill')) switchTab('team'); });
+  G.on('chainMilestone', i => {
+    G.sfx.milestone();
+    toast(G.CHAIN[i].icon, `${G.CHAIN[i].name} ×2!`, `Mijlpaal bereikt: niveau ${G.S.chain[i]}`);
+  });
+  G.on('safetyWarn', w => {
+    G.sfx.error(); G.haptic('MEDIUM');
+    toast('⚠️', `Veiligheidsrisico ${w}%`, 'Neem safety-engineers aan of koop veiligheidsonderzoek, anders volgt een backlash.');
+  });
+  G.on('backlash', ([title, text]) => {
+    G.sfx.error(); G.haptic('HEAVY');
+    document.getElementById('app').animate([{ transform: 'translateX(-8px)' }, { transform: 'translateX(8px)' }, { transform: 'translateX(0)' }], { duration: 300, iterations: 2 });
+    modal('📰', `Backlash: ${title}`, `${text}<br><br><b style="color:var(--bad)">Productie −50% voor 2 minuten</b> en je apps verliezen 30% van hun gebruikers.<br><br>Investeer in veiligheid om dit te voorkomen.`,
+      [{ label: 'Later' }, { label: 'Naar Team', cls: 'primary', onClick: () => switchTab('team') }]);
   });
   G.on('autoCampaign', () => { if (currentTab === 'apps') toast('📣', 'De marketeer startte een campagne', ''); });
   const seenTabs = {};

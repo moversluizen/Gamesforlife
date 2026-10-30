@@ -24,8 +24,10 @@ De mechanismen komen uit de populairste idle games (Cookie Clicker, AdVenture Ca
 | Versterkers | Modellen zijn de basis; chips (rekenkracht), apps (gebruikersdata), onderzoek en prestige vermenigvuldigen hun productie |
 | Apps | 10 apps (Praatbot → Code-copiloot → Robot-butler) met groeiende gebruikers, campagnes en versies |
 | Navigatie | Veeg tussen de onderdelen; de pager en de menubalk tonen waar je bent |
-| Managers | 6 helpers: stagiair (auto-tikken), fab-ingenieur, chipontwerper, marketeer, talentscout, financieel directeur |
-| Opdrachten | Ada, je AI-assistent, geeft 20 opdrachten met beloningen die je door het hele spel leiden |
+| Managers | 7 helpers met rangen (Junior → Legende); de stagiair groeit door tot AI-collega en tikt per rang 2× zo sterk |
+| Veiligheid | Slimmere modellen vragen veiligheid (safety-engineers, 8 veiligheidsonderzoeken). Loop je achter, dan stijgt het risico tot een backlash: productie −50% en gebruikers haken af |
+| Mijlpalen in de keten | Elke ketenschakel verdubbelt bij 10, 25, 50, 100 … niveaus |
+| Opdrachten | Ada, je AI-assistent, geeft 22 opdrachten met beloningen die je door het hele spel leiden |
 
 ## Lokaal spelen
 
