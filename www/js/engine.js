@@ -149,13 +149,13 @@
     if (r < 0.5) {
       const amt = Math.min(S.tokens * 0.15, G.baseTps() * 900) + 13;
       G.earn(amt);
-      res = { title: 'Doorbraak!', text: `+${G.fmt(amt)} tokens` };
+      res = { title: T('Doorbraak!'), text: T('+{0} tokens', G.fmt(amt)) };
     } else if (r < 0.85) {
-      S.buffs.push({ type: 'prod', mult: 7, until: Date.now() + 77000 * dur, name: 'Datastorm' });
-      res = { title: 'Datastorm!', text: `Productie ×7 voor ${Math.round(77 * dur)} s` };
+      S.buffs.push({ type: 'prod', mult: 7, until: Date.now() + 77000 * dur, name: T('Datastorm') });
+      res = { title: T('Datastorm!'), text: T('Productie ×7 voor {0} s', Math.round(77 * dur)) };
     } else {
-      S.buffs.push({ type: 'click', mult: 77, until: Date.now() + 10000 * dur, name: 'Klikstorm' });
-      res = { title: 'Klikstorm!', text: `Tikken ×77 voor ${Math.round(10 * dur)} s` };
+      S.buffs.push({ type: 'click', mult: 77, until: Date.now() + 10000 * dur, name: T('Klikstorm') });
+      res = { title: T('Klikstorm!'), text: T('Tikken ×77 voor {0} s', Math.round(10 * dur)) };
     }
     G.scheduleEureka();
     return res;
@@ -230,20 +230,20 @@
   const SUF = ['', 'K', 'M', 'B', 'T', 'Qa', 'Qi', 'Sx', 'Sp', 'Oc', 'No', 'Dc', 'UDc', 'DDc', 'TDc', 'QaDc', 'QiDc', 'SxDc', 'SpDc', 'OcDc', 'NoDc', 'Vg'];
   G.fmt = n => {
     if (!isFinite(n)) return '∞';
-    if (n < 1000) return (n < 10 && n % 1 ? n.toFixed(1) : Math.floor(n).toString()).replace('.', ',');
+    if (n < 1000) return (n < 10 && n % 1 ? n.toFixed(1) : Math.floor(n).toString()).replace('.', G.DEC);
     const e = Math.floor(Math.log10(n) / 3);
-    if (e >= SUF.length) return n.toExponential(2).replace('.', ',');
+    if (e >= SUF.length) return n.toExponential(2).replace('.', G.DEC);
     const v = n / Math.pow(10, e * 3);
-    return (v < 10 ? v.toFixed(2) : v < 100 ? v.toFixed(1) : v.toFixed(0)).replace('.', ',') + ' ' + SUF[e];
+    return (v < 10 ? v.toFixed(2) : v < 100 ? v.toFixed(1) : v.toFixed(0)).replace('.', G.DEC) + ' ' + SUF[e];
   };
   // Vaste schrijfwijze voor snelheden en vermenigvuldigers.
   G.fmtRate = n => '+' + G.fmt(n) + '/s';
-  G.fmtMult = n => '×' + (n < 10 ? n.toFixed(2).replace('.', ',') : G.fmt(n));
+  G.fmtMult = n => '×' + (n < 10 ? n.toFixed(2).replace('.', G.DEC) : G.fmt(n));
   G.fmtTime = secs => {
     secs = Math.floor(secs);
     const h = Math.floor(secs / 3600), m = Math.floor(secs % 3600 / 60), s = secs % 60;
-    if (h) return `${h} u ${m} min`;
-    if (m) return `${m} min ${s} s`;
+    if (h) return T('{0} u {1} min', h, m);
+    if (m) return T('{0} min {1} s', m, s);
     return `${s} s`;
   };
 

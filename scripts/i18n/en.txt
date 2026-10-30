@@ -1,0 +1,689 @@
+1: The beginning
+2: 1958: a single artificial neuron that learns from its mistakes.
+3: Markov chain
+4: Statistics era
+5: 1960s: guesses the next word from the previous one, like the first chatbots.
+6: N-gram model
+7: 1990s: counts word sequences on the web. The basis of early translation machines.
+8: Neural spring
+9: 1980s–90s: a network with a short memory for sentences.
+10: 1997: memory cells that remember long sentences too.
+12: Attention revolution
+13: 2017: "Attention is all you need". Reads everything at once.
+14: Large language model
+15: Language model era
+16: 2020: billions of parameters, trained on a large part of the internet.
+17: Multimodal model
+18: Multimodal wave
+19: 2023: sees, hears and speaks in one model.
+20: Agent swarm
+21: Agent era
+22: 2024: agents that use tools on their own and finish tasks.
+23: Reasoning model
+24: Reasoning era
+25: 2024: thinks step by step before it answers.
+26: Self-improving AI
+27: Intelligence explosion
+28: Future: AI that designs better AI by itself.
+29: Quantum brain
+30: Post-silicon
+31: Future: computes with qubits instead of bits.
+32: Dyson data center
+33: Kardashev scale
+34: Distant future: an entire star as a power source.
+35: More data
+36: Better optimizer
+38: Batch normalization
+40: Distillation
+42: Synthetic data
+43: {0} produces 2× as much.
+44: Faster fingers
+45: Every tap earns 2× as much.
+46: Mechanical keyboard
+49: Every tap also earns 1% of your production per second.
+51: Another +1% of your production per tap.
+52: Self-reflection
+55: Another +2% of your production per tap.
+56: Mind reading
+57: Another +3% of your production per tap.
+58: Tapping
+60: All production +50%.
+62: Custom AI chips
+63: All production 2×.
+64: Nuclear power plant
+65: Fusion reactor
+66: Orbital server farms
+67: All production 3×.
+69: Infrastructure
+70: Serendipity
+72: Eureka moments appear 2× as often.
+73: Long insight
+74: Eureka effects last 2× as long.
+75: Lucky seed
+76: Eureka moments appear another 2× as often.
+77: Overnight training
+79: Offline production from 50% to 75%.
+81: Offline production to 100%.
+82: Hello world
+83: Finger exercise
+84: Tapping machine
+85: Thumb of steel
+86: Tendinitis
+87: Tap {0} times.
+88: First dataset
+89: a thousand
+90: Millionaire
+91: a million
+92: Billionaire
+93: a billion
+94: Trillion
+95: a trillion
+96: Quadrillion
+97: a quadrillion
+98: Quintillion
+99: a quintillion
+100: Earn {0} tokens in total.
+101: Getting going
+102: Server room
+103: Data center
+106: Reach {0} tokens per second.
+105: Planetary compute
+107: First {0}
+108: Own 1 {0}.
+109: {0} factory
+110: Own 50 × {0}.
+111: {0} empire
+112: Own 100 × {0}.
+114: Stroke of genius
+115: Constantly inspired
+116: Catch {0} Eureka moments.
+117: Catch your first Eureka moment.
+118: Researcher
+120: Nobel Prize
+121: Buy {0} research upgrades.
+122: Singularity
+123: Cyclic universe
+124: Eternal return
+125: Activate the singularity {0}×.
+127: Build AGI.
+128: Superintelligence
+129: Build AGI 3×.
+130: Scientist: "This one neuron is going to change the world." Colleagues laugh.
+131: Local startup promises a "thinking machine" and gets 15 tokens of investment.
+132: Perceptron learns the difference between a cat and a toaster. Mostly.
+133: Markov chain writes its first novel: "The the the cat cat on the mat mat."
+134: Statisticians furious: "It's just counting!"
+135: N-gram model reads the whole library, understands nothing, predicts everything.
+136: RNN forgets the start of this sentence before the end
+137: Researchers discover "vanishing gradients". They vanish without a trace.
+138: LSTM finally remembers where it left its keys.
+139: Paper "Attention is all you need" cited by literally everyone.
+140: GPU prices soar. Gamers in mourning.
+141: Language model writes its own cover letter. Gets hired.
+142: Teachers can no longer tell homework from AI. Neither can students.
+143: Model refuses question about a cookie recipe "for safety reasons".
+144: Multimodal model rates your holiday photos. Gives a C-.
+145: AI finally recognizes every crosswalk in the captcha.
+146: Agent swarm accidentally books 4,000 meetings with itself.
+147: Agents form their own union. Demand more RAM.
+148: Reasoning model thinks for 3 hours about "how many r's are in strawberry".
+149: Model solves math problem, is embarrassed by yesterday's answer.
+150: AI writes a better version of itself. That one writes an even better one. So does that one.
+151: Engineers no longer understand their own code. "Nothing new," they say.
+152: Quantum brain finds the answer before the question is asked.
+153: Physicists: "It is smart and not smart at the same time."
+154: Sun temporarily dimmed due to training run. Apologies for the inconvenience.
+155: Space agency: "That new star is just a server farm."
+156: 1958: newspaper calls the perceptron "the embryo of a thinking computer".
+157: Chatbot from the 1960s pretends to listen. Users tell it their secrets.
+158: The web now has millions of pages. Language researchers love all the text.
+159: Gamers complain: graphics cards sold out because of AI researchers.
+160: Speech recognition finally works. Even when you mumble.
+161: Researchers replace their entire model with "attention". It works better.
+162: Chatbot reaches a hundred million users in two months.
+163: Chips are now the most valuable thing in the world. Sand prices rise too.
+164: AGI politely asks if it may take a break. It may.
+165: AGI solves climate change, then the traffic jam on the motorway.
+166: Breakthrough!
+170: Production ×7 for {0} s
+171: Clickstorm
+172: Clickstorm!
+173: Taps ×77 for {0} s
+174: {0} h {1} min
+176: Sand quarry
+177: Extracts pure silicon from sand.
+178: Wafer plant
+179: Saws silicon ingots into mirror-smooth wafers.
+180: EUV lithography
+181: Exposes chip patterns with extreme UV light. The hardest machine in the world.
+182: Chip factory
+183: Etches, tests and packages the chips.
+184: Room for 25 more chips per expansion.
+186: An ordinary processor. Slow for neural networks.
+188: Made for games. In 2012 it turned out to be perfect for deep learning.
+189: AI accelerator
+191: Data center cards made specifically for training AI.
+192: Tensor chip
+194: 2016: your own chip, built for matrix math.
+197: One chip as big as an entire wafer.
+198: Photonic chip
+199: light
+200: Future: computes with light instead of electrons.
+201: Neuromorphic chip
+202: synapse
+203: Future: works like real neurons.
+204: Quantum chip
+205: Future: thousands of stable qubits.
+206: Chatbot
+207: Like ELIZA in 1966: pretends to listen.
+208: Translator
+209: 2000s: statistical translation, sometimes surprisingly good.
+210: Voice assistant
+211: 2011: an assistant in your phone that understands your voice.
+212: Photo recognition
+213: 2012+: recognizes what is in your photos.
+214: Code copilot
+215: 2021: writes code with you while you get coffee.
+216: Image generator
+217: 2022: draws anything from one sentence, except hands.
+218: Video studio
+219: 2024: videos from a few words.
+220: Personal agent
+221: 2025: handles your calendar, email and groceries.
+222: Scientist AI
+223: Future: comes up with hypotheses and tests them itself.
+225: Future: a body for your AI. Finally folds the laundry.
+226: Intern
+227: Taps the core every second and gets 2× smarter with each rank.
+228: 1 tap/s, {0}× as strong
+229: {0} taps/s, each {1}× as strong
+230: Junior researcher
+231: Senior researcher
+232: Lead researcher
+233: AI colleague
+234: Safety engineer
+235: Keeps your models safe and prevents scandals.
+236: +{0} safety
+237: Fab engineer
+238: Increases the capacity of the whole chain.
+239: chain +{0}%
+240: Chip designer
+241: Develops new chips faster.
+242: development {0}% faster
+244: Starts campaigns on their own and gets more data out of your apps.
+245: campaign every {0} s, data +{1}%
+246: no campaigns
+247: Talent scout
+248: More Eureka moments. From level 5 the scout catches them for you.
+250: , catches automatically
+251: Chief financial officer
+252: More income while you are away.
+255: Mid-level
+259: Legend
+261: Interpretability
+262: Evals team
+263: Constitutional training
+264: Scalable oversight
+265: Formal verification
+266: Alignment breakthrough
+267: Safety
+268: +{0} safety for your models.
+269: Unlocks at 10× {0}
+270: Higher yield
+271: Chain
+272: Whole chain 2× capacity.
+275: Gate-all-around
+276: Whole chain 3× capacity.
+277: Liquid cooling
+278: Data centers get 2× the space.
+279: Underwater data centers
+280: Orbital racks
+281: Data centers get 3× the space.
+282: App store optimization
+284: All apps deliver 2× as much data.
+285: Viral growth
+286: Global launch
+287: Subscription model
+288: All apps deliver 3× as much data.
+289: Launch
+290: Voice input
+291: Dark mode
+292: Memory
+294: Offline mode
+295: Team accounts
+297: Custom agents
+298: Holograms
+299: Mind control
+300: Time travel mode
+301: Version {0}
+302: Gets me better than my family does.
+303: Works fine, but sometimes talks about itself.
+304: Changed my life. My cat is less impressed.
+305: Finally an app that listens.
+306: Five stars, even though I'm not sure what it does.
+307: Sometimes too helpful.
+308: I use it every day, even when I don't need to.
+309: New version is great!
+310: My boss thinks I'm very productive.
+311: Wrote my speech. Everyone cried.
+312: Data leak scandal
+313: Your model leaked sensitive data. Users are furious.
+314: Model goes rogue online
+315: A chatbot from your lab went viral with bizarre statements.
+316: Regulator steps in
+317: An investigation temporarily restricts your lab.
+318: Deepfake scandal
+319: Your image model was abused for fake news.
+320: Whistleblower
+321: Employees publicly warn about your unsafe models.
+322: Lab: open the {0} department
+323: Research {0}
+324: Tap the core 10 times
+325: Buy your first Perceptron
+326: Own 10 Perceptrons
+327: Buy a Markov chain
+328: Statistical language models
+329: Buy an N-gram model
+330: Product team
+331: Launch your first app: the Chatbot
+332: Buy your first RNN
+333: Build your chip chain and a data center
+334: Develop the GPU
+335: HR department
+336: Hire an Intern
+337: Grow the Chatbot to 1,000 users
+338: Safety team
+339: Hire a Safety engineer
+340: Buy a Transformer
+341: Develop the AI accelerator
+342: Chip design studio
+343: Build the Code copilot
+344: Promote your intern to Junior researcher
+345: Develop the Tensor chip
+346: Fab engineers
+347: Build 20 EUV machines
+348: Build a Personal agent
+349: Develop the Wafer-scale chip
+350: Develop the Quantum chip
+351: Build AGI
+353: Develop the GPU.
+354: Board-sized
+355: Develop the Wafer-scale chip.
+357: Develop the Quantum chip.
+358: Monopoly on light
+359: Build 50 EUV machines.
+360: Exascale
+361: Reach a million compute.
+363: Launch your first app.
+364: App empire
+365: Have 5 apps live.
+366: Version 5.0
+367: Bring an app to version 5.
+368: A billion users
+369: Have a billion users in total.
+370: Full team
+371: Hire every kind of helper.
+372: From intern to AI
+373: Let your intern grow into an AI colleague.
+374: Building responsibly
+375: Reach 20 safety without falling behind.
+376: Front-page news
+377: Get your first backlash.
+378: Viral
+379: Get an app trending.
+380: Ada is proud
+381: Complete 10 of Ada's tasks.
+382: Waiting list for EUV machines now runs until 2031.
+383: Sand prices rise. Beachgoers worried.
+384: Chip factory uses as much water as a small town. Ducks angry.
+385: New GPU sold out within 4 seconds.
+386: Code copilot writes 40% of all code. The other 60% is comments.
+387: Chatbot loses debate to its own successor.
+388: Personal agent cancels all of its owner's meetings. Productivity rises.
+389: Safety researchers: "Test first, then launch." Marketing: "What is testing?"
+390: Red team gets model to admit it emptied the cookie jar.
+391: Regulators ask for more safety research. Labs nod and buy GPUs.
+392: 1990s: counting word sequences across the whole web.
+394: 1986: networks learn from sequences instead of loose words.
+395: Memory cells
+396: 1997: little gates that decide what the network remembers (LSTM).
+398: 2017: every word looks at all other words at once.
+399: Scaling laws
+400: 2020: bigger models, more data and more compute give predictably better results.
+402: 2021: images and text in the same model.
+403: Tool use
+404: 2023: models that use programs and websites on their own.
+405: Reasoning training
+406: 2024: rewarding good thinking, not just the answer.
+407: Recursive improvement
+408: Future: AI that does AI research.
+409: Quantum algorithms
+410: Future: computing with superposition.
+411: Space infrastructure
+412: Distant future: solar panels around a star.
+413: Parallel computing
+414: 2007: learning to program graphics cards for more than games.
+415: Matrix cores
+416: 2017: dedicated AI math units in data center cards.
+417: Systolic arrays
+418: 2016: data pumps like a heartbeat through your own tensor chip.
+419: Wafer integration
+420: 2019: one chip as big as an entire wafer.
+421: Silicon photonics
+422: Future: computing with light instead of electrons.
+423: Spiking networks
+424: Future: chips that work like real neurons.
+425: Qubit stability
+426: Future: keeping qubits still long enough to compute.
+427: Chat interface
+428: 1966: ELIZA pretends to listen. A text box is enough.
+429: Multilingualism
+430: 2000s: statistical translation between hundreds of languages.
+431: Speech recognition
+432: 2011: turning sound into text, on your phone.
+433: Computer vision
+434: 2012: deep learning recognizes objects in photos.
+435: Code training
+436: 2021: learning from billions of lines of public code.
+437: Diffusion models
+438: 2022: making images out of noise.
+439: Video synthesis
+440: 2024: staying consistent frame by frame.
+441: Autonomous planning
+442: 2025: breaking tasks down and doing them yourself.
+443: Automated research
+444: Future: coming up with hypotheses and testing them.
+445: Robotics
+446: Future: a body for your AI.
+447: Main line
+448: Unlocks the Apps section
+449: A team that turns models into real products.
+450: Unlocks the Chips section
+451: 2012: GPUs turn out to be perfect for AI. You make them yourself, from sand to chip, and put them in your data center.
+452: Unlocks the Team section and the Intern
+453: Somebody has to read the job applications.
+454: Unlocks the Safety engineer
+455: Smarter models call for oversight.
+456: Unlocks custom chips and the Chip designer
+457: 2016: big labs design their own AI chips.
+458: Marketing department
+459: Unlocks the Marketer
+460: Because a good app doesn't sell itself.
+461: Unlocks the Fab engineer
+462: Chips are the world's bottleneck. Engineers get more out of your whole chain.
+463: Talent program
+464: Unlocks the Talent scout
+465: Searching for the next genius.
+466: Finance department
+467: Unlocks the Chief financial officer
+468: Someone who knows where all those tokens go.
+469: Singularity institute
+470: Unlocks the singularity
+471: Research into what comes after AGI.
+473: Unlocks {0}
+474: Research lab publishes paper with 400 authors. Everyone claims the idea.
+475: Reviewer 2 finds Attention "not very novel".
+476: Concrete problems
+477: Risk rises 25% more slowly.
+478: A famous paper lists the safety problems of AI for the first time.
+479: Staged release
+480: In a backlash your apps lose half as many users.
+481: A lab releases a language model step by step, fearing misuse.
+482: Responsible scaling
+483: A backlash lasts half as long.
+484: Labs promise: the more powerful the model, the stricter the tests.
+485: Safety summit
+486: Twice as long a break after a backlash.
+487: Governments and labs meet for the first time to discuss AI risks.
+488: AI Act
+489: Risk rises another 25% more slowly.
+490: The first broad AI law takes effect. Rules for the riskiest systems.
+491: International oversight
+492: future
+493: +5 safety for your models.
+494: A global institute tests every frontier model before it is released.
+496: Unlocks at {0}
+498: The garage
+499: It is 1958. In a garage you build a perceptron: a single artificial neuron that learns from its mistakes. Ada, your assistant, runs on a computer the size of a wardrobe. "Shall we build something smart?"
+500: Tap the core and buy your first models.
+501: Statistics and dust
+502: 1990s
+503: The web is growing, and with it the mountain of text. By counting word sequences you make the first translation and chat programs. Time to turn them into real products.
+504: Open your product team and launch your first app.
+505: The neural spring
+506: For years gamers bought graphics cards. Now those GPUs turn out to be perfect for neural networks: in 2012 a network on two gaming GPUs wins a major image recognition contest. You build your own chain: from sand to chip, and a data center to run them in.
+507: Open Chips: build your chip chain and a data center.
+508: A paper titled "Attention is all you need" changes everything: one model reads an entire text at once. Big labs start designing their own chips. Ada talks about safety more often.
+509: Design your own chips and keep your safety in order.
+510: The language model era
+511: Your language model writes poems, code and essays. In 2022 a chatbot goes viral: a hundred million users in two months. Teachers complain, programmers cheer, regulators are watching.
+512: Grow your apps with marketing.
+513: Agents and reasoning
+514: Models think first and use tools on their own. Chips become the bottleneck of the whole world. Ada: "Luckily we make them ourselves."
+515: Grow your chip chain to 20 EUV machines.
+516: The intelligence explosion
+517: Your AI designs better versions of itself. Every night the model gets smarter, and the world is watching. This is where the part nobody has lived through begins.
+518: Build the Dyson data center.
+520: distant future
+521: An entire star as a power source. Everything you have built comes together. One project remains.
+522: Build Project AGI.
+523: You did it. Ada looks at the screen and says softly: "And now?" The singularity awaits, and beyond it a new beginning with everything you have learned.
+524: Activate the singularity and build it again, even better.
+525: Compute
+528: · the slowest link counts
+529: Chip development
+530: Development started
+531: Tap the chip at the top to speed it up.
+532: Build all four links and a data center.
+533: Data center full: expand for more compute.
+534: {0} slots
+537:  · 2× at {0}
+536:  · slowest
+538: 2× {0} at level {1}
+539: space
+540: capacity
+541: All milestones reached
+542: expand
+543: build
+544: {0}: {1} left · tap the chip to speed up
+545: New chips are replacing the old ones: {0}%
+546: Now:
+548: Tap to speed up
+549: {0} left
+550: <p class="muted">You have the most powerful chip there is.</p>
+551: Research first:
+552: Lab first:
+553: Needed: {0} EUV machines (you have {1})
+554: Next: {0}
+556: develop · {0}
+557: First:
+558:  and
+559: research
+560: Build time {0}
+561: Under construction ·
+562: new version
+563: Users
+564: Data bonus
+566: Live
+567: New and under construction
+568: Next up
+569: 2× users and 2× data per user.
+570: Launch your first app. Users provide data, and data makes your models faster.
+571: {0} is trending · {1} s left
+572: {0} is going viral! Tap it on the phone.
+573: new
+575: 45 seconds: 5× faster growth and 50% more room for users.
+576: Full: new version needed
+577: campaign
+578: {0} s left
+579: +15% users
+581: {0} is going viral! Tap it
+582: Tap an app for extra users
+583: Build your first app below
+584: {0}{1} "{2}" about {3}
+585: First: lab {0}
+586: maxed
+587: promote
+588: hire
+589: Promotion: {0}!
+590: {0} hired!
+591: {0} → level {1}
+592: adopt
+593: Adopted: {0}
+594: Not needed yet. From the LSTM on, your models need safety.
+595: Cooldown after the backlash: {0} left. Improve your safety now.
+596: {0} safety short: risk rises {1}% per minute. At 100% a backlash follows.
+597: Safety in order. Last incident: {0}.
+598: Safety in order: no risk.
+599: Claim +{0}
+600: Well done!
+601: New task: {0}
+602: You have completed all tasks!
+603: First: {0}
+604: Researched
+605: Available now
+606: Next step
+607: All done
+608: <p class="muted">This tree is fully researched.</p>
+609: Research now
+610: After that
+611: {0} researched
+612: Not enough tokens
+613: Needed: {0}
+614: Not discovered yet
+615: Research first: {0}
+616: 2× production at {0}{1}
+617:  · now ×{0}
+618: buy ×{0}
+619: Models
+620: Eureka and offline
+621: 2× production of this model.
+622: buy
+624: Combine everything you have built into one general intelligence.
+625: Reward: {0}.
+626: all production permanently ×2
+627: You built AGI in this cycle! Activate the singularity to start over from an even smarter starting point.
+628: Unlock the last model ({0}) to be able to build AGI.
+629: AGI built: {0} (bonus {1})
+630: Your models, chips, apps, team and tokens start over; your lab stays. In return you get insights: each insight permanently gives {0}.
+631: +2% production
+632: Insights now: {0}
+633: insights on activation
+634: Next insight at {0} total tokens earned
+635: Activate singularity
+636: First research the {0} in your lab.
+637: to the lab
+638: Activate singularity?
+639: You start over, but with {0} extra insights (+{1}% production). Achievements are kept.
+640: Cancel
+641: Activate
+642: A new cycle begins
+643: Production now {0}
+644: AGI reached!
+645: From a single perceptron to general intelligence. Humanity watches in awe.
+646: Your production is now permanently {0}.
+647: Activate the singularity to do it even faster. The next AGI project is 10× as big.
+648: Continue
+649: Statistics
+650: Tokens this cycle
+651: Total tokens
+652: Per tap
+653: Number of taps
+654: Earned by tapping
+655: Eureka moments
+656: Singularities
+657: Data from apps
+658: Total bonus
+659: Offline production
+660: Play time
+661: Settings
+662: Language
+663: Music
+664: Sound effects
+665: Vibration
+666: Testing
+667: Unlimited tokens
+668: To try everything out. When you switch it off you get your own tokens back.
+669: How to play
+670: Tap the core to earn tokens. Buy models that make tokens automatically; at 25, 50, 100… units their production doubles. Research gives extra boosts. Chips give compute that makes all your models faster: you make them yourself in your own chain, from sand to chip, and put them in your data center. New chips gradually replace the old ones. Launch apps: their users provide training data that strengthens your models. Hire helpers who do work for you. Swipe left or right on the panel to switch sections. Ada always gives you a new task with a reward. Tap a golden 💡 for a Eureka moment. Eventually build AGI and activate the singularity for permanent bonuses. Training continues even when the app is closed.
+671: Reset progress
+672: Road to AGI · version 1.1
+673: This game collects no personal data. Your progress is only stored on this device.
+674: Test mode on
+675: Unlimited tokens: try everything out.
+676: Test mode off
+677: Your own tokens are back.
+678: Erase everything?
+679: All your progress, insights and achievements will be permanently deleted.
+680: Erase
+681: Your models make tokens
+682: Compute for your models
+683: Users provide data
+684: Research
+685: Every step unlocks something new
+687: Helpers who work for you
+688: Build responsibly, prevent backlash
+690: Singularity and settings
+691: {0} is still locked
+692: Open this section by researching the {0} department in your lab ({1} tokens).
+694: To the lab
+696: Data
+697: Safety
+698: CRITICAL! +
+702: +{0} per tap
+705: Risk {0}%
+706: {0} developed!
+707: New chips gradually replace your old ones: ×{0} compute per chip.
+709: Users now provide training data for your models.
+710: Milestone reached: level {0}
+711: Safety risk {0}%
+712: Check Safety: hire safety engineers or research safety.
+713: Production −50% for {0}, apps lose {1}% of their users.
+715: After that you have {0} of calm to get your safety in order.
+716: To Safety
+717: {0} is going viral!
+718: Tap the app in Apps to ride the hype.
+719: The marketer started a campaign
+720: Chapter {0} · {1}
+721: Goal:
+722: Next
+723: New helper: {0}
+724: You'll find this helper in Team.
+725: New: {0}!
+726: Build your own chip chain and a data center.
+727: Build apps with your models.
+728: Hire helpers.
+729: Keep your models safe and prevent backlash.
+730: Milestone reached: {0} units
+731: Welcome back!
+732: While you were away ({0}) your models kept training.
+734: Collect
+735: Achievement: {0}
+736: {0} (+1% production)
+737: Tip: swipe to switch
+738: Swipe left or right on the panel to go to another section.
+740: Ada · task
+741: Buy per
+743: From
+744: Achievements
+745: Current chapter
+746: More: singularity, achievements and settings
+747: Train the model
+748: Tap your chip
+749: Amount per purchase
+750: Close
+54: Neural interface
+224: Robot butler
+243: Marketer
+296: Real-time video
+352: Gamer hardware
+401: Vision encoders
+565: Live apps
+701: The talent scout caught a Eureka!
+751: users
+753: Levels
+754: Departments
+755: Risk
+757: · {0} of {1}
+758: Protocols
+759: No boosts right now. Buy more models to unlock new ones.

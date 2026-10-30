@@ -106,3 +106,11 @@ Benodigd: een Google Play Console-account (eenmalig $25).
 Het versienummer (`versionCode`) loopt automatisch op met elke build, dus elke nieuwe AAB kan direct als update geüpload worden.
 
 Lokaal bouwen kan ook met Android Studio: `npm run android`.
+
+## Talen
+
+Het spel is vertaald in 9 talen: Nederlands, English, Deutsch, Français, Español, Português, Italiano, 日本語 en 简体中文. Bij de eerste start kies je de taal (vlag, taalnaam en land in die taal); wisselen kan via Menu → Instellingen → Taal (het spel herlaadt dan).
+
+- In de code gaat elke tekst door `T('Nederlandse tekst {0}', waarde)`; zonder vertaling blijft het Nederlands staan.
+- Vertalingen staan in `scripts/i18n/<taal>.txt` als `nummer: vertaling` (het nummer verwijst naar `scripts/i18n-keys.json`).
+- Nieuwe teksten: `node scripts/i18n-keys.js` zet ze achteraan in de lijst, vertaal ze en bouw met `node scripts/i18n-build.js` naar `www/js/lang/`. Het bouwscript controleert placeholders en HTML-tags.

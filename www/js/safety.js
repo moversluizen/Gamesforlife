@@ -6,14 +6,14 @@
   // Protocollen: eenmalig, elk met een echte mijlpaal uit de AI-veiligheid.
   // model = index van het model dat je moet bezitten voordat het protocol beschikbaar is.
   G.PROTOCOLS = [
-    { id: 'pr0', icon: '📄', name: 'Concrete problemen',     year: '2016', cost: 5e5,  model: 4,  fx: { rate: 0.75 },  desc: 'Risico stijgt 25% langzamer.',                 story: 'Een beroemd paper zet de veiligheidsproblemen van AI voor het eerst op een rij.' },
-    { id: 'pr1', icon: '🚦', name: 'Gefaseerde release',     year: '2019', cost: 2e7,  model: 5,  fx: { users: 0.5 },  desc: 'Bij een backlash verliezen je apps de helft minder gebruikers.', story: 'Een lab brengt een taalmodel stap voor stap uit, uit angst voor misbruik.' },
-    { id: 'pr2', icon: '📏', name: 'Verantwoord schalen',    year: '2023', cost: 5e8,  model: 6,  fx: { dur: 0.5 },    desc: 'Een backlash duurt de helft korter.',          story: 'Labs beloven: hoe krachtiger het model, hoe strenger de tests.' },
-    { id: 'pr3', icon: '🏛️', name: 'Veiligheidstop',         year: '2023', cost: 2e10, model: 7,  fx: { calm: 2 },     desc: 'Na een backlash twee keer zo lang rust.',       story: 'Regeringen en labs komen voor het eerst samen om over AI-risico\'s te praten.' },
-    { id: 'pr4', icon: '⚖️', name: 'AI-wet',                 year: '2024', cost: 5e11, model: 8,  fx: { rate: 0.75 },  desc: 'Risico stijgt nog eens 25% langzamer.',        story: 'De eerste brede AI-wet treedt in werking. Regels voor de riskantste systemen.' },
-    { id: 'pr5', icon: '🌐', name: 'Internationaal toezicht', year: 'toekomst', cost: 1e13, model: 10, fx: { pts: 5 }, desc: '+5 veiligheid voor je modellen.',               story: 'Een wereldwijd instituut test elk grensverleggend model voordat het uitkomt.' },
+    { id: 'pr0', icon: '📄', name: T('Concrete problemen'),     year: '2016', cost: 5e5,  model: 4,  fx: { rate: 0.75 },  desc: T('Risico stijgt 25% langzamer.'),                 story: T('Een beroemd paper zet de veiligheidsproblemen van AI voor het eerst op een rij.') },
+    { id: 'pr1', icon: '🚦', name: T('Gefaseerde release'),     year: '2019', cost: 2e7,  model: 5,  fx: { users: 0.5 },  desc: T('Bij een backlash verliezen je apps de helft minder gebruikers.'), story: T('Een lab brengt een taalmodel stap voor stap uit, uit angst voor misbruik.') },
+    { id: 'pr2', icon: '📏', name: T('Verantwoord schalen'),    year: '2023', cost: 5e8,  model: 6,  fx: { dur: 0.5 },    desc: T('Een backlash duurt de helft korter.'),          story: T('Labs beloven: hoe krachtiger het model, hoe strenger de tests.') },
+    { id: 'pr3', icon: '🏛️', name: T('Veiligheidstop'),         year: '2023', cost: 2e10, model: 7,  fx: { calm: 2 },     desc: T('Na een backlash twee keer zo lang rust.'),       story: T('Regeringen en labs komen voor het eerst samen om over AI-risico\'s te praten.') },
+    { id: 'pr4', icon: '⚖️', name: T('AI-wet'),                 year: '2024', cost: 5e11, model: 8,  fx: { rate: 0.75 },  desc: T('Risico stijgt nog eens 25% langzamer.'),        story: T('De eerste brede AI-wet treedt in werking. Regels voor de riskantste systemen.') },
+    { id: 'pr5', icon: '🌐', name: T('Internationaal toezicht'), year: T('toekomst'), cost: 1e13, model: 10, fx: { pts: 5 }, desc: T('+5 veiligheid voor je modellen.'),               story: T('Een wereldwijd instituut test elk grensverleggend model voordat het uitkomt.') },
   ];
-  G.PROTOCOLS.forEach(p => G.UPGRADES.push({ ...p, sub: 'Protocol', kind: 'protocol', mult: 0, safetyTab: true, lockText: `Komt vrij bij ${G.GENS[p.model].name}`, unlock: s => s.owned[p.model] > 0 }));
+  G.PROTOCOLS.forEach(p => G.UPGRADES.push({ ...p, sub: T('Protocol'), kind: 'protocol', mult: 0, safetyTab: true, lockText: T('Komt vrij bij {0}', G.GENS[p.model].name), unlock: s => s.owned[p.model] > 0 }));
   // Veiligheidsonderzoek hoort voortaan in deze tak, niet bij de boosts.
   for (const u of G.UPGRADES) if (u.kind === 'safety') u.safetyTab = true;
 
@@ -43,7 +43,7 @@
       for (const w of [50, 80]) if (before < w && S.risk >= w && S.riskWarn < w) { S.riskWarn = w; G.emit('safetyWarn', w); }
       if (S.risk >= 100) {
         const inc = G.INCIDENTS[(Math.random() * G.INCIDENTS.length) | 0];
-        S.buffs.push({ type: 'prod', mult: 0.5, until: Date.now() + G.backlashDuration() * 1000, name: 'Backlash' });
+        S.buffs.push({ type: 'prod', mult: 0.5, until: Date.now() + G.backlashDuration() * 1000, name: T('Backlash') });
         for (const a of G.APPS) { const s = S.apps[a.id]; if (s && s.v) s.u *= 1 - G.backlashUserLoss(); }
         S.risk = 0; S.riskWarn = 0; S.backlashes++;
         S.calmUntil = Date.now() + G.calmDuration() * 1000;

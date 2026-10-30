@@ -16,9 +16,10 @@ class FakeDate extends Date {
 }
 const ctx = { console, Math, JSON, Object, Array, Number, String, Promise, setTimeout: () => 0, Date: FakeDate };
 ctx.window = ctx;
+ctx.location = { hash: '' }; ctx.navigator = { language: 'nl' }; ctx.document = { documentElement: {} };
 ctx.localStorage = { getItem: () => null, setItem() {}, removeItem() {} };
 vm.createContext(ctx);
-for (const f of ['data.js', 'engine.js', 'industry.js', 'research.js', 'safety.js']) {
+for (const f of ['i18n.js', 'data.js', 'engine.js', 'industry.js', 'research.js', 'safety.js']) {
   vm.runInContext(fs.readFileSync(path.join(__dirname, '..', 'www', 'js', f), 'utf8'), ctx, { filename: f });
 }
 const G = ctx.G;

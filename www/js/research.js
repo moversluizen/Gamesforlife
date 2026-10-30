@@ -5,63 +5,63 @@
   const G = window.G;
 
   const MODEL_TECH = [null, null,
-    ['Statistische taalmodellen', '📊', 'Jaren 90: woordreeksen tellen op het hele web.'],
-    ['Backpropagation through time', '⏪', '1986: netwerken leren van reeksen in plaats van losse woorden.'],
-    ['Geheugencellen', '🗃️', '1997: poortjes die bepalen wat het netwerk onthoudt (LSTM).'],
-    ['Attention', '🎯', '2017: elk woord kijkt naar alle andere woorden tegelijk.'],
-    ['Schaalwetten', '📈', '2020: groter model, meer data en meer rekenkracht geven voorspelbaar betere resultaten.'],
-    ['Vision-encoders', '🖼️', '2021: beelden en tekst in hetzelfde model.'],
-    ['Toolgebruik', '🛠️', '2023: modellen die zelf programma\'s en websites gebruiken.'],
-    ['Redeneertraining', '🧠', '2024: belonen voor goed nadenken, niet alleen voor het antwoord.'],
-    ['Recursieve verbetering', '🔁', 'Toekomst: AI die AI-onderzoek doet.'],
-    ['Quantumalgoritmes', '🌀', 'Toekomst: rekenen met superpositie.'],
-    ['Ruimte-infrastructuur', '🚀', 'Verre toekomst: zonnepanelen rond een ster.'],
+    [T('Statistische taalmodellen'), '📊', T('Jaren 90: woordreeksen tellen op het hele web.')],
+    [T('Backpropagation through time'), '⏪', T('1986: netwerken leren van reeksen in plaats van losse woorden.')],
+    [T('Geheugencellen'), '🗃️', T('1997: poortjes die bepalen wat het netwerk onthoudt (LSTM).')],
+    [T('Attention'), '🎯', T('2017: elk woord kijkt naar alle andere woorden tegelijk.')],
+    [T('Schaalwetten'), '📈', T('2020: groter model, meer data en meer rekenkracht geven voorspelbaar betere resultaten.')],
+    [T('Vision-encoders'), '🖼️', T('2021: beelden en tekst in hetzelfde model.')],
+    [T('Toolgebruik'), '🛠️', T('2023: modellen die zelf programma\'s en websites gebruiken.')],
+    [T('Redeneertraining'), '🧠', T('2024: belonen voor goed nadenken, niet alleen voor het antwoord.')],
+    [T('Recursieve verbetering'), '🔁', T('Toekomst: AI die AI-onderzoek doet.')],
+    [T('Quantumalgoritmes'), '🌀', T('Toekomst: rekenen met superpositie.')],
+    [T('Ruimte-infrastructuur'), '🚀', T('Verre toekomst: zonnepanelen rond een ster.')],
   ];
   const CHIP_TECH = [null,
-    ['Parallel rekenen', '🧵', '2007: grafische kaarten leren programmeren voor meer dan games.'],
-    ['Matrixkernen', '🔢', '2017: speciale rekenkernen voor AI in datacenterkaarten.'],
-    ['Systolische arrays', '🫀', '2016: data pompt als een hartslag door je eigen tensor-chip.'],
-    ['Wafer-integratie', '🟪', '2019: één chip zo groot als een hele wafer.'],
-    ['Silicium-fotonica', '🌈', 'Toekomst: rekenen met licht in plaats van elektronen.'],
-    ['Spiking-netwerken', '⚡', 'Toekomst: chips die werken als echte neuronen.'],
-    ['Qubit-stabiliteit', '❄️', 'Toekomst: qubits lang genoeg stil laten staan om te rekenen.'],
+    [T('Parallel rekenen'), '🧵', T('2007: grafische kaarten leren programmeren voor meer dan games.')],
+    [T('Matrixkernen'), '🔢', T('2017: speciale rekenkernen voor AI in datacenterkaarten.')],
+    [T('Systolische arrays'), '🫀', T('2016: data pompt als een hartslag door je eigen tensor-chip.')],
+    [T('Wafer-integratie'), '🟪', T('2019: één chip zo groot als een hele wafer.')],
+    [T('Silicium-fotonica'), '🌈', T('Toekomst: rekenen met licht in plaats van elektronen.')],
+    [T('Spiking-netwerken'), '⚡', T('Toekomst: chips die werken als echte neuronen.')],
+    [T('Qubit-stabiliteit'), '❄️', T('Toekomst: qubits lang genoeg stil laten staan om te rekenen.')],
   ];
   const APP_TECH = [
-    ['Chatinterface', '💬', '1966: ELIZA doet alsof ze luistert. Een tekstvak volstaat.'],
-    ['Meertaligheid', '🌍', 'Jaren 2000: statistische vertaling tussen honderden talen.'],
-    ['Spraakherkenning', '🎙️', '2011: geluid omzetten in tekst, op je telefoon.'],
-    ['Computervisie', '👁️', '2012: deep learning herkent objecten in foto\'s.'],
-    ['Code-training', '📝', '2021: leren van miljarden regels openbare code.'],
-    ['Diffusiemodellen', '🎨', '2022: beelden maken uit ruis.'],
-    ['Videosynthese', '🎬', '2024: beeld voor beeld consistent blijven.'],
-    ['Autonome planning', '🗺️', '2025: taken opknippen en zelf uitvoeren.'],
-    ['Geautomatiseerd onderzoek', '🧫', 'Toekomst: hypotheses bedenken én testen.'],
-    ['Robotica', '🦾', 'Toekomst: een lichaam voor je AI.'],
+    [T('Chatinterface'), '💬', T('1966: ELIZA doet alsof ze luistert. Een tekstvak volstaat.')],
+    [T('Meertaligheid'), '🌍', T('Jaren 2000: statistische vertaling tussen honderden talen.')],
+    [T('Spraakherkenning'), '🎙️', T('2011: geluid omzetten in tekst, op je telefoon.')],
+    [T('Computervisie'), '👁️', T('2012: deep learning herkent objecten in foto\'s.')],
+    [T('Code-training'), '📝', T('2021: leren van miljarden regels openbare code.')],
+    [T('Diffusiemodellen'), '🎨', T('2022: beelden maken uit ruis.')],
+    [T('Videosynthese'), '🎬', T('2024: beeld voor beeld consistent blijven.')],
+    [T('Autonome planning'), '🗺️', T('2025: taken opknippen en zelf uitvoeren.')],
+    [T('Geautomatiseerd onderzoek'), '🧫', T('Toekomst: hypotheses bedenken én testen.')],
+    [T('Robotica'), '🦾', T('Toekomst: een lichaam voor je AI.')],
   ];
 
   const tech = (id, tree, [name, icon, desc], cost, unlocks) =>
-    ({ id, tree, name, icon, sub: 'Hoofdlijn', desc, cost, kind: 'tech', mult: 0, unlocks, unlock: () => false });
+    ({ id, tree, name, icon, sub: T('Hoofdlijn'), desc, cost, kind: 'tech', mult: 0, unlocks, unlock: () => false });
 
   G.TREES = { lab: [], models: [], chips: [], apps: [] };
 
   // Lab: je organisatie. Elke afdeling opent een onderdeel of een helper.
   // Het lab blijft bestaan na een singulariteit (opgeslagen in S.lab).
   G.LAB = [
-    ['lab_product',  'Productteam',             '📱', 2000, 'Ontgrendelt het onderdeel Apps',                 'Een team dat van modellen echte producten maakt.'],
-    ['lab_hardware', 'Chipfabriek',             '🏭', 4e4,  'Ontgrendelt het onderdeel Chips',                '2012: GPU\'s blijken perfect voor AI. Jij maakt ze zelf, van zand tot chip, en zet ze in je datacenter.'],
-    ['lab_hr',       'HR-afdeling',             '👥', 2.5e5, 'Ontgrendelt het onderdeel Team en de Stagiair', 'Iemand moet de sollicitaties lezen.'],
-    ['lab_safety',   'Veiligheidsteam',         '🦺', 1e6,  'Ontgrendelt de Safety-engineer',                 'Slimmere modellen vragen om toezicht.'],
-    ['lab_design',   'Chipontwerpstudio',       '👩‍🔬', 2e7,  'Ontgrendelt eigen chips en de Chipontwerper',     '2016: grote labs ontwerpen hun eigen AI-chips.'],
-    ['lab_mkt',      'Marketingafdeling',       '📣', 3e8,  'Ontgrendelt de Marketeer',                       'Want een goede app verkoopt zichzelf niet.'],
-    ['lab_eng',      'Fab-ingenieurs',          '🧑‍🔧', 4e10, 'Ontgrendelt de Fab-ingenieur',                   'Chips zijn de bottleneck van de wereld. Ingenieurs halen meer uit je hele keten.'],
-    ['lab_talent',   'Talentprogramma',         '🕵️', 3e11, 'Ontgrendelt de Talentscout',                     'Op zoek naar het volgende genie.'],
-    ['lab_finance',  'Financiële afdeling',     '💼', 2e12, 'Ontgrendelt de Financieel directeur',            'Iemand die weet waar al die tokens heen gaan.'],
-    ['lab_sing',     'Singulariteitsinstituut', '🌀', 5e12, 'Ontgrendelt de singulariteit',                   'Onderzoek naar wat er na AGI komt.'],
+    ['lab_product',  T('Productteam'),             '📱', 2000, T('Ontgrendelt het onderdeel Apps'),                 T('Een team dat van modellen echte producten maakt.')],
+    ['lab_hardware', T('Chipfabriek'),             '🏭', 4e4,  T('Ontgrendelt het onderdeel Chips'),                T('2012: GPU\'s blijken perfect voor AI. Jij maakt ze zelf, van zand tot chip, en zet ze in je datacenter.')],
+    ['lab_hr',       T('HR-afdeling'),             '👥', 2.5e5, T('Ontgrendelt het onderdeel Team en de Stagiair'), T('Iemand moet de sollicitaties lezen.')],
+    ['lab_safety',   T('Veiligheidsteam'),         '🦺', 1e6,  T('Ontgrendelt de Safety-engineer'),                 T('Slimmere modellen vragen om toezicht.')],
+    ['lab_design',   T('Chipontwerpstudio'),       '👩‍🔬', 2e7,  T('Ontgrendelt eigen chips en de Chipontwerper'),     T('2016: grote labs ontwerpen hun eigen AI-chips.')],
+    ['lab_mkt',      T('Marketingafdeling'),       '📣', 3e8,  T('Ontgrendelt de Marketeer'),                       T('Want een goede app verkoopt zichzelf niet.')],
+    ['lab_eng',      T('Fab-ingenieurs'),          '🧑‍🔧', 4e10, T('Ontgrendelt de Fab-ingenieur'),                   T('Chips zijn de bottleneck van de wereld. Ingenieurs halen meer uit je hele keten.')],
+    ['lab_talent',   T('Talentprogramma'),         '🕵️', 3e11, T('Ontgrendelt de Talentscout'),                     T('Op zoek naar het volgende genie.')],
+    ['lab_finance',  T('Financiële afdeling'),     '💼', 2e12, T('Ontgrendelt de Financieel directeur'),            T('Iemand die weet waar al die tokens heen gaan.')],
+    ['lab_sing',     T('Singulariteitsinstituut'), '🌀', 5e12, T('Ontgrendelt de singulariteit'),                   T('Onderzoek naar wat er na AGI komt.')],
   ];
   G.HELPER_LAB = { intern: 'lab_hr', safety: 'lab_safety', eng: 'lab_eng', design: 'lab_design', mkt: 'lab_mkt', scout: 'lab_talent', cfo: 'lab_finance' };
   G.TAB_LAB = { apps: 'lab_product', chips: 'lab_hardware', team: 'lab_hr' };
   G.LAB.forEach(([id, name, icon, cost, unlocks, desc]) => {
-    const u = { id, tree: 'lab', name, icon, sub: 'Lab', desc, cost, kind: 'lab', mult: 0, unlocks, unlock: () => false };
+    const u = { id, tree: 'lab', name, icon, sub: T('Lab'), desc, cost, kind: 'lab', mult: 0, unlocks, unlock: () => false };
     G.UPGRADES.push(u);
     G.TREES.lab.push({ spine: u, left: null, right: null });
   });
@@ -89,14 +89,14 @@
   G.GENS.forEach((g, i) => {
     if (!MODEL_TECH[i]) return;
     // Elke stap relatief duurder: vroege modellen snel, latere vragen geduld.
-    addRow('models', i, tech('tm' + i, 'models', MODEL_TECH[i], g.cost * 1.5 * Math.pow(1.5, i - 2), `Ontgrendelt ${g.name}`));
+    addRow('models', i, tech('tm' + i, 'models', MODEL_TECH[i], g.cost * 1.5 * Math.pow(1.5, i - 2), T('Ontgrendelt {0}', g.name)));
   });
   G.CHIPS.forEach((c, i) => {
     if (!CHIP_TECH[i]) return;
-    addRow('chips', i, tech('tc' + i, 'chips', CHIP_TECH[i], c.cost * 0.5 * Math.pow(1.4, i - 1), `Ontgrendelt ${c.name}`));
+    addRow('chips', i, tech('tc' + i, 'chips', CHIP_TECH[i], c.cost * 0.5 * Math.pow(1.4, i - 1), T('Ontgrendelt {0}', c.name)));
   });
   G.APPS.forEach((a, i) => {
-    addRow('apps', i, tech('ta' + i, 'apps', APP_TECH[i], a.cost * 0.6 * Math.pow(1.4, i), `Ontgrendelt ${a.name}`));
+    addRow('apps', i, tech('ta' + i, 'apps', APP_TECH[i], a.cost * 0.6 * Math.pow(1.4, i), T('Ontgrendelt {0}', a.name)));
   });
 
   // Hoofdlijn: elke knoop vraagt de vorige.
@@ -180,7 +180,7 @@
   };
 
   G.NEWS.push(
-    [3, 'Onderzoekslab publiceert paper met 400 auteurs. Iedereen claimt het idee.'],
-    [5, 'Reviewer 2 vindt Attention "weinig vernieuwend".'],
+    [3, T('Onderzoekslab publiceert paper met 400 auteurs. Iedereen claimt het idee.')],
+    [5, T('Reviewer 2 vindt Attention "weinig vernieuwend".')],
   );
 })();

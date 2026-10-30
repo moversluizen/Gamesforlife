@@ -14,12 +14,12 @@
     if (state === 'locked') return `<div class="gen locked-h res-card" data-id="${u.id}">
       <div class="gicon"><span>${u.icon}</span></div>
       <div class="ginfo"><div class="gname">${u.name}</div><div class="grate">${eff}</div>
-        <div class="mlabel">Eerst: ${par ? par.name : ''}</div></div><span></span></div>`;
+        <div class="mlabel">${T('Eerst: {0}', par ? par.name : '')}</div></div><span></span></div>`;
     return `<div class="gen res-card" data-act="tech" data-id="${u.id}">
       <div class="gicon"><span>${u.icon}</span></div>
       <div class="ginfo"><div class="gname">${u.name}</div>
         <div class="grate">${eff}</div></div>
-      <button class="gbuy"><span class="q">onderzoeken</span><span class="c">${G.fmt(u.cost)}</span></button></div>`;
+      <button class="gbuy"><span class="q">${T('onderzoeken')}</span><span class="c">${G.fmt(u.cost)}</span></button></div>`;
   }
 
   function renderTree() {
@@ -35,16 +35,16 @@
     $('treeBody').innerHTML = `
       <div class="ind-card">
         <div class="stats3">
-          <div><small>Onderzocht</small><b>${done.length} / ${all.length}</b></div>
-          <div><small>Nu mogelijk</small><b>${avail.length}</b></div>
-          <div><small>Volgende stap</small><b class="ellip">${next ? next.spine.name : 'Alles klaar'}</b></div>
+          <div><small>${T('Onderzocht')}</small><b>${done.length} / ${all.length}</b></div>
+          <div><small>${T('Nu mogelijk')}</small><b>${avail.length}</b></div>
+          <div><small>${T('Volgende stap')}</small><b class="ellip">${next ? next.spine.name : T('Alles klaar')}</b></div>
         </div>
         <div class="bar"><i style="width:${done.length / all.length * 100}%"></i></div>
-        ${next ? '' : '<p class="muted">Deze boom is helemaal onderzocht.</p>'}
+        ${next ? '' : T('<p class="muted">Deze boom is helemaal onderzocht.</p>')}
       </div>
-      ${avail.length ? `<div class="subhead">Nu te onderzoeken</div>${avail.map(u => techCard(u, 'avail')).join('')}` : ''}
-      ${locked.length ? `<div class="subhead">Daarna</div>${locked.map(u => techCard(u, 'locked')).join('')}` : ''}
-      ${done.length ? `<div class="subhead">Onderzocht</div><p class="done-list">${done.map(u => u.name).join(' · ')}</p>` : ''}`;
+      ${avail.length ? `<div class="subhead">${T('Nu te onderzoeken')}</div>${avail.map(u => techCard(u, 'avail')).join('')}` : ''}
+      ${locked.length ? `<div class="subhead">${T('Daarna')}</div>${locked.map(u => techCard(u, 'locked')).join('')}` : ''}
+      ${done.length ? `<div class="subhead">${T('Onderzocht')}</div><p class="done-list">${done.map(u => u.name).join(' · ')}</p>` : ''}`;
   }
 
   // Stipjes alleen voor iets nieuws: een afdeling of hoofdlijn die je nu kunt onderzoeken (geen boosts).
@@ -96,10 +96,10 @@
   function buy(u) {
     if (G.buyTech(u.id)) {
       G.sfx.upgrade(); G.haptic('MEDIUM'); G.fx.wave();
-      G.ui.toast('🔬', `${u.name} onderzocht`, u.kind === 'tech' ? u.unlocks : u.desc);
+      G.ui.toast('🔬', T('{0} onderzocht', u.name), u.kind === 'tech' ? u.unlocks : u.desc);
     } else {
       G.sfx.error();
-      G.ui.toast('🪙', 'Te weinig tokens', `Nodig: ${G.fmt(u.cost)}`);
+      G.ui.toast('🪙', T('Te weinig tokens'), T('Nodig: {0}', G.fmt(u.cost)));
     }
     G.uiRefresh(true);
   }

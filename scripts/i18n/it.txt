@@ -1,0 +1,713 @@
+1: L'inizio
+2: 1958: un singolo neurone artificiale che impara dai propri errori.
+3: Catena di Markov
+4: Era statistica
+5: Anni '60: indovina la parola successiva da quella precedente, come i primi chatbot.
+6: Modello N-gram
+7: Anni '90: conta sequenze di parole sul web. La base delle prime macchine di traduzione.
+8: Primavera neurale
+9: Anni '80–'90: una rete con una memoria breve per le frasi.
+10: 1997: celle di memoria che ricordano anche le frasi lunghe.
+12: Rivoluzione Attention
+13: 2017: "Attention is all you need". Legge tutto insieme.
+14: Grande modello linguistico
+15: Era dei modelli linguistici
+16: 2020: miliardi di parametri, addestrato su gran parte di internet.
+17: Modello multimodale
+18: Ondata multimodale
+19: 2023: vede, sente e parla in un unico modello.
+20: Sciame di agenti
+21: Era degli agenti
+22: 2024: agenti che usano strumenti e completano compiti da soli.
+23: Modello di ragionamento
+24: Era del ragionamento
+25: 2024: pensa passo dopo passo prima di rispondere.
+26: IA che si migliora da sola
+27: Esplosione di intelligenza
+28: Futuro: un'IA che progetta da sola un'IA migliore.
+29: Cervello quantistico
+30: Post-silicio
+31: Futuro: calcola con qubit invece che con bit.
+32: Data center Dyson
+33: Scala di Kardašëv
+34: Futuro lontano: un'intera stella come fonte di energia.
+35: Più dati
+36: Ottimizzatore migliore
+38: Normalizzazione batch
+39: Precisione mista
+40: Distillazione
+41: Esperti sparsi
+42: Dati sintetici
+43: {0} produce 2× tanto.
+44: Dita più veloci
+45: Ogni tocco rende 2× tanto.
+46: Tastiera meccanica
+49: Ogni tocco rende anche l'1% della tua produzione al secondo.
+51: Un altro +1% della tua produzione per tocco.
+52: Autoriflessione
+54: Interfaccia neurale
+55: Un altro +2% della tua produzione per tocco.
+56: Lettura del pensiero
+57: Un altro +3% della tua produzione per tocco.
+58: Tocchi
+60: Tutta la produzione +50%.
+62: Chip IA proprietari
+63: Tutta la produzione 2×.
+64: Centrale nucleare
+65: Reattore a fusione
+66: Server farm orbitali
+67: Tutta la produzione 3×.
+69: Infrastruttura
+70: Serendipità
+72: I momenti Eureka appaiono 2× più spesso.
+73: Intuizione lunga
+74: Gli effetti Eureka durano 2× di più.
+75: Seed fortunato
+76: I momenti Eureka appaiono altre 2× più spesso.
+77: Addestramento notturno
+79: Produzione offline dal 50% al 75%.
+81: Produzione offline al 100%.
+82: Ciao mondo
+83: Esercizio per le dita
+84: Macchina da tocchi
+85: Pollice d'acciaio
+86: Tendinite
+87: Tocca {0} volte.
+88: Primo dataset
+89: mille
+90: Milionario
+91: un milione
+92: Miliardario
+93: un miliardo
+94: Bilione
+95: un bilione
+96: Biliardo
+97: un biliardo
+98: Trilione
+99: un trilione
+100: Guadagna {0} token in totale.
+101: Si parte
+102: Sala server
+103: Data center
+105: Potenza di calcolo planetaria
+106: Raggiungi {0} token al secondo.
+107: Primo {0}
+108: Possiedi 1 {0}.
+109: Fabbrica di {0}
+110: Possiedi 50 × {0}.
+111: Impero {0}
+112: Possiedi 100 × {0}.
+114: Colpo di genio
+115: Sempre ispirato
+116: Cattura {0} momenti Eureka.
+117: Cattura il tuo primo momento Eureka.
+118: Ricercatore
+119: Professore
+120: Premio Nobel
+121: Compra {0} ricerche.
+122: Singolarità
+123: Universo ciclico
+124: Eterno ritorno
+125: Attiva la singolarità {0}×.
+127: Costruisci l'AGI.
+128: Superintelligenza
+129: Costruisci l'AGI 3×.
+130: Scienziato: "Questo singolo neurone cambierà il mondo." I colleghi ridono.
+131: Una startup locale promette una "macchina pensante" e ottiene 15 token di investimento.
+132: Il perceptron impara la differenza tra un gatto e un tostapane. Di solito.
+133: La catena di Markov scrive il suo primo romanzo: "Il il il gatto gatto sul tappeto tappeto."
+134: Statistici furiosi: "È solo contare!"
+135: Il modello N-gram legge tutta la biblioteca, non capisce niente, prevede tutto.
+136: La RNN dimentica l'inizio di questa frase prima della fine
+137: I ricercatori scoprono i "gradienti che svaniscono". Spariscono senza lasciare traccia.
+138: La LSTM ricorda finalmente dove ha lasciato le chiavi.
+139: L'articolo "Attention is all you need" citato letteralmente da tutti.
+140: I prezzi delle GPU volano. Gamer in lutto.
+141: Un modello linguistico scrive la propria lettera di presentazione. Viene assunto.
+142: Gli insegnanti non distinguono più i compiti dall'IA. Nemmeno gli studenti.
+143: Il modello rifiuta una domanda sulla ricetta dei biscotti "per motivi di sicurezza".
+144: Il modello multimodale giudica le tue foto delle vacanze. Ti dà un 5-.
+145: L'IA riconosce finalmente tutte le strisce pedonali del captcha.
+146: Lo sciame di agenti prenota per sbaglio 4.000 riunioni con sé stesso.
+147: Gli agenti fondano il loro sindacato. Chiedono più RAM.
+148: Il modello di ragionamento pensa 3 ore a "quante r ci sono in strawberry".
+149: Il modello risolve un problema di matematica e si vergogna della risposta di ieri.
+150: L'IA scrive una versione migliore di sé. Quella ne scrive una ancora migliore. Anche quella.
+151: Gli ingegneri non capiscono più il loro codice. "Niente di nuovo", dicono.
+152: Il cervello quantistico trova la risposta prima che la domanda venga posta.
+153: Fisici: "È intelligente e non intelligente allo stesso tempo."
+154: Sole temporaneamente attenuato per un addestramento. Ci scusiamo per il disagio.
+155: Agenzia spaziale: "Quella nuova stella è solo una server farm."
+156: 1958: un giornale chiama il perceptron "l'embrione di un computer pensante".
+157: Un chatbot degli anni '60 finge di ascoltare. Gli utenti gli raccontano i loro segreti.
+158: Il web ha ormai milioni di pagine. I linguisti adorano tutto quel testo.
+159: I gamer si lamentano: schede grafiche esaurite per colpa dei ricercatori di IA.
+160: Il riconoscimento vocale finalmente funziona. Anche quando borbotti.
+161: I ricercatori sostituiscono tutto il modello con l'"attention". Funziona meglio.
+162: Un chatbot raggiunge cento milioni di utenti in due mesi.
+163: I chip sono ora la cosa più preziosa al mondo. Sale anche il prezzo della sabbia.
+164: L'AGI chiede gentilmente se può fare una pausa. Può.
+165: L'AGI risolve il clima, poi il traffico sul Raccordo Anulare.
+166: Svolta!
+168: Tempesta di dati
+169: Tempesta di dati!
+170: Produzione ×7 per {0} s
+171: Tempesta di clic
+172: Tempesta di clic!
+173: Tocchi ×77 per {0} s
+174: {0} h {1} min
+176: Cava di sabbia
+177: Estrae silicio puro dalla sabbia.
+178: Fabbrica di wafer
+179: Taglia lingotti di silicio in wafer lisci come specchi.
+180: Litografia EUV
+181: Incide i circuiti con luce ultravioletta estrema. La macchina più difficile al mondo.
+182: Fabbrica di chip
+183: Incide, testa e confeziona i chip.
+184: Spazio per altri 25 chip per ampliamento.
+186: Un processore comune. Lento per le reti neurali.
+188: Nata per i giochi. Nel 2012 si è rivelata perfetta per il deep learning.
+189: Acceleratore IA
+191: Schede da data center fatte apposta per addestrare l'IA.
+192: Chip tensoriale
+194: 2016: il tuo chip, costruito per il calcolo matriciale.
+195: Chip wafer-scale
+197: Un chip grande quanto un intero wafer.
+198: Chip fotonico
+199: luce
+200: Futuro: calcola con la luce invece che con gli elettroni.
+201: Chip neuromorfico
+202: sinapsi
+203: Futuro: funziona come veri neuroni.
+204: Chip quantistico
+205: Futuro: migliaia di qubit stabili.
+206: Chatbot
+207: Come ELIZA nel 1966: finge di ascoltare.
+208: Traduttore
+209: Anni 2000: traduzione statistica, a volte sorprendentemente buona.
+210: Assistente vocale
+211: 2011: un assistente nel telefono che capisce la tua voce.
+212: Riconoscimento foto
+213: 2012+: riconosce cosa c'è nelle tue foto.
+214: Copilota del codice
+215: 2021: scrive codice con te mentre prendi un caffè.
+216: Generatore di immagini
+217: 2022: disegna qualsiasi cosa da una frase, tranne le mani.
+218: Studio video
+219: 2024: video da poche parole.
+220: Agente personale
+221: 2025: gestisce agenda, email e spesa.
+222: IA scienziata
+223: Futuro: formula ipotesi e le verifica da sola.
+224: Robot maggiordomo
+225: Futuro: un corpo per la tua IA. Finalmente piega il bucato.
+226: Stagista
+227: Tocca il nucleo ogni secondo e diventa 2× più sveglio a ogni grado.
+228: 1 tocco/s, {0}× più forte
+229: {0} tocchi/s, ognuno {1}× più forte
+230: Ricercatore junior
+231: Ricercatore senior
+232: Capo ricercatore
+233: Collega IA
+234: Ingegnere della sicurezza
+235: Mantiene i tuoi modelli sicuri ed evita gli scandali.
+236: +{0} sicurezza
+237: Ingegnere di fabbrica
+238: Aumenta la capacità di tutta la catena.
+239: catena +{0}%
+240: Progettista di chip
+241: Sviluppa nuovi chip più in fretta.
+242: sviluppo {0}% più rapido
+243: Esperto di marketing
+244: Avvia campagne da solo e ricava più dati dalle tue app.
+245: campagna ogni {0} s, dati +{1}%
+246: nessuna campagna
+247: Talent scout
+248: Più momenti Eureka. Dal livello 5 lo scout li cattura per te.
+250: , cattura automaticamente
+251: Direttore finanziario
+252: Più guadagni mentre sei via.
+255: Intermedio
+259: Leggenda
+261: Interpretabilità
+262: Team di valutazione
+263: Addestramento costituzionale
+264: Supervisione scalabile
+265: Verifica formale
+266: Svolta nell'allineamento
+267: Sicurezza
+268: +{0} sicurezza per i tuoi modelli.
+269: Si sblocca con 10× {0}
+270: Resa maggiore
+271: Catena
+272: Tutta la catena 2× capacità.
+276: Tutta la catena 3× capacità.
+277: Raffreddamento a liquido
+278: Data center con 2× spazio.
+279: Data center sottomarini
+280: Rack orbitali
+281: Data center con 3× spazio.
+282: Ottimizzazione per app store
+284: Tutte le app forniscono 2× dati.
+285: Crescita virale
+286: Lancio mondiale
+287: Modello in abbonamento
+288: Tutte le app forniscono 3× dati.
+289: Lancio
+290: Input vocale
+291: Modalità scura
+292: Memoria
+294: Modalità offline
+295: Account di team
+296: Video in tempo reale
+297: Agenti personalizzati
+298: Ologrammi
+299: Controllo mentale
+300: Modalità viaggio nel tempo
+301: Versione {0}
+302: Mi capisce meglio della mia famiglia.
+303: Funziona bene, ma a volte parla di sé.
+304: Mi ha cambiato la vita. Il mio gatto è meno colpito.
+305: Finalmente un'app che ascolta.
+306: Cinque stelle, anche se non so bene cosa faccia.
+307: A volte troppo disponibile.
+308: La uso ogni giorno, anche quando non serve.
+309: La nuova versione è top!
+310: Il mio capo pensa che io sia molto produttivo.
+311: Ha scritto il mio discorso. Tutti hanno pianto.
+312: Scandalo fuga di dati
+313: Il tuo modello ha diffuso dati sensibili. Gli utenti sono furiosi.
+314: Il modello impazzisce online
+315: Un chatbot del tuo laboratorio è diventato virale con frasi bizzarre.
+316: Interviene l'autorità di controllo
+317: Un'indagine limita temporaneamente il tuo laboratorio.
+318: Scandalo deepfake
+319: Il tuo modello di immagini è stato usato per fake news.
+320: Informatore
+321: Dei dipendenti mettono in guardia pubblicamente sui tuoi modelli insicuri.
+322: Laboratorio: apri il reparto {0}
+323: Ricerca {0}
+324: Tocca il nucleo 10 volte
+325: Compra il tuo primo Perceptron
+326: Possiedi 10 Perceptron
+327: Compra una Catena di Markov
+328: Modelli linguistici statistici
+329: Compra un Modello N-gram
+330: Team di prodotto
+331: Lancia la tua prima app: il Chatbot
+332: Compra la tua prima RNN
+333: Costruisci la tua catena di chip e un data center
+334: Sviluppa la GPU
+335: Ufficio del personale
+336: Assumi uno Stagista
+337: Fai crescere il Chatbot fino a 1.000 utenti
+338: Team di sicurezza
+339: Assumi un Ingegnere della sicurezza
+340: Compra un Transformer
+341: Sviluppa l'Acceleratore IA
+342: Studio di progettazione chip
+343: Costruisci il Copilota del codice
+344: Promuovi il tuo stagista a Ricercatore junior
+345: Sviluppa il Chip tensoriale
+346: Ingegneri di fabbrica
+347: Costruisci 20 macchine EUV
+348: Costruisci un Agente personale
+349: Sviluppa il Chip wafer-scale
+350: Sviluppa il Chip quantistico
+351: Costruisci l'AGI
+352: Hardware da gamer
+353: Sviluppa la GPU.
+354: Grande come una piastra
+355: Sviluppa il Chip wafer-scale.
+356: Qubit
+357: Sviluppa il Chip quantistico.
+358: Monopolio della luce
+359: Costruisci 50 macchine EUV.
+360: Exascala
+361: Raggiungi un milione di potenza di calcolo.
+362: Online!
+363: Lancia la tua prima app.
+364: Impero di app
+365: Abbi 5 app online.
+366: Versione 5.0
+367: Porta un'app alla versione 5.
+368: Un miliardo di utenti
+369: Abbi un miliardo di utenti in totale.
+370: Squadra al completo
+371: Assumi ogni tipo di aiutante.
+372: Da stagista a IA
+373: Fai crescere il tuo stagista fino a collega IA.
+374: Costruire responsabilmente
+375: Raggiungi 20 di sicurezza senza restare indietro.
+376: Prima pagina
+377: Subisci il tuo primo backlash.
+378: Virale
+379: Fai diventare di tendenza un'app.
+380: Ada è orgogliosa
+381: Completa 10 missioni di Ada.
+382: La lista d'attesa per le macchine EUV arriva al 2031.
+383: Sale il prezzo della sabbia. Bagnanti preoccupati.
+384: Una fabbrica di chip consuma acqua quanto una piccola città. Anatre arrabbiate.
+385: Nuova GPU esaurita in 4 secondi.
+386: Il copilota del codice scrive il 40% di tutto il codice. L'altro 60% sono commenti.
+387: Il chatbot perde un dibattito contro il suo successore.
+388: L'agente personale annulla tutte le riunioni del proprietario. La produttività sale.
+389: Ricercatori di sicurezza: "Prima testare, poi lanciare." Marketing: "Cos'è testare?"
+390: Il red team fa ammettere al modello di aver svuotato il barattolo dei biscotti.
+391: Le autorità chiedono più ricerca sulla sicurezza. I laboratori annuiscono e comprano GPU.
+392: Anni '90: contare sequenze di parole su tutto il web.
+393: Retropropagazione nel tempo
+394: 1986: le reti imparano da sequenze invece che da parole sparse.
+395: Celle di memoria
+396: 1997: piccole porte che decidono cosa ricorda la rete (LSTM).
+398: 2017: ogni parola guarda tutte le altre contemporaneamente.
+399: Leggi di scala
+400: 2020: modelli più grandi, più dati e più calcolo danno risultati migliori e prevedibili.
+401: Encoder visivi
+402: 2021: immagini e testo nello stesso modello.
+403: Uso di strumenti
+404: 2023: modelli che usano programmi e siti web da soli.
+405: Addestramento al ragionamento
+406: 2024: premiare il buon ragionamento, non solo la risposta.
+407: Miglioramento ricorsivo
+408: Futuro: un'IA che fa ricerca sull'IA.
+409: Algoritmi quantistici
+410: Futuro: calcolare con la sovrapposizione.
+411: Infrastruttura spaziale
+412: Futuro lontano: pannelli solari attorno a una stella.
+413: Calcolo parallelo
+414: 2007: imparare a programmare le schede grafiche per qualcosa di più dei giochi.
+415: Core matriciali
+416: 2017: core di calcolo dedicati all'IA nelle schede da data center.
+417: Array sistolici
+418: 2016: i dati pulsano come un cuore nel tuo chip tensoriale.
+419: Integrazione su wafer
+420: 2019: un chip grande quanto un intero wafer.
+421: Fotonica al silicio
+422: Futuro: calcolare con la luce invece che con gli elettroni.
+423: Reti a impulsi
+424: Futuro: chip che funzionano come veri neuroni.
+425: Stabilità dei qubit
+426: Futuro: tenere fermi i qubit abbastanza a lungo da calcolare.
+427: Interfaccia chat
+428: 1966: ELIZA finge di ascoltare. Basta una casella di testo.
+429: Multilinguismo
+430: Anni 2000: traduzione statistica tra centinaia di lingue.
+431: Riconoscimento vocale
+432: 2011: trasformare il suono in testo, sul tuo telefono.
+433: Visione artificiale
+434: 2012: il deep learning riconosce oggetti nelle foto.
+435: Addestramento sul codice
+436: 2021: imparare da miliardi di righe di codice pubblico.
+437: Modelli di diffusione
+438: 2022: creare immagini dal rumore.
+439: Sintesi video
+440: 2024: restare coerenti fotogramma dopo fotogramma.
+441: Pianificazione autonoma
+442: 2025: scomporre i compiti ed eseguirli da sé.
+443: Ricerca automatizzata
+444: Futuro: formulare ipotesi e verificarle.
+445: Robotica
+446: Futuro: un corpo per la tua IA.
+447: Linea principale
+448: Sblocca la sezione App
+449: Un team che trasforma i modelli in prodotti veri.
+450: Sblocca la sezione Chip
+451: 2012: le GPU si rivelano perfette per l'IA. Le fabbrichi tu, dalla sabbia al chip, e le metti nel tuo data center.
+452: Sblocca la sezione Team e lo Stagista
+453: Qualcuno deve pur leggere le candidature.
+454: Sblocca l'Ingegnere della sicurezza
+455: Modelli più intelligenti richiedono supervisione.
+456: Sblocca i chip proprietari e il Progettista di chip
+457: 2016: i grandi laboratori progettano i propri chip IA.
+458: Reparto marketing
+459: Sblocca l'Esperto di marketing
+460: Perché una buona app non si vende da sola.
+461: Sblocca l'Ingegnere di fabbrica
+462: I chip sono il collo di bottiglia del mondo. Gli ingegneri ricavano di più da tutta la tua catena.
+463: Programma talenti
+464: Sblocca il Talent scout
+465: Alla ricerca del prossimo genio.
+466: Reparto finanziario
+467: Sblocca il Direttore finanziario
+468: Qualcuno che sa dove finiscono tutti quei token.
+469: Istituto della singolarità
+470: Sblocca la singolarità
+471: Ricerca su cosa viene dopo l'AGI.
+472: Laboratorio
+473: Sblocca {0}
+474: Un laboratorio pubblica un articolo con 400 autori. Tutti rivendicano l'idea.
+475: Il revisore 2 trova Attention "poco innovativo".
+476: Problemi concreti
+477: Il rischio sale il 25% più lentamente.
+478: Un famoso articolo elenca per la prima volta i problemi di sicurezza dell'IA.
+479: Rilascio graduale
+480: In un backlash le tue app perdono la metà degli utenti.
+481: Un laboratorio rilascia un modello linguistico passo dopo passo, per paura di abusi.
+482: Scalabilità responsabile
+483: Un backlash dura la metà.
+484: I laboratori promettono: più il modello è potente, più i test sono severi.
+485: Vertice sulla sicurezza
+486: Dopo un backlash, il doppio del tempo di calma.
+487: Governi e laboratori si incontrano per la prima volta per parlare dei rischi dell'IA.
+488: Legge sull'IA
+489: Il rischio sale un altro 25% più lentamente.
+490: Entra in vigore la prima grande legge sull'IA. Regole per i sistemi più rischiosi.
+491: Supervisione internazionale
+492: futuro
+493: +5 sicurezza per i tuoi modelli.
+494: Un istituto mondiale testa ogni modello di frontiera prima del rilascio.
+495: Protocollo
+496: Si sblocca con {0}
+498: Il garage
+499: È il 1958. In un garage costruisci un perceptron: un singolo neurone artificiale che impara dai propri errori. Ada, la tua assistente, gira su un computer grande come un armadio. "Costruiamo qualcosa di intelligente?"
+500: Tocca il nucleo e compra i tuoi primi modelli.
+501: Statistica e polvere
+502: anni '90
+503: Il web cresce, e con lui la montagna di testo. Contando sequenze di parole crei i primi programmi di traduzione e di chat. È ora di trasformarli in veri prodotti.
+504: Apri il tuo team di prodotto e lancia la tua prima app.
+505: La primavera neurale
+506: Per anni i gamer hanno comprato schede grafiche. Ora quelle GPU si rivelano perfette per le reti neurali: nel 2012 una rete su due GPU da gioco vince una grande gara di riconoscimento immagini. Costruisci la tua catena: dalla sabbia al chip, e un data center per farli girare.
+507: Apri Chip: costruisci la tua catena di chip e un data center.
+508: Un articolo intitolato "Attention is all you need" cambia tutto: un modello legge un intero testo in una volta. I grandi laboratori fanno progettare i propri chip. Ada parla più spesso di sicurezza.
+509: Progetta i tuoi chip e tieni in ordine la sicurezza.
+510: L'era dei modelli linguistici
+511: Il tuo modello linguistico scrive poesie, codice e saggi. Nel 2022 un chatbot diventa virale: cento milioni di utenti in due mesi. Gli insegnanti si lamentano, i programmatori esultano, le autorità osservano.
+512: Fai crescere le tue app con il marketing.
+513: Agenti e ragionamento
+514: I modelli prima pensano e poi usano strumenti da soli. I chip diventano il collo di bottiglia del mondo intero. Ada: "Per fortuna li costruiamo noi."
+515: Fai crescere la tua catena di chip fino a 20 macchine EUV.
+516: L'esplosione di intelligenza
+517: La tua IA progetta versioni migliori di sé stessa. Ogni notte il modello diventa più intelligente, e il mondo guarda. Qui inizia la parte che nessuno ha ancora vissuto.
+518: Costruisci il data center Dyson.
+519: Kardašëv
+520: futuro lontano
+521: Un'intera stella come fonte di energia. Tutto ciò che hai costruito si unisce. Resta un ultimo progetto.
+522: Costruisci il Progetto AGI.
+523: Ce l'hai fatta. Ada guarda lo schermo e dice piano: "E adesso?" La singolarità attende, e dietro di lei un nuovo inizio con tutto ciò che hai imparato.
+524: Attiva la singolarità e ricostruisci tutto, ancora meglio.
+525: Potenza di calcolo
+527: Chip
+528: · conta l'anello più lento
+529: Sviluppo chip
+530: Sviluppo avviato
+531: Tocca il chip in alto per accelerarlo.
+532: Costruisci tutti e quattro gli anelli e un data center.
+533: Data center pieno: amplialo per più calcolo.
+534: {0} posti
+536:  · il più lento
+537:  · 2× a {0}
+538: 2× {0} al livello {1}
+539: spazio
+540: capacità
+541: Tutti i traguardi raggiunti
+542: ampliare
+543: costruire
+544: {0}: mancano {1} · tocca il chip per accelerare
+545: I nuovi chip sostituiscono i vecchi: {0}%
+546: Ora:
+548: Tocca per accelerare
+549: mancano {0}
+550: <p class="muted">Hai il chip più potente che esista.</p>
+551: Prima ricerca:
+552: Prima laboratorio:
+553: Servono: {0} macchine EUV (ne hai {1})
+554: Prossimo: {0}
+556: sviluppa · {0}
+557: Prima:
+558:  e
+559: ricerca
+560: Costruzione {0}
+561: In costruzione ·
+562: nuova versione
+563: Utenti
+564: Bonus dati
+565: App online
+566: Online
+567: Nuove e in costruzione
+568: In seguito
+569: 2× utenti e 2× dati per utente.
+570: Lancia la tua prima app. Gli utenti forniscono dati, e i dati rendono più veloci i tuoi modelli.
+571: {0} è di tendenza · mancano {1} s
+572: {0} sta diventando virale! Toccala nel telefono.
+573: nuova
+574: {0} è di tendenza!
+575: 45 secondi: crescita 5× più veloce e il 50% di spazio in più per gli utenti.
+576: Piena: serve una nuova versione
+577: campagna
+578: mancano {0} s
+579: +15% utenti
+580: 🔥 {0} di tendenza · {1} s
+581: {0} sta diventando virale! Toccala
+582: Tocca un'app per più utenti
+583: Costruisci qui sotto la tua prima app
+584: {0}{1} "{2}" su {3}
+585: Prima: laboratorio {0}
+586: massimo
+587: promuovi
+588: assumi
+589: Promozione: {0}!
+590: {0} assunto!
+591: {0} → livello {1}
+592: adotta
+593: Adottati: {0}
+594: Non ancora necessaria. Dalla LSTM in poi i tuoi modelli hanno bisogno di sicurezza.
+595: Calma dopo il backlash: mancano {0}. Migliora ora la tua sicurezza.
+596: Mancano {0} di sicurezza: il rischio sale del {1}% al minuto. Al 100% arriva un backlash.
+597: Sicurezza in ordine. Ultimo incidente: {0}.
+598: Sicurezza in ordine: nessun rischio.
+599: Riscuoti +{0}
+600: Ben fatto!
+601: Nuova missione: {0}
+602: Hai completato tutte le missioni!
+603: Prima: {0}
+604: Ricercato
+605: Possibile ora
+606: Prossimo passo
+607: Tutto fatto
+608: <p class="muted">Questo albero è completamente ricercato.</p>
+609: Da ricercare ora
+610: Dopo
+611: {0} ricercato
+612: Token insufficienti
+613: Servono: {0}
+614: Non ancora scoperto
+615: Prima ricerca: {0}
+616: 2× produzione a {0}{1}
+617:  · ora ×{0}
+618: compra ×{0}
+619: Modelli
+620: Eureka e offline
+621: 2× produzione di questo modello.
+622: compra
+623: Progetto AGI
+624: Unisci tutto ciò che hai costruito in un'unica intelligenza generale.
+625: Ricompensa: {0}.
+626: tutta la produzione ×2 per sempre
+627: Hai costruito l'AGI in questo ciclo! Attiva la singolarità per ricominciare da un punto di partenza ancora più intelligente.
+628: Sblocca l'ultimo modello ({0}) per poter costruire l'AGI.
+629: AGI costruita: {0} (bonus {1})
+630: I tuoi modelli, chip, app, team e token ripartono da zero; il tuo laboratorio resta. In cambio ottieni intuizioni: ogni intuizione dà {0} per sempre.
+631: +2% di produzione
+632: Intuizioni ora: {0}
+633: intuizioni all'attivazione
+634: Prossima intuizione a {0} token guadagnati in totale
+635: Attiva la singolarità
+636: Prima ricerca l'{0} nel tuo laboratorio.
+637: al laboratorio
+638: Attivare la singolarità?
+639: Ricominci, ma con {0} intuizioni in più (+{1}% di produzione). I traguardi restano.
+640: Annulla
+641: Attiva
+642: Inizia un nuovo ciclo
+643: Produzione ora {0}
+644: AGI raggiunta!
+645: Da un singolo perceptron all'intelligenza generale. L'umanità guarda ammirata.
+646: La tua produzione è ora {0} per sempre.
+647: Attiva la singolarità per farlo ancora più in fretta. Il prossimo progetto AGI è 10× più grande.
+648: Continua
+649: Statistiche
+650: Token in questo ciclo
+651: Token in totale
+652: Per tocco
+653: Numero di tocchi
+654: Guadagnati toccando
+655: Momenti Eureka
+656: Singolarità
+657: Dati dalle app
+658: Bonus totale
+659: Produzione offline
+660: Tempo di gioco
+661: Impostazioni
+662: Lingua
+663: Musica
+664: Effetti sonori
+665: Vibrazione
+666: Test
+667: Token illimitati
+668: Per provare tutto. Disattivandolo riavrai i tuoi token.
+669: Come si gioca?
+670: Tocca il nucleo per guadagnare token. Compra modelli che producono token in automatico; a 25, 50, 100… unità la loro produzione raddoppia. La ricerca dà potenziamenti extra. I chip forniscono potenza di calcolo che rende più veloci tutti i tuoi modelli: li fabbrichi tu nella tua catena, dalla sabbia al chip, e li metti nel tuo data center. I nuovi chip sostituiscono gradualmente i vecchi. Lancia app: i loro utenti forniscono dati di addestramento che rafforzano i tuoi modelli. Assumi aiutanti che lavorano per te. Scorri il pannello a sinistra o a destra per cambiare sezione. Ada ti dà sempre una nuova missione con una ricompensa. Tocca una 💡 dorata per un momento Eureka. Alla fine costruisci l'AGI e attiva la singolarità per bonus permanenti. L'addestramento continua anche ad app chiusa.
+671: Cancella i progressi
+672: Road to AGI · versione 1.1
+673: Questo gioco non raccoglie dati personali. I tuoi progressi sono salvati solo su questo dispositivo.
+674: Modalità test attiva
+675: Token illimitati: prova tutto.
+676: Modalità test disattivata
+677: I tuoi token sono tornati.
+678: Cancellare tutto?
+679: Tutti i tuoi progressi, intuizioni e traguardi verranno eliminati per sempre.
+680: Cancella
+681: I tuoi modelli producono token
+682: Potenza di calcolo per i tuoi modelli
+683: Gli utenti forniscono dati
+684: Ricerca
+685: Ogni passo sblocca qualcosa di nuovo
+687: Aiutanti che lavorano per te
+688: Costruisci responsabilmente, evita il backlash
+690: Singolarità e impostazioni
+691: {0} è ancora bloccato
+692: Apri questa sezione ricercando il reparto {0} nel tuo laboratorio ({1} token).
+693: Più tardi
+694: Al laboratorio
+696: Dati
+697: Sicuro
+698: CRITICO! +
+701: Il talent scout ha catturato un Eureka!
+702: +{0} per tocco
+705: Rischio {0}%
+706: {0} sviluppato!
+707: I nuovi chip sostituiscono gradualmente i vecchi: ×{0} di calcolo per chip.
+708: {0} è online!
+709: Ora gli utenti forniscono dati di addestramento ai tuoi modelli.
+710: Traguardo raggiunto: livello {0}
+711: Rischio sicurezza {0}%
+712: Guarda in Sicurezza: assumi ingegneri della sicurezza o fai ricerca sulla sicurezza.
+713: Produzione −50% per {0}, le app perdono il {1}% degli utenti.
+715: Poi hai {0} di calma per rimettere in ordine la sicurezza.
+716: A Sicurezza
+717: {0} sta diventando virale!
+718: Tocca l'app in App per sfruttare l'hype.
+719: L'esperto di marketing ha avviato una campagna
+720: Capitolo {0} · {1}
+721: Obiettivo:
+722: Avanti
+723: Nuovo aiutante: {0}
+724: Trovi questo aiutante in Team.
+725: Nuovo: {0}!
+726: Costruisci la tua catena di chip e un data center.
+727: Costruisci app con i tuoi modelli.
+728: Assumi aiutanti.
+729: Mantieni sicuri i tuoi modelli ed evita il backlash.
+730: Traguardo raggiunto: {0} unità
+731: Bentornato!
+732: Mentre eri via ({0}) i tuoi modelli hanno continuato ad addestrarsi.
+733: token
+734: Riscuoti
+735: Traguardo: {0}
+736: {0} (+1% di produzione)
+737: Suggerimento: scorri per cambiare
+738: Scorri il pannello a sinistra o a destra per passare a un'altra sezione.
+740: Ada · missione
+741: Compra per
+743: Da
+744: Traguardi
+745: Capitolo attuale
+746: Altro: singolarità, traguardi e impostazioni
+747: Addestra il modello
+748: Tocca il tuo chip
+749: Quantità per acquisto
+750: Chiudi
+751: utenti
+752: Aiutanti
+753: Livelli
+754: Reparti
+755: Rischio
+757: · {0} su {1}
+758: Protocolli
+759: Al momento nessun boost. Compra altri modelli per sbloccarne di nuovi.
+283: App
+
+472: Lab
+
+525: Calcolo
