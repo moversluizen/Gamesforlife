@@ -88,7 +88,7 @@
   // ---------- staat ----------
   G.industryDefaults = () => ({
     chain: G.CHAIN.map(() => 0), chips: 0, chipGen: 0, rnd: null,
-    apps: {}, helpers: {}, quest: 0, mktAuto: 0, risk: 0, backlashes: 0, riskWarn: 0,
+    apps: {}, helpers: {}, quest: 0, mktAuto: 0, risk: 0, backlashes: 0, riskWarn: 0, trend: null,
   });
 
   G.hl = id => G.S.helpers[id] || 0;
@@ -170,7 +170,39 @@
   G.appsLive = () => G.APPS.filter(a => (G.S.apps[a.id] || {}).v > 0).length;
   G.appUnlocked = a => G.S.owned[a.model] >= a.n;
   G.appCost = a => a.cost * Math.pow(6, G.app(a.id).v);
-  G.appCap = a => { const s = G.app(a.id); return a.cap * Math.pow(2, Math.max(0, s.v - 1)); };
+  G.trending = a => !!(G.S.trend && G.S.trend.id === a.id && G.S.trend.until > Date.now());
+  G.appCap = a => { const s = G.app(a.id); return a.cap * Math.pow(2, Math.max(0, s.v - 1)) * (G.trending(a) ? 1.5 : 1); };
+
+  // Elke versie brengt een nieuwe functie.
+  G.APP_FEATURES = ['', 'Lancering', 'Spraakinvoer', 'Donkere modus', 'Geheugen', 'Plug-ins', 'Offline modus', 'Teamaccounts',
+    'Realtime video', 'Eigen agents', 'Hologrammen', 'Gedachtesturing', 'Tijdreismodus'];
+  G.appFeature = v => G.APP_FEATURES[v] || `Versie ${v}`;
+  G.appStars = a => { const s = G.app(a.id); return Math.min(5, 2 + Math.ceil(s.v / 2)); };
+
+  // Trending: af en toe gaat een live app viraal; tik om het aan te zetten.
+  G.trendOffer = null;
+  G.nextTrend = Date.now() + 45000;
+  G.claimTrend = () => {
+    const o = G.trendOffer;
+    if (!o || o.until < Date.now()) return null;
+    const a = G.APPS.find(x => x.id === o.id), s = G.app(a.id);
+    G.S.trend = { id: a.id, until: Date.now() + 45000 };
+    s.u = Math.min(G.appCap(a), s.u + G.appCap(a) * 0.1);
+    G.trendOffer = null;
+    G.nextTrend = Date.now() + (60 + Math.random() * 90) * 1000;
+    return a;
+  };
+  // Tikken op een app in de telefoon: een paar extra gebruikers.
+  G.promoteApp = a => {
+    const s = G.app(a.id);
+    if (!s.v) return 0;
+    const before = s.u;
+    s.u = Math.min(G.appCap(a), s.u + Math.max(1, G.appCap(a) * 0.01));
+    return s.u - before;
+  };
+  G.REVIEWS = ['Snapt me beter dan mijn familie.', 'Werkt prima, maar praat soms over zichzelf.', 'Heeft mijn leven veranderd. Mijn kat is minder onder de indruk.',
+    'Eindelijk een app die luistert.', 'Vijf sterren, al weet ik niet precies wat hij doet.', 'Soms té behulpzaam.', 'Gebruik hem elke dag, ook als het niet hoeft.',
+    'Nieuwe versie is top!', 'Mijn baas denkt dat ik heel productief ben.', 'Schreef mijn speech. Iedereen huilde.'];
   // Gebruikers leveren trainingsdata; data versterkt de modellen.
   G.appData = a => { const s = G.app(a.id); return s.v ? s.u * a.rev * Math.pow(2, s.v - 1) * G.mods.app : 0; };
   G.dataValue = () => G.APPS.reduce((t, a) => t + G.appData(a), 0);
@@ -260,8 +292,15 @@
         const s = S.apps[a.id];
         if (!s || !s.v) continue;
         const cap = G.appCap(a);
-        s.u = Math.min(cap, s.u + Math.min(cap - s.u, 0.06 * s.u * (1 - s.u / cap) * h + 0.5 * h));
+        s.u = Math.min(cap, s.u + Math.min(cap - s.u, 0.06 * (G.trending(a) ? 5 : 1) * s.u * (1 - s.u / cap) * h + 0.5 * h));
       }
+    }
+
+    if (G.trendOffer && G.trendOffer.until < now) { G.trendOffer = null; G.nextTrend = now + 60000; }
+    if (!G.trendOffer && now > G.nextTrend && dt < 5) {
+      const live = G.APPS.filter(a => (S.apps[a.id] || {}).v > 0 && !G.trending(a));
+      if (live.length) { G.trendOffer = { id: live[(Math.random() * live.length) | 0].id, until: now + 15000 }; G.emit('trendOffer', G.trendOffer); }
+      else G.nextTrend = now + 30000;
     }
 
     // Risico loopt alleen op terwijl je speelt, niet offline.
@@ -336,6 +375,7 @@
   ach('ai-col', '🤖', 'Van stagiair tot AI', 'Laat je stagiair uitgroeien tot AI-collega.', s => G.rank(G.HELPERS[0]) >= 5);
   ach('safe20', '🛡️', 'Verantwoord bouwen', 'Haal 20 veiligheid zonder achterstand.', s => G.safetyPoints() >= 20 && !G.safetyDeficit());
   ach('scandal', '📰', 'Voorpaginanieuws', 'Krijg je eerste backlash.', s => s.backlashes >= 1);
+  ach('viral', '🔥', 'Viraal', 'Laat een app trending gaan.', s => !!s.trend);
   ach('quests', '🤖', 'Ada is trots', 'Voltooi 10 opdrachten van Ada.', s => s.quest >= 10);
 
   G.NEWS.push(

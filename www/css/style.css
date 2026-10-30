@@ -34,6 +34,7 @@ button { font: inherit; color: inherit; border: 0; background: none; cursor: poi
   height: 100vh; height: 100dvh;
   display: grid;
   grid-template-rows: auto minmax(150px, 37%) minmax(0, 1fr) auto;
+  grid-template-columns: minmax(0, 1fr);
   padding-left: var(--sl); padding-right: var(--sr);
   background:
     radial-gradient(120% 60% at 50% 0%, hsla(var(--hue), 80%, 25%, .35), transparent 70%),
@@ -166,7 +167,7 @@ button { font: inherit; color: inherit; border: 0; background: none; cursor: poi
   background: var(--card); border: 1px solid var(--line); min-width: 0;
 }
 .boost .bi { font-size: 18px; line-height: 1.1; }
-.boost .bl { font-size: 10px; color: var(--mute); font-weight: 700; text-transform: uppercase; letter-spacing: .4px; }
+.boost .bl { max-width: 100%; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; font-size: 10px; color: var(--mute); font-weight: 700; text-transform: uppercase; letter-spacing: .4px; }
 .boost .bv { font-size: 15px; font-weight: 800; color: var(--c1); font-variant-numeric: tabular-nums; }
 .boost.lk { opacity: .4; }
 .boost.lk .bv { color: var(--mute); }
@@ -430,7 +431,7 @@ button:focus-visible { outline: 2px solid var(--c1); outline-offset: 2px; }
 /* breed scherm (iPad / desktop) */
 /* breed scherm of telefoon/tablet liggend: speelveld links, paneel rechts */
 @media (min-width: 900px), (orientation: landscape) and (min-width: 640px) {
-  #app { grid-template-columns: 1fr 460px; grid-template-rows: auto 1fr auto; }
+  #app { grid-template-columns: minmax(0, 1fr) min(460px, 55%); grid-template-rows: auto 1fr auto; }
   #top { grid-column: 1; grid-row: 1; }
   #stage { grid-column: 1; grid-row: 2 / 4; }
   #panel { grid-column: 2; grid-row: 1 / 3; border-radius: 0; border-top: 0; border-left: 1px solid var(--line); }
@@ -556,7 +557,76 @@ button:focus-visible { outline: 2px solid var(--c1); outline-offset: 2px; }
 .safety.bad .sf-row b { color: var(--bad); }
 .buff.bad { background: linear-gradient(90deg, #b3123a, #ff5a3c); box-shadow: 0 0 14px rgba(255, 60, 60, .5); }
 .buff.risk { pointer-events: auto; background: linear-gradient(90deg, #ff8a00, #ff3c5a); color: #fff; font: inherit; font-size: 12px; font-weight: 800; }
-.boost-grid { grid-template-columns: repeat(5, 1fr); }
+.boost-grid { grid-template-columns: repeat(5, minmax(0, 1fr)); }
 .boost.warn { border-color: var(--bad); }
 .boost.warn .bv { color: var(--bad); font-size: 13px; }
 @media (max-width: 370px) { .boost .bv { font-size: 13px; } .track span { width: 26px; height: 26px; font-size: 14px; } }
+
+/* ---------- drie hoofdschermen + volledige schermen ---------- */
+.scr { display: none; position: absolute; inset: 0; z-index: 2; }
+#app[data-screen="chips"] #scrChips, #app[data-screen="apps"] #scrApps { display: flex; }
+#app[data-screen="chips"] :is(#core, #orbit, #ticker),
+#app[data-screen="apps"] :is(#core, #orbit, #ticker) { display: none; }
+/* Op telefoons staand: Onderzoek, Team en Meer krijgen het hele scherm */
+@media (max-width: 899px) and (orientation: portrait), (max-width: 639px) {
+  #app[data-screen="full"] { grid-template-rows: auto 0 minmax(0, 1fr) auto; }
+  #app[data-screen="full"] #stage { visibility: hidden; padding: 0; min-height: 0; }
+}
+
+/* chips-speelveld */
+#scrChips { flex-direction: column; align-items: center; justify-content: center; gap: 4cqh; padding: 10px 16px 8px; }
+.flow.big { width: 100%; max-width: 460px; margin: 0; }
+.flow.big .fnode { width: 58px; background: rgba(12, 18, 40, .85); }
+.flow.big .arrow { height: 3px; }
+.arrow.live i:nth-child(2) { animation-delay: .6s; }
+.cs-chip {
+  position: relative; width: min(42cqh, 46cqw, 170px); aspect-ratio: 1; border-radius: 22%;
+  display: grid; place-items: center; touch-action: manipulation; transition: transform .08s;
+  background: linear-gradient(145deg, hsla(var(--hue), 60%, 28%, .95), #0b1024);
+  border: 2px solid hsla(var(--hue), 100%, 70%, .55);
+  outline: 6px dashed hsla(var(--hue), 100%, 70%, .3); outline-offset: 5px;
+  box-shadow: 0 0 34px hsla(var(--hue), 100%, 60%, .35), inset 0 0 22px rgba(0, 0, 0, .55);
+}
+.cs-glow { position: absolute; inset: 14%; border-radius: 50%; background: radial-gradient(hsla(var(--hue), 100%, 65%, .45), transparent 70%); }
+.cs-icon { position: relative; font-size: calc(min(42cqh, 46cqw, 170px) * .4); line-height: 1; }
+.cs-name { position: absolute; bottom: 7%; left: 0; right: 0; text-align: center; font-size: 10px; font-weight: 800; color: var(--mute); white-space: nowrap; }
+.cs-chip.hit { transform: scale(.93); }
+.cs-chip.busy { animation: pulse .7s infinite alternate; }
+.cs-stats { display: flex; flex-direction: column; align-items: center; gap: 2px; text-align: center; font-weight: 700; }
+#csCompute { color: var(--c1); font-size: 13px; }
+#csHint { color: var(--mute); font-size: 11px; }
+
+/* apps-speelveld: een telefoon */
+#scrApps { align-items: center; justify-content: center; gap: 16px; padding: 10px 16px 28px; }
+.as-phone {
+  position: relative; flex: none; height: min(88cqh, 340px); aspect-ratio: 9 / 17; border-radius: 24px; padding: 20px 7px 8px;
+  background: linear-gradient(170deg, #0a1230, #04060f); border: 3px solid #2b3766;
+  box-shadow: 0 0 34px hsla(var(--hue), 100%, 60%, .3), inset 0 0 0 2px #000;
+}
+.as-notch { position: absolute; top: 7px; left: 50%; width: 34%; height: 7px; border-radius: 6px; background: #1b2347; translate: -50% 0; }
+.as-grid { position: relative; display: grid; grid-template-columns: repeat(3, 1fr); gap: 4px 3px; height: 100%; align-content: start; }
+.as-app { position: relative; display: flex; flex-direction: column; align-items: center; gap: 1px; min-width: 0; touch-action: manipulation; }
+.as-ic {
+  width: 100%; max-width: 40px; aspect-ratio: 1; border-radius: 26%; display: grid; place-items: center; font-size: clamp(12px, 5cqh, 20px);
+  background: radial-gradient(circle at 30% 25%, hsla(var(--hue), 90%, 60%, .6), hsla(calc(var(--hue) + 40), 90%, 35%, .35));
+}
+.as-app.locked .as-ic { background: none; border: 1.5px dashed rgba(255, 255, 255, .16); }
+.as-app.new .as-ic, .as-app.building .as-ic { opacity: .65; }
+.as-u { max-width: 100%; overflow: hidden; font-size: 8.5px; font-weight: 800; color: var(--mute); height: 10px; line-height: 10px; font-variant-numeric: tabular-nums; white-space: nowrap; }
+.as-fire { position: absolute; top: -6px; right: -1px; font-size: 13px; display: none; }
+.as-app.offer .as-fire, .as-app.trend .as-fire { display: block; }
+.as-app.offer .as-ic { animation: pulse .5s infinite alternate; box-shadow: 0 0 0 2px var(--gold), 0 0 16px var(--gold); }
+.as-app.trend .as-ic { box-shadow: 0 0 0 2px #ff6a3c, 0 0 14px #ff6a3c; }
+.as-up { position: absolute; font-size: 11px; pointer-events: none; translate: -50% 0; animation: upFloat 1.4s ease-out forwards; }
+@keyframes upFloat { to { transform: translateY(-46px); opacity: 0; } }
+.as-side { display: flex; flex-direction: column; gap: 1px; min-width: 0; max-width: 190px; }
+.as-side small { font-size: 10px; color: var(--mute); font-weight: 800; text-transform: uppercase; letter-spacing: .4px; }
+.as-side b { font-size: 22px; font-weight: 900; font-variant-numeric: tabular-nums; margin-bottom: 8px; }
+#asData { color: var(--c1); }
+#asTrend { font-size: 12px; font-weight: 700; color: var(--mute); line-height: 1.35; }
+#asTrend.hot { color: #ffb36b; }
+.as-review { position: absolute; left: 0; right: 0; bottom: 6px; text-align: center; font-size: 11px; color: var(--mute); padding: 0 16px; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
+.fire-badge { display: none; }
+.fire-badge.on { display: inline; }
+@media (max-height: 760px) { .as-review { display: none; } #scrApps { padding-bottom: 8px; } }
+@media (prefers-reduced-motion: reduce) { .as-up, .cs-chip.busy, .as-app.offer .as-ic { animation: none; } }

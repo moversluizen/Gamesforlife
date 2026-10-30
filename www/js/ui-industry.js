@@ -54,7 +54,6 @@
         <div class="bar"><i data-f="fill"></i></div>
         <p class="muted" data-f="status"></p>
       </div>
-      <div class="flow">${G.CHAIN.map((c, i) => `${i ? '<span class="arrow" data-f="ar' + i + '"><i></i></span>' : ''}<div class="fnode" data-f="fn${i}"><span>${c.icon}</span><small data-f="fc${i}"></small></div>`).join('')}</div>
       <div id="rnd" class="ind-card rnd"></div>
       <div class="subhead">Supply chain <span class="muted">· de traagste schakel bepaalt je output</span></div>
       ${G.CHAIN.map((c, i) => `
@@ -64,6 +63,16 @@
             <div class="mbar"><i data-f="sm${i}"></i></div><div class="mlabel" data-f="sl${i}"></div></div>
           <button class="gbuy"><span class="q" data-f="sq${i}"></span><span class="c" data-f="sc${i}"></span></button>
         </div>`).join('')}`;
+    $('csFlow').innerHTML = G.CHAIN.map((c, i) => `${i ? '<span class="arrow" data-f="ar' + i + '"><i></i><i></i></span>' : ''}<div class="fnode" data-f="fn${i}"><span>${c.icon}</span><small data-f="fc${i}"></small></div>`).join('');
+    if (!$('csChip').dataset.bound) $('csChip').addEventListener('pointerdown', e => {
+      e.preventDefault();
+      G.ui.tapAt(e.clientX, e.clientY, false);
+      const cut = G.boostRnd();
+      if (cut) floatText(e, '−' + (cut / 1000).toFixed(1).replace('.', ',') + ' s');
+      $('csChip').classList.add('hit');
+      setTimeout(() => $('csChip').classList.remove('hit'), 80);
+    });
+    $('csChip').dataset.bound = '1';
     body.addEventListener('click', e => {
       const t = e.target.closest('[data-act]');
       if (!t) return;
@@ -97,9 +106,10 @@
     set(body, 'status', status);
     G.CHAIN.forEach((c, i) => {
       const cost = G.chainCost(i);
-      set(body, 'fc' + i, i < 4 ? rate(G.stageCap(i)) + '/s' : G.fmt(slots));
-      set(body, 'fn' + i, { cls: { bn: built && i === b, off: !S.chain[i] } });
-      if (i) set(body, 'ar' + i, { cls: { live: S.chain[i - 1] > 0 && S.chain[i] > 0 } });
+      const flow = $('csFlow');
+      set(flow, 'fc' + i, i < 4 ? rate(G.stageCap(i)) + '/s' : G.fmt(slots));
+      set(flow, 'fn' + i, { cls: { bn: built && i === b, off: !S.chain[i] } });
+      if (i) set(flow, 'ar' + i, { cls: { live: S.chain[i - 1] > 0 && S.chain[i] > 0 } });
       set(body, 'st' + i, { cls: { can: S.tokens >= cost } });
       set(body, 'lv' + i, S.chain[i]);
       set(body, 'sr' + i, i < 4
@@ -112,6 +122,14 @@
       set(body, 'sc' + i, G.fmt(cost));
     });
     updateRnd();
+    // speelveld
+    const c = G.chip();
+    if ($('csIcon').textContent !== c.icon) { $('csIcon').textContent = c.icon; $('csName').textContent = `${c.name} · ${c.node}`; }
+    $('csCompute').textContent = `⚡ ${G.fmt(G.compute())} rekenkracht · modellen ×${G.computeBonus().toFixed(2).replace('.', ',')}`;
+    $('csHint').textContent = S.rnd
+      ? `🔬 ${G.CHIPS[S.rnd.gen].name}: nog ${G.fmtTime(Math.ceil(Math.max(0, S.rnd.end - Date.now()) / 1000))} · tik op de chip om te versnellen`
+      : 'Tik op de chip voor tokens';
+    $('csChip').classList.toggle('busy', !!S.rnd);
   }
 
   function updateRnd() {
@@ -164,9 +182,10 @@
         <button class="gbuy" data-act="app-build" data-id="${a.id}"><span class="q">bouwen</span><span class="c">${G.fmt(G.appCost(a))}</span></button></div></div>`;
       if (st === 'building') return `<div class="app"><div class="app-top">${head}<div class="ginfo"><div class="gname">${a.name}</div>
         <div class="grate">👷 Wordt gebouwd… <span data-f="bl-${a.id}"></span></div><div class="bar"><i data-f="bb-${a.id}"></i></div></div></div></div>`;
-      return `<div class="app live" data-f="ap-${a.id}"><div class="app-top">${head}<div class="ginfo"><div class="gname">${a.name} <span class="ver">v${s.v}</span></div>
+      return `<div class="app live" data-f="ap-${a.id}"><div class="app-top">${head}<div class="ginfo"><div class="gname">${a.name} <span class="ver">v${s.v}</span> <span class="stars">${'★'.repeat(G.appStars(a))}</span> <span class="fire-badge" data-f="ht-${a.id}">🔥</span></div>
         <div class="grate"><span data-f="au-${a.id}"></span> gebruikers · <b class="earn" data-f="ar-${a.id}"></b> data</div>
-        <div class="bar users"><i data-f="ab-${a.id}"></i></div></div></div>
+        <div class="bar users"><i data-f="ab-${a.id}"></i></div>
+        <div class="mlabel">Volgende versie: v${s.v + 1} ${G.appFeature(s.v + 1)} · 2× gebruikers en data</div></div></div>
         <div class="app-btns"><button class="pill" data-act="app-mkt" data-id="${a.id}" data-f="am-${a.id}"></button>
         <button class="pill up" data-act="app-build" data-id="${a.id}" data-f="av-${a.id}"></button></div></div>`;
     }).join(''))) {
@@ -180,7 +199,7 @@
             const wasNew = !G.app(a.id).v;
             if (G.buildApp(a)) {
               G.sfx.upgrade(); G.haptic('MEDIUM');
-              if (!wasNew) G.ui.toast(a.icon, `${a.name} v${G.app(a.id).v}`, 'Nieuwe versie: 2× gebruikers en 2× data per gebruiker.');
+              if (!wasNew) G.ui.toast(a.icon, `${a.name} v${G.app(a.id).v}: ${G.appFeature(G.app(a.id).v)}`, 'Nieuwe functie: 2× gebruikers en 2× data per gebruiker.');
             } else G.sfx.error();
           } else if (t.dataset.act === 'app-mkt') {
             if (G.campaign(a)) { G.sfx.eureka(); G.haptic('MEDIUM'); floatText(e, '📣 +' + G.fmt(G.appCap(a) * 0.15 + 10)); }
@@ -205,12 +224,90 @@
         set(list, 'au-' + a.id, `${G.fmt(Math.floor(s.u))} / ${G.fmt(G.appCap(a))}`);
         set(list, 'ar-' + a.id, G.fmt(G.appData(a)));
         set(list, 'ab-' + a.id, { w: pct(s.u, G.appCap(a)) });
+        set(list, 'ht-' + a.id, { cls: { on: G.trending(a) } });
         const cd = Math.max(0, (s.cd || 0) - now);
         set(list, 'am-' + a.id, { t: cd ? `📣 ${Math.ceil(cd / 1000)} s` : '📣 Campagne', dis: cd > 0 });
         set(list, 'av-' + a.id, { t: `⬆ v${s.v + 1} · ${G.fmt(G.appCost(a))}`, cls: { can: S.tokens >= G.appCost(a) } });
       }
     }
     $('appHead').textContent = live ? `${live} live · modellen ×${G.dataBonus().toFixed(2).replace('.', ',')}` : 'Apps leveren data voor je modellen';
+  }
+
+  // ---------- apps-speelveld: een telefoon met je apps ----------
+  let reviewAt = 0, upAt = 0;
+  function updateAppsStage() {
+    const grid = $('asGrid'), S = G.S, now = Date.now();
+    const key = G.APPS.map(a => appStatus(a)).join(',');
+    if (grid.dataset.k !== key) {
+      grid.dataset.k = key;
+      grid.innerHTML = G.APPS.map(a => {
+        const st = appStatus(a);
+        return `<button class="as-app ${st.startsWith('live') ? 'live' : st}" data-id="${a.id}">
+          <span class="as-ic">${st === 'locked' ? '' : st === 'building' ? '👷' : a.icon}</span>
+          <span class="as-u" data-f="u-${a.id}">${st === 'new' ? 'nieuw' : ''}</span><span class="as-fire">🔥</span></button>`;
+      }).join('');
+      if (!grid.dataset.bound) {
+        grid.dataset.bound = '1';
+        grid.addEventListener('pointerdown', e => {
+          const b = e.target.closest('.as-app');
+          if (!b) return;
+          e.preventDefault();
+          const a = G.APPS.find(x => x.id === b.dataset.id);
+          if (G.trendOffer && G.trendOffer.id === a.id) {
+            G.claimTrend();
+            G.sfx.eureka(); G.haptic('HEAVY'); G.fx.wave();
+            G.ui.toast('🔥', `${a.name} is trending!`, '45 seconden: 5× snellere groei en 50% meer ruimte voor gebruikers.');
+          } else if (G.app(a.id).v) {
+            const add = G.promoteApp(a);
+            G.ui.tapAt(e.clientX, e.clientY, false);
+            floatText(e, add >= 1 ? '+' + G.fmt(add) + ' 👤' : 'Vol: nieuwe versie nodig');
+          } else { G.ui.switchTab('apps'); return; }
+          b.animate([{ transform: 'scale(.85)' }, { transform: 'scale(1)' }], { duration: 180 });
+          G.uiRefresh(false);
+        });
+      }
+    }
+    let users = 0;
+    for (const a of G.APPS) {
+      const s = S.apps[a.id];
+      const btn = grid.querySelector(`[data-id="${a.id}"]`);
+      if (!btn) continue;
+      btn.classList.toggle('offer', !!(G.trendOffer && G.trendOffer.id === a.id));
+      btn.classList.toggle('trend', G.trending(a));
+      if (s && s.v) { users += s.u; set(grid, 'u-' + a.id, G.fmt(Math.floor(s.u))); }
+    }
+    $('asUsers').textContent = G.fmt(Math.floor(users));
+    $('asData').textContent = '×' + G.dataBonus().toFixed(2).replace('.', ',');
+    const tr = S.trend && S.trend.until > now ? G.APPS.find(a => a.id === S.trend.id) : null;
+    const trTxt = tr ? `🔥 ${tr.name} trending · ${Math.ceil((S.trend.until - now) / 1000)} s`
+      : G.trendOffer ? `🔥 ${G.APPS.find(a => a.id === G.trendOffer.id).name} gaat viraal! Tik erop` : G.appsLive() ? 'Tik op een app voor extra gebruikers' : 'Bouw je eerste app hieronder';
+    if ($('asTrend').textContent !== trTxt) $('asTrend').textContent = trTxt;
+    $('asTrend').classList.toggle('hot', !!(tr || G.trendOffer));
+
+    // gebruikers die omhoog zweven
+    if (now > upAt && G.appsLive()) {
+      upAt = now + 350;
+      const live = [...grid.querySelectorAll('.as-app.live')];
+      const b = live[(Math.random() * live.length) | 0];
+      if (b && grid.querySelectorAll('.as-up').length < 8) {
+        const u = document.createElement('span');
+        u.className = 'as-up'; u.textContent = '👤';
+        u.style.left = (b.offsetLeft + b.offsetWidth / 2) + 'px';
+        u.style.top = b.offsetTop + 'px';
+        grid.appendChild(u);
+        setTimeout(() => u.remove(), 1400);
+      }
+    }
+    // reviews
+    if (now > reviewAt) {
+      reviewAt = now + 6000;
+      const live = G.APPS.filter(a => (S.apps[a.id] || {}).v > 0);
+      const el = $('asReview');
+      if (live.length) {
+        const a = live[(Math.random() * live.length) | 0], st = G.appStars(a);
+        el.textContent = `${'★'.repeat(st)}${'☆'.repeat(5 - st)} "${G.REVIEWS[(Math.random() * G.REVIEWS.length) | 0]}" over ${a.name}`;
+      } else el.textContent = '';
+    }
   }
 
   // ---------- team ----------
@@ -332,7 +429,7 @@
       updateDots();
       buildOrbit();
       if (tab === 'chips') updateChips();
-      if (tab === 'apps') updateApps();
+      if (tab === 'apps') { updateApps(); updateAppsStage(); }
       if (tab === 'team') updateTeam();
     },
     reset() { for (const k in last) delete last[k]; orbitKey = ''; $('chipBody').removeAttribute('data-built'); buildOrbit(); },

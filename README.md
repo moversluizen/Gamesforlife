@@ -23,6 +23,8 @@ De mechanismen komen uit de populairste idle games (Cookie Clicker, AdVenture Ca
 | Technologieboom | 8 chipgeneraties (CPU → GPU → … → Quantumchip) met ontwikkeltijd; tikken versnelt het onderzoek |
 | Versterkers | Modellen zijn de basis; chips (rekenkracht), apps (gebruikersdata), onderzoek en prestige vermenigvuldigen hun productie |
 | Apps | 10 apps (Praatbot → Code-copiloot → Robot-butler) met groeiende gebruikers, campagnes en versies |
+| Drie speelvelden | Modellen (kern), Chips (supply chain en chip) en Apps (telefoon met je apps) hebben elk een eigen tikscherm; Onderzoek, Team en Meer zijn volledige schermen |
+| Apps | Trending-momenten (🔥 5× groei), een functie per versie, sterren en gebruikersreviews |
 | Navigatie | Veeg tussen de onderdelen; de pager en de menubalk tonen waar je bent |
 | Managers | 7 helpers met rangen (Junior → Legende); de stagiair groeit door tot AI-collega en tikt per rang 2× zo sterk |
 | Veiligheid | Slimmere modellen vragen veiligheid (safety-engineers, 8 veiligheidsonderzoeken). Loop je achter, dan stijgt het risico tot een backlash: productie −50% en gebruikers haken af |

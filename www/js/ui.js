@@ -210,7 +210,9 @@
   }
 
   // ---------- tabs ----------
-  const TAB_ORDER = ['models', 'research', 'chips', 'apps', 'team', 'more'];
+  const TAB_ORDER = ['models', 'chips', 'apps', 'research', 'team', 'more'];
+  // Modellen, Chips en Apps hebben een eigen speelveld; de rest is een volledig scherm.
+  const SCREENS = { models: 'models', chips: 'chips', apps: 'apps' };
   const TAB_NAMES = { models: 'Modellen', research: 'Onderzoek', chips: 'Chips', apps: 'Apps', team: 'Team', more: 'Meer' };
   // Volgende (dir 1) of vorige (dir -1) tab die al open is.
   function neighbor(dir) {
@@ -226,6 +228,7 @@
     }
     const dir = TAB_ORDER.indexOf(t) - TAB_ORDER.indexOf(currentTab);
     currentTab = t;
+    $('app').dataset.screen = SCREENS[t] || 'full';
     document.querySelectorAll('#tabs button').forEach(b => b.classList.toggle('on', b.dataset.tab === t));
     document.querySelectorAll('.tab').forEach(s => s.classList.toggle('active', s.id === 'tab-' + t));
     const sec = activeSection();
@@ -346,7 +349,7 @@
     box.appendChild(t);
     setTimeout(() => { t.classList.add('out'); setTimeout(() => t.remove(), 400); }, 2600);
   }
-  G.ui = { modal, toast, switchTab };
+  G.ui = { modal, toast, switchTab, tapAt: (x, y, auto) => tapAt(x, y, auto) };
 
   // ---------- kern tikken ----------
   const stage = $('stage'), core = $('core'), floaters = $('floaters');
@@ -378,10 +381,11 @@
     if (!n) return;
     autoAcc += n * dt;
     if (autoAcc < 1) return;
-    const p = G.helperPos('intern'), c = core.getBoundingClientRect();
+    const c = core.getBoundingClientRect(), visible = c.width > 0;
     while (autoAcc >= 1) {
       autoAcc--;
-      if (p) tapAt(c.left + c.width * (0.3 + Math.random() * 0.4), c.top + c.height * (0.3 + Math.random() * 0.4), true);
+      if (visible) tapAt(c.left + c.width * (0.3 + Math.random() * 0.4), c.top + c.height * (0.3 + Math.random() * 0.4), true);
+      else { const v = G.clickValue() * G.internPower(); G.earn(v); G.S.clickEarned += v; }
     }
   }
 
@@ -498,6 +502,11 @@
     modal('📰', `Backlash: ${title}`, `${text}<br><br><b style="color:var(--bad)">Productie −50% voor 2 minuten</b> en je apps verliezen 30% van hun gebruikers.<br><br>Investeer in veiligheid om dit te voorkomen.`,
       [{ label: 'Later' }, { label: 'Naar Team', cls: 'primary', onClick: () => switchTab('team') }]);
   });
+  G.on('trendOffer', o => {
+    const a = G.APPS.find(x => x.id === o.id);
+    G.sfx.eureka();
+    if (currentTab !== 'apps') toast('🔥', `${a.name} gaat viraal!`, 'Ga naar Apps en tik op de app om de hype te benutten.');
+  });
   G.on('autoCampaign', () => { if (currentTab === 'apps') toast('📣', 'De marketeer startte een campagne', ''); });
   const seenTabs = {};
   function checkUnlocks() {
@@ -534,7 +543,7 @@
     if (achTimer > 1) {
       achTimer = 0;
       for (const a of G.checkAchievements()) { toast(a.icon, 'Prestatie: ' + a.name, a.desc + ' (+1% productie)'); G.sfx.achievement(); }
-      if (!eurekaEl && Date.now() > G.nextEureka) spawnEureka();
+      if (!eurekaEl && Date.now() > G.nextEureka && stage.offsetHeight > 0) spawnEureka();
       if (currentTab === 'more' && moreSub === 'ach') updateAch();
       updateSing();
       checkUnlocks();
