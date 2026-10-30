@@ -58,7 +58,7 @@
   G.milestoneLevel = owned => { let n = 0; for (const m of G.MILESTONES) if (owned >= m) n++; return n; };
   G.nextMilestone = owned => G.MILESTONES.find(m => owned < m) || null;
 
-  G.genUnitRate = i => G.GENS[i].rate * G.mods.gen[i] * Math.pow(2, G.milestoneLevel(G.S.owned[i])) * G.mods.global * G.mods.perm * (G.computeBonus ? G.computeBonus() : 1);
+  G.genUnitRate = i => G.GENS[i].rate * G.mods.gen[i] * Math.pow(2, G.milestoneLevel(G.S.owned[i])) * G.mods.global * G.mods.perm * (G.computeBonus ? G.computeBonus() * G.dataBonus() : 1);
   G.genRate = i => G.genUnitRate(i) * G.S.owned[i] * G.buffMult('prod');
   G.tps = () => { let t = 0; for (let i = 0; i < G.GENS.length; i++) t += G.genRate(i); return t; };
   G.baseTps = () => (G.totalTps ? G.totalTps() : G.tps()) / G.buffMult('prod');
@@ -175,13 +175,14 @@
     if (dt <= 0) return 0;
     if (dt > 5) {
       const secs = Math.min(dt, OFFLINE_CAP);
-      const ind = G.industryTick(secs) / G.buffMult('prod');
-      const amt = (G.tps() / G.buffMult('prod') * secs + ind) * G.mods.offline;
+      const amt = G.tps() / G.buffMult('prod') * secs * G.mods.offline;
       G.earn(amt);
+      G.industryTick(secs);
       G.S.buffs = G.S.buffs.filter(b => b.until > now);
       return { secs, amt };
     }
-    G.earn(G.tps() * dt + G.industryTick(dt));
+    G.earn(G.tps() * dt);
+    G.industryTick(dt);
     if (G.S.buffs.length && G.S.buffs.some(b => b.until <= now)) G.S.buffs = G.S.buffs.filter(b => b.until > now);
     return 0;
   };

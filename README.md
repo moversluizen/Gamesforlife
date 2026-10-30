@@ -21,7 +21,9 @@ De mechanismen komen uit de populairste idle games (Cookie Clicker, AdVenture Ca
 | Sfeer | Nieuwsticker, kleuren per tijdperk, geanimeerd neuraal netwerk, geluid en trillen |
 | Productieketen | Supply chain voor chips: zandgroeve → waferfabriek → EUV-lithografie → chipfabriek → datacenter. De traagste schakel (bottleneck) bepaalt de output |
 | Technologieboom | 8 chipgeneraties (CPU → GPU → … → Quantumchip) met ontwikkeltijd; tikken versnelt het onderzoek |
-| Tweede inkomstenbron | 10 apps (Praatbot → Code-copiloot → Robot-butler) met groeiende gebruikers, campagnes en versies |
+| Versterkers | Modellen zijn de basis; chips (rekenkracht), apps (gebruikersdata), onderzoek en prestige vermenigvuldigen hun productie |
+| Apps | 10 apps (Praatbot → Code-copiloot → Robot-butler) met groeiende gebruikers, campagnes en versies |
+| Navigatie | Veeg tussen de onderdelen; de pager en de menubalk tonen waar je bent |
 | Managers | 6 helpers: stagiair (auto-tikken), fab-ingenieur, chipontwerper, marketeer, talentscout, financieel directeur |
 | Opdrachten | Ada, je AI-assistent, geeft 20 opdrachten met beloningen die je door het hele spel leiden |
 

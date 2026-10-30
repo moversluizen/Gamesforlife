@@ -186,9 +186,7 @@
       <div class="row"><span>Eureka-momenten</span><b>${S.eurekas}</b></div>
       <div class="row"><span>Singulariteiten</span><b>${S.prestiges}</b></div>
       <div class="row"><span>Rekenkracht</span><b>${G.fmt(G.compute())} (×${G.computeBonus().toFixed(2).replace('.', ',')})</b></div>
-      <div class="row"><span>Modellen per seconde</span><b>${G.fmt(G.tps())}</b></div>
-      <div class="row"><span>Apps per seconde</span><b>${G.fmt(G.appRevenue())}</b></div>
-      <div class="row"><span>Chipverkoop per seconde</span><b>${G.fmt(G.chipSales())}</b></div>
+      <div class="row"><span>Data uit apps</span><b>${G.fmt(G.dataValue())} (×${G.dataBonus().toFixed(2).replace('.', ',')})</b></div>
       <div class="row"><span>Totale bonus</span><b>×${G.fmt(G.mods.perm)}</b></div>
       <div class="row"><span>Offline productie</span><b>${Math.round(G.mods.offline * 100)}%</b></div>
       <div class="row"><span>Speeltijd</span><b>${G.fmtTime(played)}</b></div>
@@ -196,7 +194,7 @@
       <div class="row"><span>Geluid</span><button class="switch ${S.settings.sound ? 'on' : ''}" data-set="sound" aria-label="Geluid"></button></div>
       <div class="row"><span>Trillen</span><button class="switch ${S.settings.haptics ? 'on' : ''}" data-set="haptics" aria-label="Trillen"></button></div>
       <div class="section-title">Hoe speel je?</div>
-      <div class="small-print">Tik op de kern om tokens te verdienen. Koop modellen die automatisch tokens maken; bij 10, 25, 50, 100… stuks verdubbelt hun productie. Onderzoek geeft extra boosts. Bouw een supply chain voor chips: rekenkracht maakt al je modellen sneller, en de traagste schakel bepaalt hoeveel chips je maakt. Lanceer apps voor extra inkomsten en neem helpers aan die werk voor je doen. Ada geeft je steeds een nieuwe opdracht met een beloning. Tik op een gouden 💡 voor een Eureka-moment. Bouw uiteindelijk AGI en activeer de singulariteit voor permanente bonussen. Ook als de app dicht is gaat de training door.</div>
+      <div class="small-print">Tik op de kern om tokens te verdienen. Koop modellen die automatisch tokens maken; bij 10, 25, 50, 100… stuks verdubbelt hun productie. Onderzoek geeft extra boosts. Bouw een supply chain voor chips: rekenkracht maakt al je modellen sneller, en de traagste schakel bepaalt hoeveel chips je maakt. Lanceer apps: hun gebruikers leveren trainingsdata die je modellen versterkt. Neem helpers aan die werk voor je doen. Veeg links of rechts over het paneel om van onderdeel te wisselen. Ada geeft je steeds een nieuwe opdracht met een beloning. Tik op een gouden 💡 voor een Eureka-moment. Bouw uiteindelijk AGI en activeer de singulariteit voor permanente bonussen. Ook als de app dicht is gaat de training door.</div>
       <button class="danger" id="wipeBtn">Voortgang wissen</button>
       <div class="small-print">Road to AGI · versie 1.1<br>Dit spel verzamelt geen persoonsgegevens. Je voortgang wordt alleen op dit apparaat opgeslagen.</div>`;
     for (const sw of $('moreBody').querySelectorAll('.switch')) {
@@ -209,17 +207,107 @@
   }
 
   // ---------- tabs ----------
-  const TAB_NAMES = { chips: 'Chips', apps: 'Apps', team: 'Team' };
+  const TAB_ORDER = ['models', 'research', 'chips', 'apps', 'team', 'more'];
+  const TAB_NAMES = { models: 'Modellen', research: 'Onderzoek', chips: 'Chips', apps: 'Apps', team: 'Team', more: 'Meer' };
+  // Volgende (dir 1) of vorige (dir -1) tab die al open is.
+  function neighbor(dir) {
+    let i = TAB_ORDER.indexOf(currentTab);
+    do { i += dir; } while (i >= 0 && i < TAB_ORDER.length && !G.tabUnlocked(TAB_ORDER[i]));
+    return TAB_ORDER[i] || null;
+  }
   function switchTab(t) {
     if (!G.tabUnlocked(t)) {
       G.sfx.error();
       toast('🔒', `${TAB_NAMES[t]} is nog op slot`, `Verdien in totaal ${G.fmt(G.TAB_UNLOCK[t])} tokens om dit te ontgrendelen.`);
       return;
     }
+    const dir = TAB_ORDER.indexOf(t) - TAB_ORDER.indexOf(currentTab);
     currentTab = t;
     document.querySelectorAll('#tabs button').forEach(b => b.classList.toggle('on', b.dataset.tab === t));
     document.querySelectorAll('.tab').forEach(s => s.classList.toggle('active', s.id === 'tab-' + t));
+    const sec = activeSection();
+    sec.classList.remove('in-next', 'in-prev');
+    if (dir) { void sec.offsetWidth; sec.classList.add(dir > 0 ? 'in-next' : 'in-prev'); }
+    placeIndicator();
     refresh(true);
+  }
+  const activeSection = () => $('tab-' + currentTab);
+
+  // ---------- waar ben je: streepje in de menubalk en navigatie bovenin het paneel ----------
+  function placeIndicator() {
+    const b = document.querySelector('#tabs button.on'), nav = $('tabs');
+    if (!b) return;
+    const r = b.getBoundingClientRect(), nr = nav.getBoundingClientRect();
+    $('tabInd').style.transform = `translateX(${r.left - nr.left + r.width / 2 - 14}px)`;
+  }
+  window.addEventListener('resize', placeIndicator);
+  function updatePager() {
+    const prev = neighbor(-1), next = neighbor(1);
+    $('pgPrev').textContent = prev ? '‹ ' + TAB_NAMES[prev] : '';
+    $('pgNext').textContent = next ? TAB_NAMES[next] + ' ›' : '';
+    $('pdots').innerHTML = TAB_ORDER.map(t => `<i class="${t === currentTab ? 'on' : ''}${G.tabUnlocked(t) ? '' : ' lk'}"></i>`).join('');
+  }
+  $('pgPrev').addEventListener('click', () => { const n = neighbor(-1); if (n) { G.haptic(); switchTab(n); } });
+  $('pgNext').addEventListener('click', () => { const n = neighbor(1); if (n) { G.haptic(); switchTab(n); } });
+  window.addEventListener('keydown', e => {
+    if (!$('modal').classList.contains('hidden')) return;
+    if (e.key === 'ArrowRight' || e.key === 'ArrowLeft') { const n = neighbor(e.key === 'ArrowRight' ? 1 : -1); if (n) switchTab(n); }
+  });
+
+  // ---------- swipen tussen onderdelen ----------
+  const panel = $('panel');
+  let sw = null, swallowClick = false;
+  panel.addEventListener('pointerdown', e => {
+    if (e.pointerType === 'mouse' && e.button !== 0) return;
+    sw = { x: e.clientX, y: e.clientY, id: e.pointerId, horiz: null };
+  });
+  panel.addEventListener('pointermove', e => {
+    if (!sw || e.pointerId !== sw.id) return;
+    const dx = e.clientX - sw.x, dy = e.clientY - sw.y;
+    if (sw.horiz === null && (Math.abs(dx) > 10 || Math.abs(dy) > 10)) sw.horiz = Math.abs(dx) > Math.abs(dy) * 1.3;
+    if (!sw.horiz) return;
+    const sec = activeSection(), can = neighbor(dx < 0 ? 1 : -1);
+    sec.style.transition = 'none';
+    sec.style.transform = `translateX(${dx * (can ? 0.45 : 0.12)}px)`;
+  });
+  const swipeEnd = e => {
+    if (!sw || e.pointerId !== sw.id) return;
+    const dx = e.clientX - sw.x, horiz = sw.horiz, sec = activeSection();
+    sw = null;
+    sec.style.transition = ''; sec.style.transform = '';
+    if (!horiz) return;
+    swallowClick = true;
+    setTimeout(() => { swallowClick = false; }, 50);
+    if (Math.abs(dx) < 50) return;
+    const n = neighbor(dx < 0 ? 1 : -1);
+    if (n) { G.haptic(); switchTab(n); }
+  };
+  panel.addEventListener('pointerup', swipeEnd);
+  panel.addEventListener('pointercancel', swipeEnd);
+  // Een veegbeweging mag niet ook nog een knop indrukken.
+  panel.addEventListener('click', e => { if (swallowClick) { e.stopPropagation(); e.preventDefault(); swallowClick = false; } }, true);
+
+  // ---------- wat versterkt je modellen ----------
+  function updateBoosts() {
+    const tiles = [
+      { tab: 'research', icon: '🔬', label: 'Onderzoek', v: G.mods.global },
+      { tab: 'chips', icon: '⚡', label: 'Chips', v: G.computeBonus() },
+      { tab: 'apps', icon: '📊', label: 'Data', v: G.dataBonus() },
+      { tab: 'more', icon: '🌀', label: 'Bonus', v: G.mods.perm * G.buffMult('prod') },
+    ];
+    const box = $('boosts');
+    if (!box.children.length) {
+      box.innerHTML = `<p class="boost-intro">Je modellen zijn de basis. Alles eromheen vermenigvuldigt hun productie:</p>
+        <div class="boost-grid">${tiles.map(t => `<button class="boost" data-tab="${t.tab}"><span class="bi">${t.icon}</span><span class="bl">${t.label}</span><span class="bv"></span></button>`).join('')}</div>`;
+      box.addEventListener('click', e => { const b = e.target.closest('.boost'); if (b) { G.haptic(); switchTab(b.dataset.tab); } });
+    }
+    box.querySelectorAll('.boost').forEach((b, i) => {
+      const t = tiles[i], open = G.tabUnlocked(t.tab);
+      b.classList.toggle('lk', !open);
+      const txt = open ? '×' + (t.v < 100 ? t.v.toFixed(2).replace('.', ',') : G.fmt(t.v)) : '🔒';
+      const v = b.querySelector('.bv');
+      if (v.textContent !== txt) v.textContent = txt;
+    });
   }
   document.querySelectorAll('#tabs button').forEach(b => b.addEventListener('click', () => { G.haptic(); switchTab(b.dataset.tab); }));
   function switchSub(sub) {
@@ -372,6 +460,8 @@
     if (currentTab === 'more' && moreSub === 'ach' && force) updateAch();
     if (currentTab === 'more' && moreSub === 'set' && force) updateMore();
     G.uiInd.update(currentTab, force);
+    if (currentTab === 'models') updateBoosts();
+    if (force) updatePager();
     document.querySelectorAll('#tabs button').forEach(b => b.classList.toggle('locked', !G.tabUnlocked(b.dataset.tab)));
     document.querySelectorAll('#buyMode button').forEach(b => b.classList.toggle('on', String(G.S.buyMode) === b.dataset.m));
   }
@@ -383,7 +473,7 @@
   });
   G.on('appLive', a => {
     G.sfx.milestone(); G.haptic('HEAVY');
-    toast(a.icon, `${a.name} is live!`, 'Gebruikers stromen binnen. Start een campagne voor een boost.');
+    toast(a.icon, `${a.name} is live!`, 'Gebruikers leveren nu trainingsdata voor je modellen.');
   });
   G.on('autoCampaign', () => { if (currentTab === 'apps') toast('📣', 'De marketeer startte een campagne', ''); });
   const seenTabs = {};
@@ -391,6 +481,7 @@
     for (const t of Object.keys(G.TAB_UNLOCK)) {
       const u = G.tabUnlocked(t);
       if (u && seenTabs[t] === false) { G.sfx.achievement(); toast('🔓', `Nieuw: ${TAB_NAMES[t]}!`, { chips: 'Bouw je eigen chip-supply chain.', apps: 'Bouw apps met je modellen.', team: 'Neem helpers aan.' }[t]); }
+      if (u !== seenTabs[t]) updatePager();
       seenTabs[t] = u;
     }
   }
@@ -465,6 +556,12 @@
     refresh(true);
     nextNews();
     checkUnlocks();
+    placeIndicator();
+    setTimeout(() => {
+      if (G.S.settings.swipeHint) return;
+      G.S.settings.swipeHint = true;
+      toast('👆', 'Tip: veeg om te wisselen', 'Veeg over het paneel naar links of rechts om naar een ander onderdeel te gaan.');
+    }, 20000);
     if (off) showOffline(off);
     else if (G.S.lifeEarned === 0) {
       modal('🧠', 'Road to AGI', 'Jij leidt een klein AI-lab met één perceptron. <b>Tik op de kern</b> om je model te trainen, koop steeds slimmere modellen en bouw uiteindelijk de eerste <b>algemene intelligentie</b>.', [{ label: 'Start training', cls: 'primary' }]);

@@ -90,8 +90,8 @@
     set(body, 'fill', { w: pct(S.chips, slots) });
     let status;
     if (!built) status = 'Bouw alle vier productieschakels om chips te maken. Chips geven rekenkracht, en rekenkracht maakt al je modellen sneller.';
-    else if (!S.chain[4]) status = `${rate(G.chipRate())} chips/s · nog geen datacenter, dus alles wordt verkocht (+${G.fmt(G.chipSales())}/s).`;
-    else if (G.chipsFull()) status = `Datacenter vol. Het overschot wordt verkocht: +${G.fmt(G.chipSales())}/s. Breid uit voor meer rekenkracht.`;
+    else if (!S.chain[4]) status = `${rate(G.chipRate())} chips/s, maar nog geen datacenter om ze te plaatsen. Bouw er een.`;
+    else if (G.chipsFull()) status = 'Datacenter vol. Breid uit om meer chips te plaatsen en je modellen nog sneller te maken.';
     else status = `${rate(G.chipRate())} chips/s · ${G.chip().name} (${G.chip().node}) · ×${G.fmt(G.chip().power)} rekenkracht per chip`;
     set(body, 'status', status);
     G.CHAIN.forEach((c, i) => {
@@ -159,7 +159,7 @@
       if (st === 'building') return `<div class="app"><div class="app-top">${head}<div class="ginfo"><div class="gname">${a.name}</div>
         <div class="grate">👷 Wordt gebouwd… <span data-f="bl-${a.id}"></span></div><div class="bar"><i data-f="bb-${a.id}"></i></div></div></div></div>`;
       return `<div class="app live" data-f="ap-${a.id}"><div class="app-top">${head}<div class="ginfo"><div class="gname">${a.name} <span class="ver">v${s.v}</span></div>
-        <div class="grate"><span data-f="au-${a.id}"></span> gebruikers · <b class="earn" data-f="ar-${a.id}"></b></div>
+        <div class="grate"><span data-f="au-${a.id}"></span> gebruikers · <b class="earn" data-f="ar-${a.id}"></b> data</div>
         <div class="bar users"><i data-f="ab-${a.id}"></i></div></div></div>
         <div class="app-btns"><button class="pill" data-act="app-mkt" data-id="${a.id}" data-f="am-${a.id}"></button>
         <button class="pill up" data-act="app-build" data-id="${a.id}" data-f="av-${a.id}"></button></div></div>`;
@@ -174,7 +174,7 @@
             const wasNew = !G.app(a.id).v;
             if (G.buildApp(a)) {
               G.sfx.upgrade(); G.haptic('MEDIUM');
-              if (!wasNew) G.ui.toast(a.icon, `${a.name} v${G.app(a.id).v}`, 'Nieuwe versie: 2× gebruikers en 2× omzet per gebruiker.');
+              if (!wasNew) G.ui.toast(a.icon, `${a.name} v${G.app(a.id).v}`, 'Nieuwe versie: 2× gebruikers en 2× data per gebruiker.');
             } else G.sfx.error();
           } else if (t.dataset.act === 'app-mkt') {
             if (G.campaign(a)) { G.sfx.eureka(); G.haptic('MEDIUM'); floatText(e, '📣 +' + G.fmt(G.appCap(a) * 0.15 + 10)); }
@@ -185,7 +185,7 @@
       }
     }
     const now = Date.now();
-    let live = 0, total = 0;
+    let live = 0;
     for (const a of shown) {
       const s = G.S.apps[a.id] || {}, st = appStatus(a);
       if (st === 'new') set(list, 'ap-' + a.id, { cls: { can: S.tokens >= G.appCost(a) } });
@@ -195,16 +195,16 @@
         set(list, 'bb-' + a.id, { w: (100 * (1 - left / (a.time * 1000))) + '%' });
       }
       if (st.startsWith('live')) {
-        live++; total += G.appRate(a);
+        live++;
         set(list, 'au-' + a.id, `${G.fmt(Math.floor(s.u))} / ${G.fmt(G.appCap(a))}`);
-        set(list, 'ar-' + a.id, '+' + G.fmt(G.appRate(a)) + '/s');
+        set(list, 'ar-' + a.id, G.fmt(G.appData(a)));
         set(list, 'ab-' + a.id, { w: pct(s.u, G.appCap(a)) });
         const cd = Math.max(0, (s.cd || 0) - now);
         set(list, 'am-' + a.id, { t: cd ? `📣 ${Math.ceil(cd / 1000)} s` : '📣 Campagne', dis: cd > 0 });
         set(list, 'av-' + a.id, { t: `⬆ v${s.v + 1} · ${G.fmt(G.appCost(a))}`, cls: { can: S.tokens >= G.appCost(a) } });
       }
     }
-    $('appHead').textContent = live ? `${live} live · +${G.fmt(total)}/s` : '';
+    $('appHead').textContent = live ? `${live} live · modellen ×${G.dataBonus().toFixed(2).replace('.', ',')}` : 'Apps leveren data voor je modellen';
   }
 
   // ---------- team ----------

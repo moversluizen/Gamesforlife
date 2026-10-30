@@ -41,7 +41,7 @@
     { id: 'intern', name: 'Stagiair',            icon: '🧑‍🎓', cost: 800,   grow: 1.6, max: 20, desc: 'Tikt elke seconde op de kern.',                 eff: l => `${l} tik${l === 1 ? '' : 'ken'} per seconde` },
     { id: 'eng',    name: 'Fab-ingenieur',       icon: '🧑‍🔧', cost: 5000,  grow: 1.7, max: 40, desc: 'Verhoogt de capaciteit van de hele keten.',      eff: l => `keten +${l * 25}%` },
     { id: 'design', name: 'Chipontwerper',       icon: '👩‍🔬', cost: 3e4,   grow: 2,   max: 15, desc: 'Ontwikkelt nieuwe chips sneller.',               eff: l => `ontwikkeling ${Math.round((1 - Math.pow(0.85, l)) * 100)}% sneller` },
-    { id: 'mkt',    name: 'Marketeer',           icon: '📣', cost: 5e4,   grow: 1.9, max: 20, desc: 'Start vanzelf campagnes en verhoogt app-omzet.', eff: l => l ? `campagne elke ${G.mktInterval(l)} s, omzet +${l * 10}%` : 'geen campagnes' },
+    { id: 'mkt',    name: 'Marketeer',           icon: '📣', cost: 5e4,   grow: 1.9, max: 20, desc: 'Start vanzelf campagnes en haalt meer data uit je apps.', eff: l => l ? `campagne elke ${G.mktInterval(l)} s, data +${l * 10}%` : 'geen campagnes' },
     { id: 'scout',  name: 'Talentscout',         icon: '🕵️', cost: 1e5,   grow: 2.2, max: 10, desc: 'Meer Eureka-momenten. Vanaf niveau 5 vangt de scout ze voor je.', eff: l => `Eureka +${l * 15}%${l >= 5 ? ', vangt automatisch' : ''}` },
     { id: 'cfo',    name: 'Financieel directeur', icon: '💼', cost: 2e5,  grow: 2.5, max: 10, desc: 'Meer opbrengst terwijl je weg bent.',            eff: l => `offline +${l * 10}%` },
   ];
@@ -54,10 +54,10 @@
     { id: 'sl0', icon: '❄️', name: 'Vloeistofkoeling',     sub: 'Datacenter', desc: 'Datacenters 2× zoveel ruimte.', cost: 1e5,  kind: 'slots', mult: 2, unlock: s => s.chain[4] >= 10 },
     { id: 'sl1', icon: '🌊', name: 'Onderzeese datacenters', sub: 'Datacenter', desc: 'Datacenters 2× zoveel ruimte.', cost: 1e9, kind: 'slots', mult: 2, unlock: s => s.chain[4] >= 40 },
     { id: 'sl2', icon: '🛰️', name: 'Orbitale racks',       sub: 'Datacenter', desc: 'Datacenters 3× zoveel ruimte.', cost: 1e13, kind: 'slots', mult: 3, unlock: s => s.chain[4] >= 80 },
-    { id: 'ap0', icon: '📱', name: 'App-store-optimalisatie', sub: 'Apps',    desc: 'Alle apps 2× omzet.', cost: 1e5,  kind: 'app', mult: 2, unlock: s => G.appsLive() >= 1 },
-    { id: 'ap1', icon: '🚀', name: 'Virale groei',         sub: 'Apps',       desc: 'Alle apps 2× omzet.', cost: 1e8,  kind: 'app', mult: 2, unlock: s => G.appsLive() >= 3 },
-    { id: 'ap2', icon: '🌐', name: 'Wereldwijde lancering', sub: 'Apps',      desc: 'Alle apps 2× omzet.', cost: 1e11, kind: 'app', mult: 2, unlock: s => G.appsLive() >= 5 },
-    { id: 'ap3', icon: '💳', name: 'Abonnementsmodel',     sub: 'Apps',       desc: 'Alle apps 3× omzet.', cost: 1e14, kind: 'app', mult: 3, unlock: s => G.appsLive() >= 7 },
+    { id: 'ap0', icon: '📱', name: 'App-store-optimalisatie', sub: 'Apps',    desc: 'Alle apps leveren 2× zoveel data.', cost: 1e5,  kind: 'app', mult: 2, unlock: s => G.appsLive() >= 1 },
+    { id: 'ap1', icon: '🚀', name: 'Virale groei',         sub: 'Apps',       desc: 'Alle apps leveren 2× zoveel data.', cost: 1e8,  kind: 'app', mult: 2, unlock: s => G.appsLive() >= 3 },
+    { id: 'ap2', icon: '🌐', name: 'Wereldwijde lancering', sub: 'Apps',      desc: 'Alle apps leveren 2× zoveel data.', cost: 1e11, kind: 'app', mult: 2, unlock: s => G.appsLive() >= 5 },
+    { id: 'ap3', icon: '💳', name: 'Abonnementsmodel',     sub: 'Apps',       desc: 'Alle apps leveren 3× zoveel data.', cost: 1e14, kind: 'app', mult: 3, unlock: s => G.appsLive() >= 7 },
   );
 
   // ---------- staat ----------
@@ -97,9 +97,7 @@
   G.chip = () => G.CHIPS[G.S.chipGen];
   G.compute = () => G.S.chips * G.chip().power;
   G.computeBonus = () => 1 + Math.pow(G.compute(), 0.4) / 10;
-  G.chipPrice = () => G.chip().power * 4 * G.mods.perm;
   G.chipsFull = () => G.S.chain[4] > 0 && G.S.chips >= G.slots() - 1e-9;
-  G.chipSales = () => (G.chipsFull() || G.S.chain[4] === 0 ? G.chipRate() : 0) * G.chipPrice() * G.buffMult('prod');
 
   // ---------- chipontwikkeling ----------
   G.nextChip = () => G.CHIPS[G.S.chipGen + 1] || null;
@@ -129,8 +127,10 @@
   G.appUnlocked = a => G.S.owned[a.model] >= a.n;
   G.appCost = a => a.cost * Math.pow(6, G.app(a.id).v);
   G.appCap = a => { const s = G.app(a.id); return a.cap * Math.pow(2, Math.max(0, s.v - 1)); };
-  G.appRate = a => { const s = G.app(a.id); return s.v ? s.u * a.rev * Math.pow(2, s.v - 1) * G.mods.app * G.mods.perm * G.buffMult('prod') : 0; };
-  G.appRevenue = () => G.APPS.reduce((t, a) => t + G.appRate(a), 0);
+  // Gebruikers leveren trainingsdata; data versterkt de modellen.
+  G.appData = a => { const s = G.app(a.id); return s.v ? s.u * a.rev * Math.pow(2, s.v - 1) * G.mods.app : 0; };
+  G.dataValue = () => G.APPS.reduce((t, a) => t + G.appData(a), 0);
+  G.dataBonus = () => 1 + Math.pow(G.dataValue(), 0.3) / 10;
   G.buildApp = a => {
     const s = G.app(a.id), c = G.appCost(a);
     if (!G.appUnlocked(a) || s.b || G.S.tokens < c) return false;
@@ -159,10 +159,8 @@
   };
 
   // ---------- tijd ----------
-  // Geeft de verdiende tokens terug (apps + verkochte chips) over dt seconden.
   G.industryTick = dt => {
     const S = G.S, now = Date.now();
-    let earned = 0;
 
     if (S.rnd && now >= S.rnd.end) {
       S.chipGen = S.rnd.gen;
@@ -179,19 +177,13 @@
     const h = dt / steps;
     for (let k = 0; k < steps; k++) {
       const rate = G.chipRate();
-      if (S.chain[4] > 0) {
-        const room = G.slots() - S.chips;
-        const add = Math.min(room, rate * h);
-        S.chips += Math.max(0, add);
-        if (rate * h > add) earned += (rate * h - Math.max(0, add)) * G.chipPrice() * G.buffMult('prod');
-      } else earned += rate * h * G.chipPrice() * G.buffMult('prod');
+      if (S.chain[4] > 0) S.chips = Math.min(G.slots(), S.chips + rate * h);
 
       for (const a of G.APPS) {
         const s = S.apps[a.id];
         if (!s || !s.v) continue;
         const cap = G.appCap(a);
         s.u = Math.min(cap, s.u + Math.min(cap - s.u, 0.06 * s.u * (1 - s.u / cap) * h + 0.5 * h));
-        earned += G.appRate(a) * h;
       }
     }
 
@@ -202,10 +194,9 @@
       for (const a of G.APPS) if (G.campaign(a, true)) any = true;
       if (any) G.emit('autoCampaign');
     }
-    return earned;
   };
 
-  G.totalTps = () => G.tps() + G.appRevenue() + G.chipSales();
+  G.totalTps = () => G.tps();
 
   // ---------- tabbladen ontgrendelen ----------
   G.TAB_UNLOCK = { chips: 250, apps: 150, team: 800 };
