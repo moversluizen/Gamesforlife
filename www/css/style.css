@@ -22,7 +22,7 @@
 html, body {
   margin: 0; height: 100%; overflow: hidden;
   background: var(--bg); color: var(--fg);
-  font-family: -apple-system, BlinkMacSystemFont, "SF Pro Rounded", "Segoe UI", Roboto, system-ui, sans-serif;
+  font-family: ui-rounded, -apple-system, BlinkMacSystemFont, "SF Pro Rounded", "Segoe UI", Roboto, system-ui, sans-serif;
   -webkit-tap-highlight-color: transparent; -webkit-user-select: none; user-select: none;
   -webkit-touch-callout: none; overscroll-behavior: none;
 }
@@ -51,12 +51,31 @@ button { font: inherit; color: inherit; border: 0; background: none; cursor: poi
 .agi-label { display: flex; justify-content: space-between; font-size: 12px; color: var(--mute); margin-bottom: 4px; font-weight: 600; }
 .bar { height: 8px; border-radius: 8px; background: rgba(255, 255, 255, .07); overflow: hidden; }
 .bar i { display: block; height: 100%; width: 0; border-radius: 8px; background: linear-gradient(90deg, var(--c1), var(--c2), var(--gold)); box-shadow: 0 0 12px var(--c1); transition: width .4s; }
-#buffs { display: flex; justify-content: center; gap: 6px; flex-wrap: wrap; margin-top: 8px; min-height: 0; }
+#buffs { position: absolute; top: 10px; left: 0; right: 0; z-index: 5; display: flex; justify-content: center; gap: 6px; flex-wrap: wrap; pointer-events: none; }
 .buff { font-size: 12px; font-weight: 700; padding: 4px 10px; border-radius: 99px; background: linear-gradient(90deg, #6a3cff, #ff3ca6); box-shadow: 0 0 14px rgba(255, 60, 166, .5); animation: pulse 1s infinite alternate; }
 
 /* ---------- speelveld ---------- */
 #stage { position: relative; overflow: hidden; display: flex; align-items: center; justify-content: center; }
 #fx { position: absolute; inset: 0; width: 100%; height: 100%; }
+#stage::before {
+  content: ''; position: absolute; left: 50%; top: 50%; width: 140%; aspect-ratio: 2; translate: -50% -42%;
+  background: radial-gradient(closest-side, hsla(var(--hue), 100%, 55%, .22), transparent); pointer-events: none;
+}
+#floor {
+  position: absolute; left: -80%; right: -80%; bottom: 0; height: 75%; pointer-events: none; opacity: .7;
+  background-image:
+    linear-gradient(hsla(var(--hue), 100%, 68%, .35) 1px, transparent 1px),
+    linear-gradient(90deg, hsla(var(--hue), 100%, 68%, .35) 1px, transparent 1px);
+  background-size: 46px 46px;
+  transform: perspective(320px) rotateX(56deg); transform-origin: 50% 100%;
+  -webkit-mask-image: linear-gradient(to top, #000 5%, transparent 60%); mask-image: linear-gradient(to top, #000 5%, transparent 60%);
+  animation: floorMove 3s linear infinite;
+}
+@keyframes floorMove { to { background-position: 0 46px, 0 0; } }
+#core::after {
+  content: ''; position: absolute; left: 18%; right: 18%; bottom: -7%; height: 9%; border-radius: 50%;
+  background: radial-gradient(closest-side, hsla(var(--hue), 100%, 60%, .55), transparent); filter: blur(4px); z-index: -1;
+}
 #core {
   position: relative; z-index: 2; width: min(62vw, 34vh, 260px); aspect-ratio: 1;
   border-radius: 50%; touch-action: manipulation; transition: transform .08s;
@@ -108,13 +127,17 @@ button { font: inherit; color: inherit; border: 0; background: none; cursor: poi
 #panel {
   background: var(--panel); border-top: 1px solid var(--line); border-radius: 22px 22px 0 0;
   overflow: hidden; position: relative; z-index: 3; min-height: 0;
-  box-shadow: 0 -10px 40px rgba(0, 0, 0, .4);
+  box-shadow: 0 -10px 40px rgba(0, 0, 0, .4), inset 0 1px 0 hsla(var(--hue), 100%, 75%, .12);
+}
+#panel::before {
+  content: ''; position: absolute; top: 7px; left: 50%; width: 38px; height: 4px; border-radius: 2px;
+  background: rgba(255, 255, 255, .14); translate: -50% 0; z-index: 3;
 }
 .tab { display: none; height: 100%; overflow-y: auto; -webkit-overflow-scrolling: touch; padding: 0 12px 16px; }
 .tab.active { display: block; }
 .tabhead {
   position: sticky; top: 0; z-index: 2; display: flex; align-items: center; justify-content: space-between;
-  padding: 14px 4px 10px; background: linear-gradient(var(--panel) 80%, transparent);
+  min-height: 58px; padding: 16px 4px 8px; background: linear-gradient(var(--panel) 80%, transparent);
 }
 .tabhead h2 { margin: 0; font-size: 18px; }
 .seg { display: flex; background: rgba(255, 255, 255, .06); border-radius: 10px; padding: 3px; }
@@ -133,9 +156,17 @@ button { font: inherit; color: inherit; border: 0; background: none; cursor: poi
 .gen.locked .gicon { filter: grayscale(1) brightness(.3); }
 .gicon {
   width: 52px; height: 52px; border-radius: 14px; display: grid; place-items: center; font-size: 28px;
-  background: radial-gradient(circle at 30% 25%, hsla(var(--hue), 90%, 60%, .5), hsla(calc(var(--hue) + 60), 90%, 40%, .25));
+  --gh: var(--hue);
+  background: radial-gradient(circle at 30% 22%, hsla(var(--gh), 95%, 64%, .6), hsla(calc(var(--gh) + 35), 90%, 38%, .3) 70%);
+  box-shadow: inset 0 0 0 1px hsla(var(--gh), 100%, 75%, .25), inset 0 -6px 12px rgba(0, 0, 0, .25);
   position: relative;
 }
+:is(.gen, .app):nth-child(6n+1) .gicon { --gh: 205; }
+:is(.gen, .app):nth-child(6n+2) .gicon { --gh: 265; }
+:is(.gen, .app):nth-child(6n+3) .gicon { --gh: 320; }
+:is(.gen, .app):nth-child(6n+4) .gicon { --gh: 20; }
+:is(.gen, .app):nth-child(6n+5) .gicon { --gh: 160; }
+:is(.gen, .app):nth-child(6n) .gicon { --gh: 45; }
 .gicon .own {
   position: absolute; right: -6px; bottom: -6px; min-width: 22px; height: 22px; padding: 0 6px; border-radius: 11px;
   background: var(--fg); color: #0a0f24; font-size: 12px; font-weight: 800; display: grid; place-items: center;
@@ -202,18 +233,32 @@ button { font: inherit; color: inherit; border: 0; background: none; cursor: poi
 .danger { color: var(--bad); font-weight: 700; padding: 12px 4px; }
 .small-print { color: var(--mute); font-size: 12px; line-height: 1.5; padding: 12px 4px; }
 
-/* tabbalk */
+/* tabbalk: vaste maten, zodat er niets verspringt bij het wisselen */
 #tabs {
-  display: grid; grid-template-columns: repeat(6, 1fr); background: #070c1c; border-top: 1px solid var(--line);
-  padding: 6px 4px calc(6px + var(--sb)); position: relative; z-index: 3;
+  display: grid; grid-template-columns: repeat(6, 1fr); align-items: stretch;
+  background: #070b1a; border-top: 1px solid rgba(255, 255, 255, .1);
+  padding: 6px 4px calc(6px + var(--sb)); position: relative; z-index: 6;
+  box-shadow: 0 -8px 24px rgba(0, 0, 0, .45);
 }
-#tabs button { display: flex; flex-direction: column; align-items: center; gap: 2px; padding: 4px 0; color: var(--mute); position: relative; }
-#tabs b { font-size: 20px; filter: grayscale(.8); transition: transform .15s, filter .15s; }
-#tabs span { font-size: 10px; font-weight: 700; }
+#tabs button {
+  height: 52px; display: flex; flex-direction: column; align-items: center; justify-content: center; gap: 4px;
+  padding: 0; color: #7f8ab8; min-width: 0;
+}
+#tabs .ic {
+  position: relative; width: 50px; height: 30px; border-radius: 15px; display: grid; place-items: center;
+  transition: background-color .2s, color .2s;
+}
+#tabs svg { width: 24px; height: 24px; fill: none; stroke: currentColor; stroke-width: 2.1; stroke-linecap: round; stroke-linejoin: round; overflow: visible; }
+#tabs svg .f { fill: currentColor; fill-opacity: .28; }
+#tabs .lb { font-size: 10.5px; font-weight: 700; line-height: 1; white-space: nowrap; }
 #tabs button.on { color: var(--fg); }
-#tabs button.on b { filter: none; transform: translateY(-2px) scale(1.1); }
-.dot { position: absolute; top: 2px; right: calc(50% - 18px); width: 9px; height: 9px; border-radius: 50%; background: var(--bad); display: none; box-shadow: 0 0 8px var(--bad); }
+#tabs button.on .ic { background: hsla(var(--hue), 100%, 62%, .2); color: var(--c1); box-shadow: inset 0 0 0 1px hsla(var(--hue), 100%, 70%, .35); }
+#tabs button.on svg .f { fill-opacity: .6; }
+#tabs button.locked { opacity: .38; }
+.dot { position: absolute; top: 1px; right: 8px; width: 9px; height: 9px; border-radius: 50%; background: var(--bad); display: none; box-shadow: 0 0 0 2px #070b1a, 0 0 8px var(--bad); }
 .dot.show { display: block; }
+button:focus { outline: none; }
+button:focus-visible { outline: 2px solid var(--c1); outline-offset: 2px; }
 
 /* modal & toasts */
 #modal { position: fixed; inset: 0; z-index: 50; background: rgba(3, 5, 14, .72); backdrop-filter: blur(6px); -webkit-backdrop-filter: blur(6px); display: flex; align-items: center; justify-content: center; padding: 16px; }
@@ -338,9 +383,6 @@ button { font: inherit; color: inherit; border: 0; background: none; cursor: poi
 .gbuy:disabled { opacity: .6; }
 
 /* ---------- tabbalk & meer ---------- */
-#tabs button.locked b { filter: grayscale(1) brightness(.5); }
-#tabs button.locked span { opacity: .5; }
-#tabs span { font-size: 9.5px; }
 #moreSeg { width: 100%; }
 #moreSeg button { flex: 1; font-size: 12px; padding: 7px 4px; }
 #sub-ach > p { margin: 0 4px 10px; }
@@ -357,4 +399,8 @@ button { font: inherit; color: inherit; border: 0; background: none; cursor: poi
   #orbit .hav { transform: rotate(var(--a)) translateY(calc(min(52vw, 66vh, 470px) * -.5 + 18px)) rotate(calc(-1 * var(--a))); }
   .tokens { font-size: 44px; }
   #toasts { right: 460px; }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  #floor, #orbit, #orbit .hav i, .arrow.live i { animation: none !important; }
 }
