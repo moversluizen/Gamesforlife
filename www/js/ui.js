@@ -278,6 +278,7 @@
     const dir = t === 'more' || currentTab === 'more' ? 0 : TAB_ORDER.indexOf(t) - TAB_ORDER.indexOf(currentTab);
     currentTab = t;
     $('app').dataset.screen = SCREENS[t] || 'full';
+    $('app').dataset.tab = t;
     document.querySelectorAll('#tabs button').forEach(b => b.classList.toggle('on', b.dataset.tab === t));
     document.querySelectorAll('.tab').forEach(s => s.classList.toggle('active', s.id === 'tab-' + t));
     const sec = activeSection();

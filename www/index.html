@@ -11,13 +11,13 @@
 <link rel="stylesheet" href="css/style.css">
 </head>
 <body>
-<div id="app" data-screen="models">
+<div id="app" data-screen="models" data-tab="models">
   <header id="top">
     <div class="hud-row">
       <button id="chapterChip" aria-label="Huidig hoofdstuk"><span id="chIcon">🔧</span><span id="chNum">H1</span></button>
       <div class="bank">
         <div class="tokens"><span id="tokens">0</span><small>tokens</small></div>
-        <div class="tps" id="tps">+0/s</div>
+        <div class="tps"><span id="tps">+0/s</span><span class="agi-pct" id="agiPct">AGI 0%</span></div>
       </div>
       <button id="moreBtn" aria-label="Meer: singulariteit, prestaties en instellingen">
         <svg viewBox="0 0 24 24" aria-hidden="true"><path d="M4 7h16M4 12h16M4 17h16"/></svg>
@@ -25,9 +25,8 @@
       </button>
     </div>
     <div class="agi">
-      <span class="agi-ch" id="eraName"></span>
+      <span class="agi-ch" id="eraName" hidden></span>
       <div class="bar"><i id="agiBar"></i></div>
-      <span class="agi-pct" id="agiPct">AGI 0%</span>
     </div>
     <button id="quest" class="hidden" aria-live="polite">
       <span class="qa">🤖</span>

@@ -1180,3 +1180,76 @@ button:focus-visible { outline: 2px solid var(--c1); outline-offset: 2px; }
 :is(#resSeg, #moreSeg) button.dot-on::after { content: ''; position: absolute; top: 5px; right: 5px; width: 7px; height: 7px; margin: 0;
   border-radius: 50%; background: var(--bad); box-shadow: 0 0 0 2px #121833; }
 @media (max-width: 370px) { :is(#resSeg, #moreSeg) button { font-size: 12px; } }
+
+/* ===== Minimale bovenbalk en meer kleur per onderdeel (v8) ===== */
+/* Bovenbalk: één regel (hoofdstuk, tokens, menu), een dun AGI-lijntje en een slanke opdracht. */
+#top { padding: calc(6px + var(--st)) 12px 6px !important; }
+.hud-row { grid-template-columns: 52px 1fr 52px !important; }
+.tokens { font-size: 26px !important; line-height: 1.05; }
+.tokens small { font-size: 12px; }
+.tps { display: flex; justify-content: center; gap: 8px; font-size: 12px !important; line-height: 1.3; }
+.tps .agi-pct { color: #c3c9e6; font-weight: 700; }
+.tps .agi-pct::before { content: '·'; margin-right: 8px; color: var(--mute); }
+.agi { display: block !important; margin: 6px 0 0 !important; max-width: none !important; }
+.agi .bar { height: 3px !important; border-radius: 3px; }
+#quest { min-height: 40px !important; margin-top: 6px !important; padding: 4px 6px 4px 10px !important; gap: 8px; border-radius: 12px; position: relative; overflow: hidden; }
+#quest .qa { font-size: 18px !important; }
+#quest .qt small { display: none !important; }
+#quest .qt > span { font-size: 13px; -webkit-line-clamp: 2; }
+#quest .qbar { position: absolute; left: 0; right: 0; bottom: 0; height: 3px !important; margin: 0 !important; border-radius: 0; }
+#quest .qr { font-size: 12px; padding: 6px 8px; border-radius: 9px; }
+
+/* Het speelveld krijgt de vrijgekomen ruimte. */
+#app { grid-template-rows: auto minmax(150px, 33%) minmax(0, 1fr) auto; }
+@media (max-height: 760px) { #app { grid-template-rows: auto minmax(120px, 29%) minmax(0, 1fr) auto; } }
+@media (max-height: 660px) { #app { grid-template-rows: auto minmax(110px, 27%) minmax(0, 1fr) auto; } }
+@media (min-width: 900px), (orientation: landscape) and (min-width: 640px) { #app { grid-template-rows: auto 1fr auto; } }
+
+/* Elk onderdeel een eigen kleur: achtergrond, paneel, overzichtskaart en kaarten kleuren mee. */
+#app { --th: 265; }
+#app[data-tab="chips"] { --th: 188; }
+#app[data-tab="apps"] { --th: 328; }
+#app[data-tab="research"] { --th: 215; }
+#app[data-tab="team"] { --th: 150; }
+#app[data-tab="safety"] { --th: 32; }
+#app[data-tab="more"] { --th: 285; }
+#app {
+  background:
+    radial-gradient(90% 45% at 85% 0%, hsla(var(--th), 85%, 45%, .30), transparent 70%),
+    radial-gradient(80% 40% at 0% 35%, hsla(calc(var(--th) + 60), 85%, 45%, .18), transparent 70%),
+    linear-gradient(180deg, hsl(var(--th) 45% 9%), #070a17 60%) !important;
+  transition: background .4s;
+}
+#panel {
+  background:
+    radial-gradient(120% 220px at 100% 0%, hsla(var(--th), 80%, 40%, .22), transparent 70%),
+    radial-gradient(90% 260px at 0% 100%, hsla(calc(var(--th) + 50), 80%, 40%, .14), transparent 70%),
+    linear-gradient(180deg, hsl(var(--th) 40% 12%), hsl(var(--th) 35% 8%)) !important;
+  box-shadow: 0 -8px 30px rgba(0, 0, 0, .35), inset 0 1px 0 hsla(var(--th), 90%, 70%, .25) !important;
+}
+.sh-ic { background: linear-gradient(145deg, hsla(var(--th), 90%, 60%, .45), hsla(calc(var(--th) + 40), 90%, 45%, .25)); box-shadow: inset 0 0 0 1px hsla(var(--th), 100%, 75%, .35); }
+.ind-card {
+  background: linear-gradient(135deg, hsla(var(--th), 75%, 38%, .38), hsla(calc(var(--th) + 45), 75%, 30%, .18)) !important;
+  box-shadow: inset 0 1px 0 hsla(var(--th), 100%, 80%, .15);
+}
+.ind-card .bar { background: rgba(0, 0, 0, .3); }
+.subhead { display: flex; align-items: center; gap: 7px; }
+.subhead::before { content: ''; flex: none; width: 4px; height: 14px; border-radius: 2px; background: linear-gradient(hsl(var(--th) 95% 68%), hsl(calc(var(--th) + 50) 95% 60%)); }
+/* Kaarten: een zachte gloed in de kleur van hun eigen icoon, zodat de lijst niet één grijze muur is. */
+:is(.gen, .app):nth-child(6n+1) { --gh: 205; }
+:is(.gen, .app):nth-child(6n+2) { --gh: 265; }
+:is(.gen, .app):nth-child(6n+3) { --gh: 320; }
+:is(.gen, .app):nth-child(6n+4) { --gh: 20; }
+:is(.gen, .app):nth-child(6n+5) { --gh: 160; }
+:is(.gen, .app):nth-child(6n) { --gh: 45; }
+.gen, .gen.can, .gen.upg {
+  background: linear-gradient(100deg, hsla(var(--gh, var(--th)), 70%, 45%, .20), hsla(var(--th), 40%, 20%, .35) 45%, rgba(255, 255, 255, .03)) !important;
+  box-shadow: inset 0 1px 0 rgba(255, 255, 255, .05);
+}
+.gen.locked-h, .gen.locked { background: rgba(255, 255, 255, .03) !important; }
+#tabs { background: linear-gradient(180deg, hsl(var(--th) 35% 9%), #070a17) !important; }
+.seg-tabs { background: rgba(0, 0, 0, .22); }
+.tokens, .tps { white-space: nowrap; }
+#app[data-screen="full"] .bank { display: flex; align-items: baseline; justify-content: center; gap: 10px; min-width: 0; }
+#app[data-screen="full"] .tokens { font-size: 22px !important; }
+#app[data-screen="full"] :is(.tokens small, .tps .agi-pct) { display: none; }
