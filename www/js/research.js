@@ -47,16 +47,16 @@
   // Lab: je organisatie. Elke afdeling opent een onderdeel of een helper.
   // Het lab blijft bestaan na een singulariteit (opgeslagen in S.lab).
   G.LAB = [
-    ['lab_product',  'Productteam',             '📱', 100,  'Ontgrendelt het onderdeel Apps',               'Een team dat van modellen echte producten maakt.'],
-    ['lab_hardware', 'Eigen hardware',          '💾', 250,  'Ontgrendelt het onderdeel Chips',              'Stop met huren: bouw je eigen chips en datacenters.'],
-    ['lab_hr',       'HR-afdeling',             '👥', 600,  'Ontgrendelt het onderdeel Team en de Stagiair', 'Iemand moet de sollicitaties lezen.'],
-    ['lab_safety',   'Veiligheidsteam',         '🦺', 2500, 'Ontgrendelt de Safety-engineer',               'Slimmere modellen vragen om toezicht.'],
-    ['lab_eng',      'Engineeringafdeling',     '🧑‍🔧', 5000, 'Ontgrendelt de Fab-ingenieur',                'Mensen die de fabriek draaiende houden.'],
-    ['lab_design',   'Chipontwerpstudio',       '👩‍🔬', 3e4,  'Ontgrendelt de Chipontwerper',                'Ontwerp je chips zelf, sneller dan de concurrent.'],
-    ['lab_mkt',      'Marketingafdeling',       '📣', 5e4,  'Ontgrendelt de Marketeer',                     'Want een goede app verkoopt zichzelf niet.'],
-    ['lab_talent',   'Talentprogramma',         '🕵️', 1e5,  'Ontgrendelt de Talentscout',                   'Op zoek naar het volgende genie.'],
-    ['lab_finance',  'Financiële afdeling',     '💼', 2e5,  'Ontgrendelt de Financieel directeur',          'Iemand die weet waar al die tokens heen gaan.'],
-    ['lab_sing',     'Singulariteitsinstituut', '🌀', 1e9,  'Ontgrendelt de singulariteit',                 'Onderzoek naar wat er na AGI komt.'],
+    ['lab_product',  'Productteam',             '📱', 400,  'Ontgrendelt het onderdeel Apps',               'Een team dat van modellen echte producten maakt.'],
+    ['lab_hardware', 'Eigen hardware',          '💾', 4000,  'Ontgrendelt het onderdeel Chips',              'Stop met huren: bouw je eigen chips en datacenters.'],
+    ['lab_hr',       'HR-afdeling',             '👥', 6e4,  'Ontgrendelt het onderdeel Team en de Stagiair', 'Iemand moet de sollicitaties lezen.'],
+    ['lab_safety',   'Veiligheidsteam',         '🦺', 5e5, 'Ontgrendelt de Safety-engineer',               'Slimmere modellen vragen om toezicht.'],
+    ['lab_eng',      'Engineeringafdeling',     '🧑‍🔧', 5e6, 'Ontgrendelt de Fab-ingenieur',                'Mensen die de fabriek draaiende houden.'],
+    ['lab_design',   'Chipontwerpstudio',       '👩‍🔬', 5e7,  'Ontgrendelt de Chipontwerper',                'Ontwerp je chips zelf, sneller dan de concurrent.'],
+    ['lab_mkt',      'Marketingafdeling',       '📣', 5e8,  'Ontgrendelt de Marketeer',                     'Want een goede app verkoopt zichzelf niet.'],
+    ['lab_talent',   'Talentprogramma',         '🕵️', 1e10,  'Ontgrendelt de Talentscout',                   'Op zoek naar het volgende genie.'],
+    ['lab_finance',  'Financiële afdeling',     '💼', 2e11,  'Ontgrendelt de Financieel directeur',          'Iemand die weet waar al die tokens heen gaan.'],
+    ['lab_sing',     'Singulariteitsinstituut', '🌀', 5e12,  'Ontgrendelt de singulariteit',                 'Onderzoek naar wat er na AGI komt.'],
   ];
   G.HELPER_LAB = { intern: 'lab_hr', safety: 'lab_safety', eng: 'lab_eng', design: 'lab_design', mkt: 'lab_mkt', scout: 'lab_talent', cfo: 'lab_finance' };
   G.TAB_LAB = { apps: 'lab_product', chips: 'lab_hardware', team: 'lab_hr' };
@@ -88,14 +88,15 @@
 
   G.GENS.forEach((g, i) => {
     if (!MODEL_TECH[i]) return;
-    addRow('models', i, tech('tm' + i, 'models', MODEL_TECH[i], g.cost * 0.5, `Ontgrendelt ${g.icon} ${g.name}`));
+    // Elke stap relatief duurder: vroege modellen snel, latere vragen geduld.
+    addRow('models', i, tech('tm' + i, 'models', MODEL_TECH[i], g.cost * 1.5 * Math.pow(1.5, i - 2), `Ontgrendelt ${g.icon} ${g.name}`));
   });
   G.CHIPS.forEach((c, i) => {
     if (!CHIP_TECH[i]) return;
-    addRow('chips', i, tech('tc' + i, 'chips', CHIP_TECH[i], c.cost * 0.3, `Ontgrendelt ${c.icon} ${c.name}`));
+    addRow('chips', i, tech('tc' + i, 'chips', CHIP_TECH[i], c.cost * 0.5 * Math.pow(1.4, i - 1), `Ontgrendelt ${c.icon} ${c.name}`));
   });
   G.APPS.forEach((a, i) => {
-    addRow('apps', i, tech('ta' + i, 'apps', APP_TECH[i], a.cost * 0.4, `Ontgrendelt ${a.icon} ${a.name}`));
+    addRow('apps', i, tech('ta' + i, 'apps', APP_TECH[i], a.cost * 0.6 * Math.pow(1.4, i), `Ontgrendelt ${a.icon} ${a.name}`));
   });
 
   // Hoofdlijn: elke knoop vraagt de vorige.

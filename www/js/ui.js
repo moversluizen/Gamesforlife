@@ -56,14 +56,14 @@
       else if (tech) e.rate.textContent = `🔬 Eerst onderzoeken: ${tech.icon} ${tech.name}`;
       else if (S.owned[i]) {
         const r = G.genRate(i);
-        e.rate.textContent = `+${G.fmt(r)}/s · ${Math.round(r / tps * 100)}% van totaal`;
+        e.rate.textContent = `${G.fmtRate(r)} · ${Math.round(r / tps * 100)}% van totaal`;
       } else e.rate.textContent = g.desc;
       const next = G.nextMilestone(S.owned[i]);
       const prevIdx = G.MILESTONES.indexOf(next) - 1, prev = prevIdx >= 0 ? G.MILESTONES[prevIdx] : 0;
       e.mbar.style.width = next ? ((S.owned[i] - prev) / (next - prev) * 100) + '%' : '100%';
       const ml = !rev ? '' : next ? `2× productie bij ${next}${G.milestoneLevel(S.owned[i]) ? ` · nu ×${G.fmt(Math.pow(2, G.milestoneLevel(S.owned[i])))}` : ''}` : 'Alle mijlpalen gehaald';
       if (e.ml.textContent !== ml) e.ml.textContent = ml;
-      e.q.textContent = tech ? '🔬 onderzoek' : rev ? `×${k}` + (next && S.owned[i] + k >= next ? ' ⭐' : '') : '';
+      e.q.textContent = tech ? 'onderzoeken' : rev ? `kopen ×${k}` + (next && S.owned[i] + k >= next ? ' ⭐' : '') : '';
       e.c.textContent = G.fmt(tech ? tech.cost : cost);
     });
   }
@@ -101,7 +101,7 @@
   // ---------- singulariteit ----------
   function updateSing() {
     const S = G.S, p = G.pendingInsights();
-    const nextAt = Math.pow(G.insightsFor(S.lifeEarned) + 1, 2) * 1e9;
+    const nextAt = G.earnedForInsights(G.insightsFor(S.lifeEarned) + 1);
     const agiHtml = G.agiUnlocked()
       ? `<div class="big-card"><div style="font-size:44px">✨</div><h3>Project AGI</h3>
           <p>Combineer alles wat je hebt gebouwd tot één algemene intelligentie.<br>Beloning: <b>alle productie permanent ×2</b>.</p>
@@ -110,7 +110,7 @@
       : `<div class="big-card"><div style="font-size:44px">${S.agi ? '✅' : '🔒'}</div><h3>Project AGI</h3>
           <p>${S.agi ? 'Je hebt AGI gebouwd in deze cyclus! Activeer de singulariteit om opnieuw te beginnen met een nóg slimmer startpunt.'
                      : `Ontgrendel het laatste model (${G.GENS[G.GENS.length - 1].name}) om AGI te kunnen bouwen.`}</p>
-          <p>AGI gebouwd: <b>${S.agiCount}×</b> (bonus ×${G.fmt(G.mods.agiBonus)})</p></div>`;
+          <p>AGI gebouwd: <b>${S.agiCount}×</b> (bonus ${G.fmtMult(G.mods.agiBonus)})</p></div>`;
     $('singBody').innerHTML = agiHtml + `
       <div class="big-card"><div style="font-size:44px">🌀</div><h3>Singulariteit</h3>
         <p>Reset je modellen, onderzoek, chips, apps, team en tokens. In ruil krijg je <b>Inzichten</b>: elk inzicht geeft permanent <b>+2% productie</b>.</p>
@@ -134,7 +134,7 @@
       { label: 'Activeren', cls: 'primary', onClick: () => {
         G.prestige(); G.sfx.big(); G.haptic('HEAVY'); flashScreen();
         buildGens(); refresh(true); G.save();
-        toast('🌀', 'Een nieuwe cyclus begint', `Productie nu ×${G.mods.perm.toFixed(2).replace('.', ',')}`);
+        toast('🌀', 'Een nieuwe cyclus begint', `Productie nu ${G.fmtMult(G.mods.perm)}`);
       } },
     ]);
   }
@@ -190,9 +190,9 @@
       <div class="row"><span>Verdiend met tikken</span><b>${G.fmt(S.clickEarned)}</b></div>
       <div class="row"><span>Eureka-momenten</span><b>${S.eurekas}</b></div>
       <div class="row"><span>Singulariteiten</span><b>${S.prestiges}</b></div>
-      <div class="row"><span>Rekenkracht</span><b>${G.fmt(G.compute())} (×${G.computeBonus().toFixed(2).replace('.', ',')})</b></div>
-      <div class="row"><span>Data uit apps</span><b>${G.fmt(G.dataValue())} (×${G.dataBonus().toFixed(2).replace('.', ',')})</b></div>
-      <div class="row"><span>Totale bonus</span><b>×${G.fmt(G.mods.perm)}</b></div>
+      <div class="row"><span>Rekenkracht</span><b>${G.fmt(G.compute())} (${G.fmtMult(G.computeBonus())})</b></div>
+      <div class="row"><span>Data uit apps</span><b>${G.fmt(G.dataValue())} (${G.fmtMult(G.dataBonus())})</b></div>
+      <div class="row"><span>Totale bonus</span><b>${G.fmtMult(G.mods.perm)}</b></div>
       <div class="row"><span>Offline productie</span><b>${Math.round(G.mods.offline * 100)}%</b></div>
       <div class="row"><span>Speeltijd</span><b>${G.fmtTime(played)}</b></div>
       <div class="section-title">Instellingen</div>
@@ -332,7 +332,7 @@
     box.querySelectorAll('.boost').forEach((b, i) => {
       const t = tiles[i], open = G.tabUnlocked(t.tab);
       b.classList.toggle('lk', !open);
-      const txt = !open ? '🔒' : t.v === null ? (G.safetyDeficit() ? `⚠ ${Math.floor(G.S.risk)}%` : '✓') : '×' + (t.v < 100 ? t.v.toFixed(2).replace('.', ',') : G.fmt(t.v));
+      const txt = !open ? '🔒' : t.v === null ? (G.safetyDeficit() ? `⚠ ${Math.floor(G.S.risk)}%` : '✓') : G.fmtMult(t.v);
       b.classList.toggle('warn', t.v === null && open && G.safetyDeficit() > 0);
       const v = b.querySelector('.bv');
       if (v.textContent !== txt) v.textContent = txt;
@@ -477,14 +477,15 @@
   function updateTop() {
     const S = G.S;
     $('tokens').textContent = G.fmt(S.tokens);
-    $('tps').textContent = G.fmt(G.totalTps());
+    $('tps').textContent = G.fmtRate(G.totalTps());
     $('tapVal').textContent = `+${G.fmt(G.clickValue() * flowMult())} per tik`;
     const p = G.agiProgress();
     $('agiBar').style.width = (p * 100).toFixed(1) + '%';
     $('agiPct').textContent = S.agi ? 'AGI ✨' : `AGI ${(p * 100).toFixed(p < 0.1 ? 1 : 0).replace('.', ',')}%`;
     const ti = topIndex();
     core.dataset.era = Math.min(3, Math.floor((ti + 1) / 3));
-    $('eraName').textContent = S.agi ? 'Tijdperk van AGI' : (ti >= 0 ? G.GENS[ti].era : 'Het begin');
+    const ck = G.chapterIndex(), ch = G.CHAPTERS[ck];
+    if ($('eraName').textContent !== ch.title) { $('eraName').textContent = ch.title; $('chIcon').textContent = ch.icon; $('chNum').textContent = 'H' + (ck + 1); }
     const hue = S.agi ? 290 : 195 + Math.max(0, ti) * 9;
     document.documentElement.style.setProperty('--hue', hue % 360);
     G.fx.setHue(hue % 360);
@@ -558,6 +559,21 @@
     if (currentTab !== 'apps') toast('🔥', `${a.name} gaat viraal!`, 'Ga naar Apps en tik op de app om de hype te benutten.');
   });
   G.on('autoCampaign', () => { if (currentTab === 'apps') toast('📣', 'De marketeer startte een campagne', ''); });
+  // ---------- verhaal ----------
+  function showChapter(k) {
+    const ch = G.CHAPTERS[k];
+    modal(ch.icon, `Hoofdstuk ${k + 1} · ${ch.title}`, `${ch.text}<br><br><b>Doel:</b> ${ch.goal}`, [{ label: 'Verder', cls: 'primary' }]);
+  }
+  function showNewChapter() {
+    if (!$('modal').classList.contains('hidden')) return;
+    const k = G.unseenChapter();
+    if (k < 0) return;
+    G.markChapter(k);
+    if (k) { G.sfx.big(); G.fx.wave(); }
+    showChapter(k);
+  }
+  $('chapterChip').addEventListener('click', () => { G.haptic(); showChapter(G.chapterIndex()); });
+
   G.on('labDone', u => {
     G.sfx.big(); G.fx.wave();
     const h = G.HELPERS.find(x => G.HELPER_LAB[x.id] === u.id);
@@ -604,6 +620,7 @@
       if (currentTab === 'more' && moreSub === 'ach') updateAch();
       updateSing();
       checkUnlocks();
+      showNewChapter();
     }
     if (saveTimer > 10) { saveTimer = 0; G.save(); }
     if (newsTimer > 9) { newsTimer = 0; nextNews(); }
@@ -641,7 +658,7 @@
     G.fx.init($('fx'));
     buildGens();
     G.scheduleEureka();
-    G.nextEureka = Math.min(G.nextEureka, Date.now() + 45000);
+    G.nextEureka = Math.min(G.nextEureka, Date.now() + 120000);
     const off = G.tick();
     refresh(true);
     nextNews();
@@ -653,9 +670,7 @@
       toast('👆', 'Tip: veeg om te wisselen', 'Veeg over het paneel naar links of rechts om naar een ander onderdeel te gaan.');
     }, 20000);
     if (off) showOffline(off);
-    else if (G.S.lifeEarned === 0) {
-      modal('🧠', 'Road to AGI', 'Jij leidt een klein AI-lab met één perceptron. <b>Tik op de kern</b> om je model te trainen, koop steeds slimmere modellen en bouw uiteindelijk de eerste <b>algemene intelligentie</b>.', [{ label: 'Start training', cls: 'primary' }]);
-    }
+    else showNewChapter();
     requestAnimationFrame(frame);
   })();
 })();

@@ -18,7 +18,7 @@ G.GENS = [
 ];
 
 // Bij deze aantallen verdubbelt de productie van een model automatisch.
-G.MILESTONES = [10, 25, 50, 100, 150, 200, 250, 300, 400, 500];
+G.MILESTONES = [25, 50, 100, 150, 200, 300, 400, 500];
 
 // ---------- Onderzoek (upgrades) ----------
 G.UPGRADES = [];

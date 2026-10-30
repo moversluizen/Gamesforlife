@@ -795,3 +795,98 @@ button:focus-visible { outline: 2px solid var(--c1); outline-offset: 2px; }
 @keyframes shockBig { from { transform: scale(.6); opacity: 1; } to { transform: scale(11); opacity: 0; } }
 .floater.big { font-size: 30px; color: var(--gold); text-shadow: 0 0 16px var(--gold), 0 2px 4px rgba(0, 0, 0, .6); animation-duration: 1.2s; }
 @media (prefers-reduced-motion: reduce) { .shock { display: none; } #flowLbl.max { animation: none; } }
+
+/* =========================================================
+   Nieuw ontwerp v2: compacte bovenkant, zwevende menubalk, alles iets kleiner
+   ========================================================= */
+/* bovenkant */
+#top { padding: calc(6px + var(--st)) 12px 6px; }
+.hud-row { display: grid; grid-template-columns: 54px 1fr 54px; align-items: center; gap: 6px; }
+#top .bank { padding: 0; text-align: center; min-width: 0; }
+.tokens { font-size: 28px; line-height: 1.05; }
+.tokens small { font-size: 12px; margin-left: 5px; }
+.tps { font-size: 12px; }
+#moreBtn { position: static; justify-self: end; width: 36px; height: 36px; }
+#chapterChip {
+  justify-self: start; display: flex; align-items: center; gap: 3px; height: 30px; padding: 0 8px 0 6px; border-radius: 15px;
+  background: rgba(255, 255, 255, .06); border: 1px solid var(--line); font-size: 12px; font-weight: 800; color: var(--fg);
+}
+#chIcon { font-size: 14px; }
+.agi { display: grid; grid-template-columns: auto 1fr auto; align-items: center; gap: 8px; margin: 6px auto 0; max-width: 560px; }
+.agi .bar { height: 5px; }
+.agi-ch { font-size: 11px; font-weight: 700; color: var(--mute); white-space: nowrap; max-width: 46vw; overflow: hidden; text-overflow: ellipsis; }
+.agi-pct { font-size: 11px; font-weight: 800; color: var(--fg); font-variant-numeric: tabular-nums; }
+#quest { margin-top: 6px; padding: 5px 9px; border-radius: 12px; gap: 8px; }
+#quest .qa { font-size: 17px; }
+#quest .qt { font-size: 12px; }
+#quest .qt small { font-size: 9px; }
+#quest .qr { font-size: 11px; }
+#quest.done .qr { padding: 5px 8px; }
+
+/* volledige schermen: alleen de bovenste regel */
+@media (max-width: 899px) and (orientation: portrait), (max-width: 639px) {
+  #app[data-screen="full"] #top { padding-top: calc(6px + var(--st)); padding-bottom: 6px; }
+  #app[data-screen="full"] .bank { display: flex; align-items: baseline; justify-content: center; gap: 8px; }
+  #app[data-screen="full"] .tokens { font-size: 20px; }
+}
+
+/* zwevende menubalk */
+#tabs {
+  margin: 0 8px calc(8px + var(--sb)); padding: 4px; border-radius: 20px;
+  background: rgba(9, 13, 30, .96); border: 1px solid rgba(255, 255, 255, .09);
+  box-shadow: 0 10px 30px rgba(0, 0, 0, .55), inset 0 1px 0 rgba(255, 255, 255, .05);
+}
+#tabInd { display: none; }
+#tabs button { height: 48px; gap: 3px; border-radius: 15px; transition: background-color .2s; }
+#tabs .ic { width: auto; height: 24px; background: none !important; box-shadow: none !important; }
+#tabs svg { width: 22px; height: 22px; }
+#tabs .lb { font-size: 10px; }
+#tabs button.on { background: hsla(var(--hue), 100%, 62%, .16); box-shadow: inset 0 0 0 1px hsla(var(--hue), 100%, 70%, .3); }
+#tabs button.on .ic { color: var(--c1); }
+#tabs .dot { right: -6px; top: -2px; }
+#tabs button.locked .ic::after { right: -8px; }
+
+/* paneel en kaarten iets kleiner */
+#panel { border-radius: 20px 20px 0 0; }
+#scrHead { padding: 10px 12px 4px; gap: 9px; }
+.sh-ic { width: 30px; height: 30px; font-size: 16px; border-radius: 9px; }
+.sh-txt h2 { font-size: 15px; }
+.sh-txt small { font-size: 11px; }
+.tab { padding: 0 10px 12px; }
+.gen, .upg { grid-template-columns: 46px 1fr auto; gap: 9px; padding: 9px; border-radius: 14px; margin-bottom: 7px; }
+.app-top { grid-template-columns: 46px 1fr auto; gap: 9px; }
+.app { padding: 9px; border-radius: 14px; margin-bottom: 7px; }
+.gicon { width: 46px; height: 46px; font-size: 24px; border-radius: 13px; }
+.gicon .own { min-width: 20px; height: 20px; font-size: 11px; right: -5px; bottom: -5px; }
+.gname { font-size: 14px; }
+.grate { font-size: 11.5px; }
+.mlabel { font-size: 10.5px; }
+.gbuy { min-width: 84px; padding: 7px 8px; border-radius: 11px; }
+.gbuy .q { font-size: 10.5px; }
+.gbuy .c { font-size: 13px; }
+.boost { padding: 6px 3px; }
+.boost .bi { font-size: 15px; }
+.boost .bv { font-size: 13px; }
+.boost-intro { font-size: 11px; margin-bottom: 6px; }
+.ind-card { padding: 12px; border-radius: 14px; }
+.seg button { font-size: 12px; padding: 5px 9px; }
+.tnode { min-height: 92px; padding: 8px 5px; border-radius: 14px; }
+.tnode .ti { font-size: 21px; }
+.tnode .tn { font-size: 11.5px; }
+#toasts { bottom: calc(80px + var(--sb)); }
+.toast { padding: 7px 11px; font-size: 12.5px; border-radius: 12px; }
+.toast .ti { font-size: 20px; }
+@media (max-width: 370px) {
+  .hud-row { grid-template-columns: 48px 1fr 40px; }
+  .tokens { font-size: 24px; }
+  .gen, .upg, .app-top { grid-template-columns: 40px 1fr auto; }
+  .gicon { width: 40px; height: 40px; font-size: 21px; }
+  .gbuy { min-width: 74px; }
+  #tabs { margin: 0 6px calc(6px + var(--sb)); }
+}
+@media (max-height: 760px) {
+  .tokens { font-size: 24px; }
+  #quest .qt small { display: none; }
+  #tabs button { height: 44px; }
+}
+.boost .bl { text-transform: none; letter-spacing: 0; font-size: 10px; }

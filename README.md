@@ -15,7 +15,7 @@ De mechanismen komen uit de populairste idle games (Cookie Clicker, AdVenture Ca
 | Lab | Je organisatie: elke afdeling (Productteam, Eigen hardware, HR, Veiligheid, …) ontgrendelt een onderdeel of helper; blijft na een singulariteit |
 | Onderzoeksbomen | Drie bomen (modellen, chips, apps): de hoofdlijn ontgrendelt elk volgend model, elke chipgeneratie en elke app; zijtakken geven boosts |
 | Upgrades | 120+ losse verbeteringen (per model, voor tikken, Eureka, offline, veiligheid) |
-| Gouden bonus | 💡 Eureka-momenten: Doorbraak, Datastorm (×7) of Klikstorm (×777) |
+| Gouden bonus | 💡 Eureka-momenten: Doorbraak, Datastorm (×7) of Klikstorm (×77) |
 | Offline-opbrengst | Tot 8 uur, 50% → 100% met upgrades |
 | Prestige | Singulariteit: reset voor Inzichten (+2% productie per stuk) |
 | Eindbaas | Project AGI: permanent ×2, daarna elke keer 10× groter |
@@ -32,6 +32,8 @@ De mechanismen komen uit de populairste idle games (Cookie Clicker, AdVenture Ca
 | Veiligheid | Slimmere modellen vragen veiligheid (safety-engineers, 8 veiligheidsonderzoeken). Loop je achter, dan stijgt het risico tot een backlash: productie −50% en gebruikers haken af |
 | Mijlpalen in de keten | Elke ketenschakel verdubbelt bij 10, 25, 50, 100 … niveaus |
 | Opdrachten | Ada, je AI-assistent, geeft 22 opdrachten met beloningen die je door het hele spel leiden |
+| Verhaallijn | Negen hoofdstukken (De garage → Kardashev → AGI) met korte verhaalmomenten van Ada |
+| Balans | Getest met `scripts/sim.js`; tempo en kostenregels staan in `docs/balans.md` |
 
 ## Lokaal spelen
 
@@ -46,10 +48,13 @@ www/                 het spel (HTML/CSS/JS, geen build nodig)
   js/fx.js           achtergrond-animatie, deeltjes, geluid, trillen
   js/industry.js     supply chain, chips, apps, helpers, opdrachten
   js/research.js     onderzoeksbomen en de koppeling met modellen, chips en apps
+  js/story.js        hoofdstukken van de verhaallijn
   js/ui-industry.js  interface voor chips, apps, team en opdrachten
   js/ui-research.js  interface voor de onderzoeksbomen
   js/ui.js           interface en spellus
 resources/           bron voor app-icoon en splash (1024px / 2732px)
+scripts/sim.js       balans-simulator (speelt het spel zonder scherm)
+docs/balans.md       balansplan: tempo, kostenregels, Lab-tijdlijn, schrijfwijze
 ios/                 Xcode-project (Capacitor, Swift Package Manager)
 android/             Android Studio-project (Capacitor)
 .github/workflows/   automatische Android-build (APK + AAB)

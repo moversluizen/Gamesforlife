@@ -13,17 +13,21 @@
 <body>
 <div id="app" data-screen="models">
   <header id="top">
-    <button id="moreBtn" aria-label="Meer: singulariteit, prestaties en instellingen">
-      <svg viewBox="0 0 24 24" aria-hidden="true"><ellipse cx="12" cy="12" rx="9.6" ry="4.2" transform="rotate(-28 12 12)"/><circle class="f" cx="12" cy="12" r="3.2"/><circle cx="19.6" cy="7.6" r="1.2" fill="currentColor"/></svg>
-      <i class="dot" id="dotSing"></i>
-    </button>
-    <div class="bank">
-      <div class="tokens"><span id="tokens">0</span><small>tokens</small></div>
-      <div class="tps"><span id="tps">0</span> per seconde</div>
+    <div class="hud-row">
+      <button id="chapterChip" aria-label="Huidig hoofdstuk"><span id="chIcon">🔧</span><span id="chNum">H1</span></button>
+      <div class="bank">
+        <div class="tokens"><span id="tokens">0</span><small>tokens</small></div>
+        <div class="tps" id="tps">+0/s</div>
+      </div>
+      <button id="moreBtn" aria-label="Meer: singulariteit, prestaties en instellingen">
+        <svg viewBox="0 0 24 24" aria-hidden="true"><ellipse cx="12" cy="12" rx="9.6" ry="4.2" transform="rotate(-28 12 12)"/><circle class="f" cx="12" cy="12" r="3.2"/><circle cx="19.6" cy="7.6" r="1.2" fill="currentColor"/></svg>
+        <i class="dot" id="dotSing"></i>
+      </button>
     </div>
     <div class="agi">
-      <div class="agi-label"><span id="eraName">Het begin</span><span id="agiPct">0%</span></div>
+      <span class="agi-ch" id="eraName">De garage</span>
       <div class="bar"><i id="agiBar"></i></div>
+      <span class="agi-pct" id="agiPct">AGI 0%</span>
     </div>
     <button id="quest" class="hidden" aria-live="polite">
       <span class="qa">🤖</span>
@@ -160,6 +164,7 @@
 <script src="js/engine.js"></script>
 <script src="js/industry.js"></script>
 <script src="js/research.js"></script>
+<script src="js/story.js"></script>
 <script src="js/fx.js"></script>
 <script src="js/ui-industry.js"></script>
 <script src="js/ui-research.js"></script>

@@ -58,7 +58,7 @@
   G.RANK_TITLES = ['Junior', 'Medior', 'Senior', 'Lead', 'Principal', 'Legende'];
 
   [
-    [2e4,  'RLHF',                     3, 3],
+    [2e4,  'RLHF',                     3, 4],
     [5e5,  'Red teaming',              3, 4],
     [1e7,  'Interpreteerbaarheid',     4, 5],
     [2e8,  'Evals-team',               4, 6],
@@ -88,7 +88,7 @@
   // ---------- staat ----------
   G.industryDefaults = () => ({
     chain: G.CHAIN.map(() => 0), chips: 0, chipGen: 0, rnd: null,
-    apps: {}, helpers: {}, quest: 0, mktAuto: 0, risk: 0, backlashes: 0, riskWarn: 0, trend: null, lab: {},
+    apps: {}, helpers: {}, quest: 0, mktAuto: 0, risk: 0, backlashes: 0, riskWarn: 0, trend: null, lab: {}, story: {},
   });
 
   G.hl = id => G.S.helpers[id] || 0;
@@ -140,7 +140,8 @@
   G.slots = () => G.S.chain[4] * G.CHAIN[4].slots * Math.pow(2, G.stageMs(4)) * G.mods.slots;
   G.chip = () => G.CHIPS[G.S.chipGen];
   G.compute = () => G.S.chips * G.chip().power;
-  G.computeBonus = () => 1 + Math.pow(G.compute(), 0.4) / 10;
+  // Logaritmisch: elke 10× meer rekenkracht geeft een vaste stap erbij, zonder dat het ontspoort.
+  G.computeBonus = () => 1 + Math.log10(1 + G.compute()) * 0.25;
   G.chipsFull = () => G.S.chain[4] > 0 && G.S.chips >= G.slots() - 1e-9;
 
   // ---------- chipontwikkeling ----------
@@ -206,7 +207,7 @@
   // Gebruikers leveren trainingsdata; data versterkt de modellen.
   G.appData = a => { const s = G.app(a.id); return s.v ? s.u * a.rev * Math.pow(2, s.v - 1) * G.mods.app : 0; };
   G.dataValue = () => G.APPS.reduce((t, a) => t + G.appData(a), 0);
-  G.dataBonus = () => 1 + Math.pow(G.dataValue(), 0.3) / 10;
+  G.dataBonus = () => 1 + Math.log10(1 + G.dataValue()) * 0.2;
   G.buildApp = a => {
     const s = G.app(a.id), c = G.appCost(a);
     if (!G.appUnlocked(a) || s.b || G.S.tokens < c) return false;
@@ -236,7 +237,7 @@
 
   // ---------- veiligheid ----------
   // Benodigde veiligheid per slimste model dat je bezit (index in G.GENS).
-  G.SAFETY_REQ = [0, 0, 0, 2, 4, 7, 10, 14, 18, 23, 29, 35, 42];
+  G.SAFETY_REQ = [0, 0, 0, 0, 3, 6, 10, 14, 18, 23, 29, 35, 42];
   G.topModel = () => { let t = -1; G.S.owned.forEach((n, i) => { if (n > 0) t = i; }); return t; };
   G.safetyNeed = () => G.topModel() < 0 ? 0 : G.SAFETY_REQ[G.topModel()];
   G.safetyPoints = () => G.eff('safety') + G.UPGRADES.reduce((t, u) => t + (u.kind === 'safety' && G.S.upgrades[u.id] ? u.mult : 0), 0);
@@ -348,7 +349,8 @@
     { text: 'Bouw AGI',                                    goal: s => [Math.min(s.agiCount, 1), 1], reward: 1e16, tab: 'more' },
   ];
   G.questNow = () => G.QUESTS[G.S.quest] || null;
-  G.questReward = q => Math.max(q.reward, G.totalTps() * 60);
+  // Een minuut van je gewone inkomen (zonder tijdelijke bonussen), zodat beloningen niet stapelen tot een lawine.
+  G.questReward = q => Math.max(q.reward, G.baseTps() * 60);
   G.claimQuest = () => {
     const q = G.questNow();
     if (!q) return 0;

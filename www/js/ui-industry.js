@@ -96,7 +96,7 @@
     const body = $('chipBody'), S = G.S;
     const built = S.chain.slice(0, 4).every(x => x > 0), b = G.bottleneck(), slots = G.slots();
     set(body, 'cmp', G.fmt(G.compute()));
-    set(body, 'bonus', '×' + G.computeBonus().toFixed(2).replace('.', ','));
+    set(body, 'bonus', G.fmtMult(G.computeBonus()));
     set(body, 'chips', `${G.fmt(Math.floor(S.chips))} / ${G.fmt(slots)}`);
     set(body, 'fill', { w: pct(S.chips, slots) });
     let status;
@@ -126,7 +126,7 @@
     // speelveld
     const c = G.chip();
     if ($('csIcon').textContent !== c.icon) { $('csIcon').textContent = c.icon; $('csName').textContent = `${c.name} · ${c.node}`; }
-    $('csCompute').textContent = `⚡ ${G.fmt(G.compute())} rekenkracht · modellen ×${G.computeBonus().toFixed(2).replace('.', ',')}`;
+    $('csCompute').textContent = `⚡ ${G.fmt(G.compute())} rekenkracht · modellen ${G.fmtMult(G.computeBonus())}`;
     $('csHint').textContent = S.rnd
       ? `🔬 ${G.CHIPS[S.rnd.gen].name}: nog ${G.fmtTime(Math.ceil(Math.max(0, S.rnd.end - Date.now()) / 1000))} · tik op de chip om te versnellen`
       : 'Tik op de chip voor tokens';
@@ -182,7 +182,7 @@
         return `<div class="app locked${known ? '' : ' needs'}"><div class="app-top">${head}<div class="ginfo"><div class="gname">${a.name}</div>
           <div class="grate">${known ? '✓' : '🔬'} Onderzoek: ${tech.icon} ${tech.name}</div>
           <div class="grate">${model ? '✓' : '🔒'} Vereist ${a.n}× ${G.GENS[a.model].name}</div></div>
-          ${known ? '' : `<button class="gbuy" data-act="app-research" data-id="${a.id}"><span class="q">🔬 onderzoek</span><span class="c">${G.fmt(tech.cost)}</span></button>`}</div></div>`;
+          ${known ? '' : `<button class="gbuy" data-act="app-research" data-id="${a.id}"><span class="q">onderzoeken</span><span class="c">${G.fmt(tech.cost)}</span></button>`}</div></div>`;
       }
       if (st === 'new') return `<div class="app" data-f="ap-${a.id}"><div class="app-top">${head}<div class="ginfo"><div class="gname">${a.name}</div>
         <div class="grate">${a.desc}</div><div class="grate">Bouwtijd ${G.fmtTime(a.time)} · tot ${G.fmt(a.cap)} gebruikers</div></div>
@@ -194,7 +194,7 @@
         <div class="bar users"><i data-f="ab-${a.id}"></i></div>
         <div class="mlabel">Volgende versie: v${s.v + 1} ${G.appFeature(s.v + 1)} · 2× gebruikers en data</div></div>
         <div class="app-actions">
-          <button class="gbuy" data-act="app-build" data-id="${a.id}" data-f="av-${a.id}"><span class="q">⬆ v${s.v + 1}</span><span class="c" data-f="avc-${a.id}"></span></button>
+          <button class="gbuy" data-act="app-build" data-id="${a.id}" data-f="av-${a.id}"><span class="q">nieuwe versie</span><span class="c" data-f="avc-${a.id}"></span></button>
           <button class="gbuy mkt" data-act="app-mkt" data-id="${a.id}" data-f="am-${a.id}"></button>
         </div></div></div>`;
     }).join(''))) {
@@ -236,12 +236,12 @@
         set(list, 'ab-' + a.id, { w: pct(s.u, G.appCap(a)) });
         set(list, 'ht-' + a.id, { cls: { on: G.trending(a) } });
         const cd = Math.max(0, (s.cd || 0) - now);
-        set(list, 'am-' + a.id, { t: cd ? `📣 ${Math.ceil(cd / 1000)} s` : '📣 campagne', dis: cd > 0 });
+        set(list, 'am-' + a.id, { t: cd ? `campagne · ${Math.ceil(cd / 1000)} s` : '📣 campagne', dis: cd > 0 });
         set(list, 'avc-' + a.id, G.fmt(G.appCost(a)));
         set(list, 'ap-' + a.id, { cls: { can: S.tokens >= G.appCost(a) } });
       }
     }
-    $('appHead').textContent = live ? `${live} live · modellen ×${G.dataBonus().toFixed(2).replace('.', ',')}` : 'Apps leveren data voor je modellen';
+    $('appHead').textContent = live ? `${live} live · modellen ${G.fmtMult(G.dataBonus())}` : 'Apps leveren data voor je modellen';
   }
 
   // ---------- apps-speelveld: een telefoon met je apps ----------
@@ -288,7 +288,7 @@
       if (s && s.v) { users += s.u; set(grid, 'u-' + a.id, G.fmt(Math.floor(s.u))); }
     }
     $('asUsers').textContent = G.fmt(Math.floor(users));
-    $('asData').textContent = '×' + G.dataBonus().toFixed(2).replace('.', ',');
+    $('asData').textContent = G.fmtMult(G.dataBonus());
     const tr = S.trend && S.trend.until > now ? G.APPS.find(a => a.id === S.trend.id) : null;
     const trTxt = tr ? `🔥 ${tr.name} trending · ${Math.ceil((S.trend.until - now) / 1000)} s`
       : G.trendOffer ? `🔥 ${G.APPS.find(a => a.id === G.trendOffer.id).name} gaat viraal! Tik erop` : G.appsLive() ? 'Tik op een app voor extra gebruikers' : 'Bouw je eerste app hieronder';
@@ -332,7 +332,7 @@
           <div class="gicon"><span>${h.icon}</span></div>
           <div class="ginfo"><div class="gname">${h.name}</div><div class="grate">${h.desc}</div>
             <div class="grate eff">🔬 Eerst in je Lab: ${lab.icon} ${lab.name}</div></div>
-          <button class="gbuy"><span class="q">🔬 onderzoek</span><span class="c">${G.fmt(lab.cost)}</span></button></div>`;
+          <button class="gbuy"><span class="q">onderzoeken</span><span class="c">${G.fmt(lab.cost)}</span></button></div>`;
       }
       const l = G.hl(h.id), max = l >= h.max, r = G.rank(h), lv = G.rankLevels(h);
       const next = lv[r + 1], prev = lv[r];

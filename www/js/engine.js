@@ -114,7 +114,9 @@
   };
 
   // ---------- singulariteit (prestige) ----------
-  G.insightsFor = earned => Math.floor(Math.sqrt(earned / 1e9));
+  // Derdemachtswortel: de eerste singulariteit voelt groot, daarna kost elke verdubbeling 8× zoveel.
+  G.insightsFor = earned => Math.floor(Math.cbrt(earned / 1e9) * 1.5);
+  G.earnedForInsights = n => Math.pow(n / 1.5, 3) * 1e9;
   G.pendingInsights = () => Math.max(0, G.insightsFor(G.S.lifeEarned) - G.S.insights);
   G.prestige = () => {
     const p = G.pendingInsights();
@@ -127,6 +129,7 @@
       started: old.started, settings: old.settings, buyMode: old.buyMode,
       quest: old.quest || 0,
       lab: old.lab || {},
+      story: old.story || {},
     });
     G.S = s;
     G.recalc();
@@ -151,8 +154,8 @@
       S.buffs.push({ type: 'prod', mult: 7, until: Date.now() + 77000 * dur, name: 'Datastorm' });
       res = { title: 'Datastorm!', text: `Productie ×7 voor ${Math.round(77 * dur)} s` };
     } else {
-      S.buffs.push({ type: 'click', mult: 777, until: Date.now() + 13000 * dur, name: 'Klikstorm' });
-      res = { title: 'Klikstorm!', text: `Tikken ×777 voor ${Math.round(13 * dur)} s` };
+      S.buffs.push({ type: 'click', mult: 77, until: Date.now() + 10000 * dur, name: 'Klikstorm' });
+      res = { title: 'Klikstorm!', text: `Tikken ×77 voor ${Math.round(10 * dur)} s` };
     }
     G.scheduleEureka();
     return res;
@@ -233,6 +236,9 @@
     const v = n / Math.pow(10, e * 3);
     return (v < 10 ? v.toFixed(2) : v < 100 ? v.toFixed(1) : v.toFixed(0)).replace('.', ',') + ' ' + SUF[e];
   };
+  // Vaste schrijfwijze voor snelheden en vermenigvuldigers.
+  G.fmtRate = n => '+' + G.fmt(n) + '/s';
+  G.fmtMult = n => '×' + (n < 10 ? n.toFixed(2).replace('.', ',') : G.fmt(n));
   G.fmtTime = secs => {
     secs = Math.floor(secs);
     const h = Math.floor(secs / 3600), m = Math.floor(secs % 3600 / 60), s = secs % 60;
