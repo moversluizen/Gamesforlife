@@ -88,7 +88,7 @@
   // ---------- staat ----------
   G.industryDefaults = () => ({
     chain: G.CHAIN.map(() => 0), chips: 0, chipGen: 0, rnd: null,
-    apps: {}, helpers: {}, quest: 0, mktAuto: 0, risk: 0, backlashes: 0, riskWarn: 0, trend: null,
+    apps: {}, helpers: {}, quest: 0, mktAuto: 0, risk: 0, backlashes: 0, riskWarn: 0, trend: null, lab: {},
   });
 
   G.hl = id => G.S.helpers[id] || 0;

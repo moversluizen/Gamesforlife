@@ -126,6 +126,7 @@
       eurekas: old.eurekas, ach: old.ach, agiCount: old.agiCount,
       started: old.started, settings: old.settings, buyMode: old.buyMode,
       quest: old.quest || 0,
+      lab: old.lab || {},
     });
     G.S = s;
     G.recalc();

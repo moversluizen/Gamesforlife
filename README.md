@@ -8,10 +8,11 @@ De mechanismen komen uit de populairste idle games (Cookie Clicker, AdVenture Ca
 
 | Mechanisme | In het spel |
 | --- | --- |
-| Tikken | Tik op de kern voor tokens |
+| Tikken | Tik op de kern voor tokens; snel tikken bouwt Flow op (tot ×3) en soms valt een kritieke tik (×8) |
 | Generatoren met exponentiële kosten (×1,15) | 13 AI-modellen, van Perceptron tot Dyson-datacenter |
 | Mijlpalen | Bij 10, 25, 50, 100 … stuks verdubbelt de productie van een model |
 | Kooptoggle | ×1 / ×10 / ×100 / Max |
+| Lab | Je organisatie: elke afdeling (Productteam, Eigen hardware, HR, Veiligheid, …) ontgrendelt een onderdeel of helper; blijft na een singulariteit |
 | Onderzoeksbomen | Drie bomen (modellen, chips, apps): de hoofdlijn ontgrendelt elk volgend model, elke chipgeneratie en elke app; zijtakken geven boosts |
 | Upgrades | 120+ losse verbeteringen (per model, voor tikken, Eureka, offline, veiligheid) |
 | Gouden bonus | 💡 Eureka-momenten: Doorbraak, Datastorm (×7) of Klikstorm (×777) |
@@ -26,7 +27,7 @@ De mechanismen komen uit de populairste idle games (Cookie Clicker, AdVenture Ca
 | Apps | 10 apps (Praatbot → Code-copiloot → Robot-butler) met groeiende gebruikers, campagnes en versies |
 | Drie speelvelden | Modellen (kern), Chips (supply chain en chip) en Apps (telefoon met je apps) hebben elk een eigen tikscherm; Onderzoek, Team en Meer zijn volledige schermen |
 | Apps | Trending-momenten (🔥 5× groei), een functie per versie, sterren en gebruikersreviews |
-| Navigatie | Veeg tussen de onderdelen; de pager en de menubalk tonen waar je bent |
+| Navigatie | Vijf vaste onderdelen in de menubalk, een kop met uitleg per scherm, Meer rechtsboven; veeg tussen de onderdelen |
 | Managers | 7 helpers met rangen (Junior → Legende); de stagiair groeit door tot AI-collega en tikt per rang 2× zo sterk |
 | Veiligheid | Slimmere modellen vragen veiligheid (safety-engineers, 8 veiligheidsonderzoeken). Loop je achter, dan stijgt het risico tot een backlash: productie −50% en gebruikers haken af |
 | Mijlpalen in de keten | Elke ketenschakel verdubbelt bij 10, 25, 50, 100 … niveaus |

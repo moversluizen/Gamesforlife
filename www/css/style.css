@@ -712,3 +712,86 @@ button:focus-visible { outline: 2px solid var(--c1); outline-offset: 2px; }
 }
 .as-u { font-size: clamp(7.5px, 6cqw, 10px); height: auto; line-height: 1.1; overflow: visible; }
 .as-fire { font-size: clamp(9px, 8cqw, 14px); top: -2px; right: 2%; }
+
+/* =========================================================
+   Herontwerp navigatie: 5 vaste onderdelen + Meer-knop
+   ========================================================= */
+#tabs { grid-template-columns: repeat(5, minmax(0, 1fr)); }
+#tabs button.locked { opacity: .5; }
+#tabs button.locked .ic::after {
+  content: '🔒'; position: absolute; right: 4px; bottom: -2px; font-size: 11px; filter: none;
+}
+#pager { display: none; }
+
+#moreBtn {
+  position: absolute; z-index: 5; top: calc(8px + var(--st)); right: max(12px, var(--sr));
+  width: 38px; height: 38px; border-radius: 12px; display: grid; place-items: center; color: var(--mute);
+  background: rgba(255, 255, 255, .06); border: 1px solid var(--line);
+}
+#moreBtn svg { width: 22px; height: 22px; fill: none; stroke: currentColor; stroke-width: 2; stroke-linecap: round; }
+#moreBtn svg .f { fill: currentColor; fill-opacity: .3; }
+#moreBtn.on { color: var(--c1); background: hsla(var(--hue), 100%, 62%, .18); border-color: hsla(var(--hue), 100%, 70%, .4); }
+#moreBtn .dot { top: 3px; right: 3px; }
+#top .bank { padding: 0 44px; }
+
+/* kop van het paneel: icoon, titel, uitleg, positie */
+#scrHead {
+  flex: none; display: flex; align-items: center; gap: 10px; padding: 12px 14px 6px; position: relative; z-index: 3;
+}
+.sh-ic {
+  flex: none; width: 36px; height: 36px; border-radius: 11px; display: grid; place-items: center; font-size: 19px;
+  background: hsla(var(--hue), 90%, 60%, .18); box-shadow: inset 0 0 0 1px hsla(var(--hue), 100%, 70%, .3);
+}
+.sh-txt { flex: 1; min-width: 0; }
+.sh-txt h2 { margin: 0; font-size: 17px; line-height: 1.15; }
+.sh-txt small { display: block; font-size: 11.5px; color: var(--mute); white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
+#scrHead .pdots { flex: none; }
+.sh-close { flex: none; width: 34px; height: 34px; border-radius: 10px; background: rgba(255, 255, 255, .08); font-size: 15px; font-weight: 800; }
+.tabhead { min-height: 0; padding: 2px 4px 8px; }
+.tabhead.sub-info { padding: 0 4px 8px; }
+.tabhead.sub-info:has(span:empty) { display: none; }
+#tab-models .tabhead { justify-content: space-between; }
+
+/* onderzoek: vijf onderdelen, icoon boven label */
+#resSeg button { display: flex; flex-direction: column; align-items: center; gap: 1px; padding: 5px 2px; font-size: 10.5px; line-height: 1.1; }
+#resSeg button b { font-size: 15px; font-weight: 400; }
+.locked-h { border-style: dashed; }
+.locked-h .gicon { filter: grayscale(1); opacity: .6; }
+.locked-h .gbuy { background: rgba(255, 207, 74, .14); }
+.locked-h .gbuy .q, .locked-h .gbuy .c { color: var(--gold); }
+
+/* =========================================================
+   Gavere kern: flow-ring, schokgolven, kritieke tikken
+   ========================================================= */
+#core .flow-track { stroke: rgba(255, 255, 255, .07); }
+#core .flow-ring { stroke: var(--c1); transition: stroke-dashoffset .12s linear, stroke .3s; filter: drop-shadow(0 0 4px var(--c1)); }
+#core.flowing .flow-ring { stroke: var(--gold); filter: drop-shadow(0 0 8px var(--gold)); }
+#core.flowing { filter: drop-shadow(0 0 46px hsla(45, 100%, 60%, .55)); }
+#core.flowing .r1 { animation-duration: 8s; }
+#core.flowing .r2 { animation-duration: 4s; }
+#core.flowing .r3 { animation-duration: 2s; }
+#core .sats { opacity: 0; fill: var(--c1); transform-box: view-box; transform-origin: 100px 100px; animation: spin 16s linear infinite; transition: opacity .6s; }
+#core[data-era="1"] .sats, #core[data-era="2"] .sats, #core[data-era="3"] .sats { opacity: .95; }
+#core[data-era="1"] .sats circle:nth-child(n+3) { display: none; }
+#core[data-era="3"] .sats { fill: var(--gold); animation-duration: 9s; }
+
+#tapInfo {
+  position: absolute; left: 0; right: 0; bottom: 32px; z-index: 3; display: flex; flex-direction: column; align-items: center;
+  gap: 1px; pointer-events: none; text-align: center;
+}
+#tapVal { font-size: 12px; font-weight: 800; color: var(--fg); text-shadow: 0 1px 4px rgba(0, 0, 0, .7); }
+#flowLbl { font-size: 11px; font-weight: 700; color: var(--mute); }
+#flowLbl.max { color: var(--gold); text-shadow: 0 0 10px var(--gold); animation: pulse .4s infinite alternate; }
+#app[data-screen="chips"] #tapInfo, #app[data-screen="apps"] #tapInfo { display: none; }
+@media (max-height: 760px) { #tapInfo { bottom: 4px; } #tapVal { font-size: 11px; } }
+
+.shock {
+  position: absolute; width: 22px; height: 22px; border-radius: 50%; pointer-events: none;
+  border: 2px solid var(--c1); translate: -50% -50%; animation: shock .55s ease-out forwards;
+}
+.shock.max { border-color: var(--gold); }
+.shock.crit { border: 3px solid var(--gold); animation: shockBig .7s ease-out forwards; }
+@keyframes shock { from { transform: scale(.6); opacity: .9; } to { transform: scale(5.5); opacity: 0; } }
+@keyframes shockBig { from { transform: scale(.6); opacity: 1; } to { transform: scale(11); opacity: 0; } }
+.floater.big { font-size: 30px; color: var(--gold); text-shadow: 0 0 16px var(--gold), 0 2px 4px rgba(0, 0, 0, .6); animation-duration: 1.2s; }
+@media (prefers-reduced-motion: reduce) { .shock { display: none; } #flowLbl.max { animation: none; } }

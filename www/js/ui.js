@@ -117,10 +117,12 @@
         <p>Inzichten nu: <b>${S.insights}</b> (+${Math.round((G.mods.insightBonus - 1) * 100)}%)</p>
         <div class="big-num">+${G.fmt(p)}</div>
         <p>${p >= 1 ? 'inzichten bij activeren' : `Volgend inzicht bij ${G.fmt(nextAt)} totaal verdiende tokens`}</p>
-        <button class="cta" id="singBtn" ${p >= 1 ? '' : 'disabled'}>Activeer singulariteit</button></div>`;
+        ${G.labDone('lab_sing') ? `<button class="cta" id="singBtn" ${p >= 1 ? '' : 'disabled'}>Activeer singulariteit</button>`
+          : `<p>🔒 Onderzoek eerst het <b>Singulariteitsinstituut</b> in je Lab.</p><button class="cta" id="singLab">🔬 Naar het Lab</button>`}</div>`;
     const ab = $('agiBtn');
     if (ab) ab.onclick = buildAGI;
-    $('singBtn').onclick = confirmPrestige;
+    if ($('singBtn')) $('singBtn').onclick = confirmPrestige;
+    if ($('singLab')) $('singLab').onclick = () => G.uiRes.open('lab', 'lab_sing');
     $('dotSing').classList.toggle('show', (G.agiUnlocked() && S.tokens >= G.agiCost()) || p >= Math.max(10, S.insights));
   }
 
@@ -210,12 +212,22 @@
   }
 
   // ---------- tabs ----------
-  const TAB_ORDER = ['models', 'chips', 'apps', 'research', 'team', 'more'];
+  const TAB_ORDER = ['models', 'chips', 'apps', 'research', 'team'];
+  const TAB_META = {
+    models:   ['🧠', 'Modellen', 'De basis: je modellen maken tokens'],
+    chips:    ['💾', 'Chips', 'Rekenkracht die al je modellen versnelt'],
+    apps:     ['📱', 'Apps', 'Gebruikers leveren data voor je modellen'],
+    research: ['🔬', 'Onderzoek', 'Hier ontgrendel je alles: afdelingen, modellen, chips en apps'],
+    team:     ['👥', 'Team', 'Helpers die het werk voor je doen'],
+    more:     ['🌀', 'Meer', 'Singulariteit, prestaties en instellingen'],
+  };
+  let prevTab = 'models';
   // Modellen, Chips en Apps hebben een eigen speelveld; de rest is een volledig scherm.
   const SCREENS = { models: 'models', chips: 'chips', apps: 'apps' };
   const TAB_NAMES = { models: 'Modellen', research: 'Onderzoek', chips: 'Chips', apps: 'Apps', team: 'Team', more: 'Meer' };
   // Volgende (dir 1) of vorige (dir -1) tab die al open is.
   function neighbor(dir) {
+    if (currentTab === 'more') return null;
     let i = TAB_ORDER.indexOf(currentTab);
     do { i += dir; } while (i >= 0 && i < TAB_ORDER.length && !G.tabUnlocked(TAB_ORDER[i]));
     return TAB_ORDER[i] || null;
@@ -223,10 +235,14 @@
   function switchTab(t) {
     if (!G.tabUnlocked(t)) {
       G.sfx.error();
-      toast('🔒', `${TAB_NAMES[t]} is nog op slot`, `Verdien in totaal ${G.fmt(G.TAB_UNLOCK[t])} tokens om dit te ontgrendelen.`);
+      const lock = G.tabLock(t);
+      modal(TAB_META[t][0], `${TAB_NAMES[t]} is nog op slot`,
+        `Open dit onderdeel door in je <b>Lab</b> de afdeling <b>${lock.icon} ${lock.name}</b> te onderzoeken (${G.fmt(lock.cost)} tokens).`,
+        [{ label: 'Later' }, { label: '🔬 Naar het Lab', cls: 'primary', onClick: () => G.uiRes.open('lab', lock.id) }]);
       return;
     }
-    const dir = TAB_ORDER.indexOf(t) - TAB_ORDER.indexOf(currentTab);
+    if (t === 'more' && currentTab !== 'more') prevTab = currentTab;
+    const dir = t === 'more' || currentTab === 'more' ? 0 : TAB_ORDER.indexOf(t) - TAB_ORDER.indexOf(currentTab);
     currentTab = t;
     $('app').dataset.screen = SCREENS[t] || 'full';
     document.querySelectorAll('#tabs button').forEach(b => b.classList.toggle('on', b.dataset.tab === t));
@@ -242,19 +258,24 @@
   // ---------- waar ben je: streepje in de menubalk en navigatie bovenin het paneel ----------
   function placeIndicator() {
     const b = document.querySelector('#tabs button.on'), nav = $('tabs');
+    $('tabInd').style.opacity = b ? 1 : 0;
     if (!b) return;
     const r = b.getBoundingClientRect(), nr = nav.getBoundingClientRect();
     $('tabInd').style.transform = `translateX(${r.left - nr.left + r.width / 2 - 14}px)`;
   }
   window.addEventListener('resize', placeIndicator);
+  // Kop van het paneel: waar ben je en wat doe je hier.
   function updatePager() {
-    const prev = neighbor(-1), next = neighbor(1);
-    $('pgPrev').textContent = prev ? '‹ ' + TAB_NAMES[prev] : '';
-    $('pgNext').textContent = next ? TAB_NAMES[next] + ' ›' : '';
-    $('pdots').innerHTML = TAB_ORDER.map(t => `<i class="${t === currentTab ? 'on' : ''}${G.tabUnlocked(t) ? '' : ' lk'}"></i>`).join('');
+    const [icon, title, sub] = TAB_META[currentTab];
+    $('shIcon').textContent = icon;
+    $('shTitle').textContent = title;
+    $('shSub').textContent = sub;
+    $('pdots').innerHTML = currentTab === 'more' ? '' : TAB_ORDER.map(t => `<i class="${t === currentTab ? 'on' : ''}${G.tabUnlocked(t) ? '' : ' lk'}"></i>`).join('');
+    $('shClose').classList.toggle('hidden', currentTab !== 'more');
+    $('moreBtn').classList.toggle('on', currentTab === 'more');
   }
-  $('pgPrev').addEventListener('click', () => { const n = neighbor(-1); if (n) { G.haptic(); switchTab(n); } });
-  $('pgNext').addEventListener('click', () => { const n = neighbor(1); if (n) { G.haptic(); switchTab(n); } });
+  $('moreBtn').addEventListener('click', () => { G.haptic(); switchTab(currentTab === 'more' ? prevTab : 'more'); });
+  $('shClose').addEventListener('click', () => { G.haptic(); switchTab(prevTab); });
   window.addEventListener('keydown', e => {
     if (!$('modal').classList.contains('hidden')) return;
     if (e.key === 'ArrowRight' || e.key === 'ArrowLeft') { const n = neighbor(e.key === 'ArrowRight' ? 1 : -1); if (n) switchTab(n); }
@@ -354,25 +375,50 @@
   // ---------- kern tikken ----------
   const stage = $('stage'), core = $('core'), floaters = $('floaters');
   // auto = getikt door een helper (telt niet mee als eigen tik)
+  // Flow: snel achter elkaar tikken bouwt een combo op (tot ×3).
+  let flow = 0, lastTap = 0;
+  const flowMult = () => 1 + 2 * flow;
   function tapAt(cx, cy, auto) {
-    const v = G.clickValue() * (auto ? G.internPower() : 1);
+    let mult = auto ? G.internPower() : flowMult();
+    const crit = !auto && Math.random() < 0.04;
+    if (crit) mult *= 8;
+    if (!auto) { flow = Math.min(1, flow + 0.06); lastTap = performance.now(); }
+    const v = G.clickValue() * mult;
     G.earn(v); G.S.clickEarned += v;
     if (!auto) G.S.clicks++;
     const r = stage.getBoundingClientRect();
     const x = cx - r.left, y = cy - r.top;
-    const crit = G.buffMult('click') > 1;
-    if (auto ? (floaters.querySelectorAll('.auto').length < 4 && Math.random() < 0.5) : floaters.children.length < 30) {
-      const f = el('div', 'floater' + (crit ? ' crit' : '') + (auto ? ' auto' : ''), '+' + G.fmt(v));
+    const storm = G.buffMult('click') > 1;
+    if (!auto) {
+      const w = el('div', 'shock' + (crit ? ' crit' : flow >= 1 ? ' max' : ''));
+      w.style.left = x + 'px'; w.style.top = y + 'px';
+      floaters.appendChild(w);
+      setTimeout(() => w.remove(), 600);
+    }
+    if (crit || (auto ? (floaters.querySelectorAll('.auto').length < 4 && Math.random() < 0.5) : floaters.children.length < 30)) {
+      const f = el('div', 'floater' + (crit ? ' crit big' : storm ? ' crit' : '') + (auto ? ' auto' : ''), (crit ? 'KRITIEK! +' : '+') + G.fmt(v));
       f.style.left = (x + (Math.random() - 0.5) * 30) + 'px';
       f.style.top = (y - 10) + 'px';
       floaters.appendChild(f);
       setTimeout(() => f.remove(), 900);
     }
-    G.fx.burst(x, y, auto ? 3 : crit ? 18 : 8);
+    G.fx.burst(x, y, auto ? 3 : crit ? 50 : storm ? 18 : 6 + Math.round(flow * 10), crit ? 45 : undefined);
     if (auto) return;
     core.classList.add('hit');
     setTimeout(() => core.classList.remove('hit'), 70);
-    G.sfx.tap(); G.haptic('LIGHT');
+    if (crit) {
+      G.sfx.eureka(); G.haptic('HEAVY');
+      $('app').animate([{ transform: 'translate(-4px, 2px)' }, { transform: 'translate(4px, -2px)' }, { transform: 'none' }], { duration: 160 });
+    } else { G.sfx.tap(flow); G.haptic(flow >= 1 ? 'MEDIUM' : 'LIGHT'); }
+  }
+  // Flow zakt weg als je even niet tikt; de ring en het label tonen de stand.
+  function updateFlow(dt) {
+    if (performance.now() - lastTap > 450) flow = Math.max(0, flow - dt * 0.4);
+    $('flowRing').style.strokeDashoffset = 615.8 * (1 - flow);
+    core.classList.toggle('flowing', flow >= 1);
+    const fl = flow > 0.03 ? (flow >= 1 ? 'FLOW ×3!' : `Flow ×${flowMult().toFixed(1).replace('.', ',')}`) : 'Tik snel voor flow';
+    if ($('flowLbl').textContent !== fl) $('flowLbl').textContent = fl;
+    $('flowLbl').classList.toggle('max', flow >= 1);
   }
   core.addEventListener('pointerdown', e => { e.preventDefault(); tapAt(e.clientX, e.clientY, false); });
   let autoAcc = 0;
@@ -432,10 +478,12 @@
     const S = G.S;
     $('tokens').textContent = G.fmt(S.tokens);
     $('tps').textContent = G.fmt(G.totalTps());
+    $('tapVal').textContent = `+${G.fmt(G.clickValue() * flowMult())} per tik`;
     const p = G.agiProgress();
     $('agiBar').style.width = (p * 100).toFixed(1) + '%';
     $('agiPct').textContent = S.agi ? 'AGI ✨' : `AGI ${(p * 100).toFixed(p < 0.1 ? 1 : 0).replace('.', ',')}%`;
     const ti = topIndex();
+    core.dataset.era = Math.min(3, Math.floor((ti + 1) / 3));
     $('eraName').textContent = S.agi ? 'Tijdperk van AGI' : (ti >= 0 ? G.GENS[ti].era : 'Het begin');
     const hue = S.agi ? 290 : 195 + Math.max(0, ti) * 9;
     document.documentElement.style.setProperty('--hue', hue % 360);
@@ -510,6 +558,12 @@
     if (currentTab !== 'apps') toast('🔥', `${a.name} gaat viraal!`, 'Ga naar Apps en tik op de app om de hype te benutten.');
   });
   G.on('autoCampaign', () => { if (currentTab === 'apps') toast('📣', 'De marketeer startte een campagne', ''); });
+  G.on('labDone', u => {
+    G.sfx.big(); G.fx.wave();
+    const h = G.HELPERS.find(x => G.HELPER_LAB[x.id] === u.id);
+    if (h && u.id !== 'lab_hr') toast(h.icon, `Nieuwe helper: ${h.name}`, 'Neem hem aan in Team.');
+    updatePager();
+  });
   const seenTabs = {};
   function checkUnlocks() {
     for (const t of Object.keys(G.TAB_UNLOCK)) {
@@ -539,6 +593,7 @@
     if (off) { showOffline(off); refresh(true); }
     G.fx.frame(dt, t);
     autoTaps(dt);
+    updateFlow(dt);
 
     uiTimer += dt; achTimer += dt; saveTimer += dt; newsTimer += dt;
     if (uiTimer > 0.15) { uiTimer = 0; refresh(false); }

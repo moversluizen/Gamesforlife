@@ -119,7 +119,8 @@
     } catch (e) {}
   }
   G.sfx = {
-    tap() { tone(420 + Math.random() * 120, 0.07, 'triangle', 0.05, 1.6); },
+    // de toon stijgt mee met je flow
+    tap(flow = 0) { tone(420 + flow * 520 + Math.random() * 90, 0.07, 'triangle', 0.05, 1.6); },
     buy() { tone(520, 0.08, 'sine', 0.07); setTimeout(() => tone(780, 0.12, 'sine', 0.06), 60); },
     milestone() { [523, 659, 784, 1047].forEach((f, i) => setTimeout(() => tone(f, 0.18, 'triangle', 0.07), i * 70)); },
     upgrade() { tone(660, 0.1, 'square', 0.03); setTimeout(() => tone(990, 0.16, 'square', 0.03), 80); },

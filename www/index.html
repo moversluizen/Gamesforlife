@@ -13,6 +13,10 @@
 <body>
 <div id="app" data-screen="models">
   <header id="top">
+    <button id="moreBtn" aria-label="Meer: singulariteit, prestaties en instellingen">
+      <svg viewBox="0 0 24 24" aria-hidden="true"><ellipse cx="12" cy="12" rx="9.6" ry="4.2" transform="rotate(-28 12 12)"/><circle class="f" cx="12" cy="12" r="3.2"/><circle cx="19.6" cy="7.6" r="1.2" fill="currentColor"/></svg>
+      <i class="dot" id="dotSing"></i>
+    </button>
     <div class="bank">
       <div class="tokens"><span id="tokens">0</span><small>tokens</small></div>
       <div class="tps"><span id="tps">0</span> per seconde</div>
@@ -47,6 +51,9 @@
             <feMerge><feMergeNode in="b"/><feMergeNode in="SourceGraphic"/></feMerge>
           </filter>
         </defs>
+        <circle class="flow-track" cx="100" cy="100" r="98" fill="none" stroke-width="3"/>
+        <circle class="flow-ring" id="flowRing" cx="100" cy="100" r="98" fill="none" stroke-width="3.5" stroke-linecap="round" transform="rotate(-90 100 100)" stroke-dasharray="615.8" stroke-dashoffset="615.8"/>
+        <g class="sats"><circle cx="100" cy="14" r="3"/><circle cx="174" cy="143" r="2.5"/><circle cx="26" cy="143" r="2.5"/><circle cx="174" cy="57" r="2"/><circle cx="26" cy="57" r="2"/><circle cx="100" cy="186" r="3"/></g>
         <g class="ring r1"><circle cx="100" cy="100" r="92" fill="none" stroke="var(--c1)" stroke-width="1.5" stroke-dasharray="4 10" opacity=".7"/></g>
         <g class="ring r2"><circle cx="100" cy="100" r="82" fill="none" stroke="var(--c2)" stroke-width="3" stroke-dasharray="60 30 10 30" opacity=".8"/></g>
         <g class="ring r3"><circle cx="100" cy="100" r="72" fill="none" stroke="var(--c1)" stroke-width="1" stroke-dasharray="1 6" opacity=".9"/></g>
@@ -79,19 +86,21 @@
       </div>
       <div class="as-review" id="asReview"></div>
     </div>
+    <div id="tapInfo" aria-live="off"><span id="tapVal"></span><span id="flowLbl"></span></div>
     <div id="floaters"></div>
     <div id="ticker"><span id="tickerText"></span></div>
   </section>
 
   <main id="panel">
-    <nav id="pager" aria-label="Onderdelen">
-      <button class="pg prev" id="pgPrev"></button>
+    <header id="scrHead">
+      <span class="sh-ic" id="shIcon"></span>
+      <div class="sh-txt"><h2 id="shTitle"></h2><small id="shSub"></small></div>
       <div class="pdots" id="pdots"></div>
-      <button class="pg next" id="pgNext"></button>
-    </nav>
+      <button class="sh-close hidden" id="shClose" aria-label="Sluiten">✕</button>
+    </header>
     <section class="tab active" id="tab-models">
       <div class="tabhead">
-        <h2>Modellen</h2>
+        <span class="muted">Kopen per</span>
         <div class="seg" id="buyMode">
           <button data-m="1" class="on">×1</button><button data-m="10">×10</button><button data-m="100">×100</button><button data-m="max">Max</button>
         </div>
@@ -102,7 +111,7 @@
     <section class="tab" id="tab-research">
       <div class="tabhead">
         <div class="seg" id="resSeg">
-          <button data-r="models" class="on">🧠 Modellen</button><button data-r="chips">💾 Chips</button><button data-r="apps">📱 Apps</button><button data-r="upg">⚡ Overig</button>
+          <button data-r="lab" class="on"><b>🏢</b>Lab</button><button data-r="models"><b>🧠</b>Modellen</button><button data-r="chips"><b>💾</b>Chips</button><button data-r="apps"><b>📱</b>Apps</button><button data-r="upg"><b>⚡</b>Overig</button>
         </div>
       </div>
       <div class="res-head"><b id="resTitle"></b><span class="muted" id="researchCount"></span></div>
@@ -111,15 +120,15 @@
       <div id="upgList" class="hidden"></div>
     </section>
     <section class="tab" id="tab-chips">
-      <div class="tabhead"><h2>Chips</h2><span class="muted" id="chipHead"></span></div>
+      <div class="tabhead sub-info"><span class="muted" id="chipHead"></span></div>
       <div id="chipBody"></div>
     </section>
     <section class="tab" id="tab-apps">
-      <div class="tabhead"><h2>Apps</h2><span class="muted" id="appHead"></span></div>
+      <div class="tabhead sub-info"><span class="muted" id="appHead"></span></div>
       <div id="appList"></div>
     </section>
     <section class="tab" id="tab-team">
-      <div class="tabhead"><h2>Team</h2><span class="muted" id="teamHead"></span></div>
+      <div class="tabhead sub-info"><span class="muted" id="teamHead"></span></div>
       <div id="teamList"></div>
     </section>
     <section class="tab" id="tab-more">
@@ -141,7 +150,6 @@
     <button data-tab="apps" aria-label="Apps"><span class="ic"><svg viewBox="0 0 24 24" aria-hidden="true"><rect x="5.5" y="2.5" width="13" height="19" rx="3"/><rect class="f" x="8.6" y="6.2" width="2.8" height="2.8" rx=".7"/><rect class="f" x="12.6" y="6.2" width="2.8" height="2.8" rx=".7"/><rect class="f" x="8.6" y="10.2" width="2.8" height="2.8" rx=".7"/><rect class="f" x="12.6" y="10.2" width="2.8" height="2.8" rx=".7"/><path d="M10.5 18.2h3"/></svg><i class="dot" id="dotApps"></i></span><span class="lb">Apps</span></button>
     <button data-tab="research" aria-label="Onderzoek"><span class="ic"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M9 3h6M10 3v6.2L4.6 18.3A2.1 2.1 0 0 0 6.4 21.5h11.2a2.1 2.1 0 0 0 1.8-3.2L14 9.2V3"/><path class="f" d="M7.4 15h9.2l1.9 3.4a1.1 1.1 0 0 1-1 1.6H6.5a1.1 1.1 0 0 1-1-1.6z"/></svg><i class="dot" id="dotResearch"></i></span><span class="lb">Onderzoek</span></button>
     <button data-tab="team" aria-label="Team"><span class="ic"><svg viewBox="0 0 24 24" aria-hidden="true"><circle cx="9" cy="8" r="3.3"/><path d="M2.8 20.5c0-3.4 2.8-6.2 6.2-6.2s6.2 2.8 6.2 6.2"/><circle class="f" cx="17.2" cy="9" r="2.6"/><path d="M16.4 14.4c2.9-.3 5 2 5 5"/></svg><i class="dot" id="dotTeam"></i></span><span class="lb">Team</span></button>
-    <button data-tab="more" aria-label="Meer"><span class="ic"><svg viewBox="0 0 24 24" aria-hidden="true"><ellipse cx="12" cy="12" rx="9.6" ry="4.2" transform="rotate(-28 12 12)"/><circle class="f" cx="12" cy="12" r="3.2"/><circle cx="19.6" cy="7.6" r="1.2" fill="currentColor"/></svg><i class="dot" id="dotSing"></i></span><span class="lb">Meer</span></button>
   </nav>
 </div>
 

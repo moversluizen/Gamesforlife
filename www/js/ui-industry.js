@@ -324,8 +324,16 @@
   // ---------- team ----------
   function updateTeam() {
     const list = $('teamList'), S = G.S;
-    const key = G.HELPERS.map(h => G.hl(h.id)).join(',') + '|' + G.S.chipGen;
+    const key = G.HELPERS.map(h => G.hl(h.id) + (G.helperUnlocked(h) ? '' : 'x')).join(',') + '|' + G.S.chipGen;
     if (keyed(list, key, `<div class="ind-card safety" data-f="safety"></div>` + G.HELPERS.map(h => {
+      if (!G.helperUnlocked(h)) {
+        const lab = G.techById(G.HELPER_LAB[h.id]);
+        return `<div class="gen helper locked-h" data-act="helper-lab" data-id="${lab.id}">
+          <div class="gicon"><span>${h.icon}</span></div>
+          <div class="ginfo"><div class="gname">${h.name}</div><div class="grate">${h.desc}</div>
+            <div class="grate eff">🔬 Eerst in je Lab: ${lab.icon} ${lab.name}</div></div>
+          <button class="gbuy"><span class="q">🔬 onderzoek</span><span class="c">${G.fmt(lab.cost)}</span></button></div>`;
+      }
       const l = G.hl(h.id), max = l >= h.max, r = G.rank(h), lv = G.rankLevels(h);
       const next = lv[r + 1], prev = lv[r];
       const nextTxt = next == null ? 'Hoogste rang bereikt' : `${G.rankName(h, r + 1)} bij niveau ${next}${h.ranks ? ' · 2× zo slim' : ' · effect +50%'}`;
@@ -342,7 +350,9 @@
       if (!list.dataset.bound) {
         list.dataset.bound = '1';
         list.addEventListener('click', e => {
-          if (e.target.closest('[data-act="to-research"]')) { G.ui.switchTab('research'); return; }
+          if (e.target.closest('[data-act="to-research"]')) { G.uiRes.open('models'); return; }
+          const lk = e.target.closest('[data-act="helper-lab"]');
+          if (lk) { G.uiRes.open('lab', lk.dataset.id); return; }
           const t = e.target.closest('[data-act="hire"]');
           if (!t) return;
           const h = G.HELPERS.find(x => x.id === t.dataset.id), first = !G.hl(h.id), r0 = G.rank(h);
@@ -422,7 +432,8 @@
       G.fx.wave();
       const nq = G.questNow();
       G.ui.toast('🤖', 'Goed gedaan!', nq ? 'Nieuwe opdracht: ' + nq.text : 'Je hebt alle opdrachten voltooid!');
-    } else if (q.tab) G.ui.switchTab(q.tab);
+    } else if (q.tree) G.uiRes.open(q.tree);
+    else if (q.tab) G.ui.switchTab(q.tab);
     G.uiRefresh(true);
   });
 

@@ -2,8 +2,8 @@
 (function () {
   const G = window.G;
   const $ = id => document.getElementById(id);
-  const NAMES = { models: 'Onderzoeksboom modellen', chips: 'Onderzoeksboom chips', apps: 'Onderzoeksboom apps', upg: 'Losse verbeteringen' };
-  let seg = 'models', lastKey = '', flashId = null;
+  const NAMES = { lab: 'Je lab: elke afdeling opent iets nieuws', models: 'Onderzoeksboom modellen', chips: 'Onderzoeksboom chips', apps: 'Onderzoeksboom apps', upg: 'Losse verbeteringen' };
+  let seg = 'lab', lastKey = '', flashId = null;
 
   function nodeHtml(u, side) {
     if (!u) return `<div class="tcell ${side}"></div>`;
@@ -28,7 +28,7 @@
   }
 
   function dots() {
-    const any = !!G.resListAffordable || ['models', 'chips', 'apps'].some(G.treeHasAffordable);
+    const any = !!G.resListAffordable || ['lab', 'models', 'chips', 'apps'].some(G.treeHasAffordable);
     $('dotResearch').classList.toggle('show', any);
     for (const b of document.querySelectorAll('#resSeg button')) {
       const r = b.dataset.r;
@@ -98,7 +98,7 @@
     // Spring naar een knoop in een boom, bijvoorbeeld vanaf een model dat op onderzoek wacht.
     open(tree, id) {
       setSeg(tree);
-      flashId = id;
+      flashId = id || null;
       G.ui.switchTab('research');
     },
   };

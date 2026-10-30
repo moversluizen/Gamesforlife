@@ -42,7 +42,29 @@
   const tech = (id, tree, [name, icon, desc], cost, unlocks) =>
     ({ id, tree, name, icon, sub: 'Hoofdlijn', desc, cost, kind: 'tech', mult: 0, unlocks, unlock: () => false });
 
-  G.TREES = { models: [], chips: [], apps: [] };
+  G.TREES = { lab: [], models: [], chips: [], apps: [] };
+
+  // Lab: je organisatie. Elke afdeling opent een onderdeel of een helper.
+  // Het lab blijft bestaan na een singulariteit (opgeslagen in S.lab).
+  G.LAB = [
+    ['lab_product',  'Productteam',             '📱', 100,  'Ontgrendelt het onderdeel Apps',               'Een team dat van modellen echte producten maakt.'],
+    ['lab_hardware', 'Eigen hardware',          '💾', 250,  'Ontgrendelt het onderdeel Chips',              'Stop met huren: bouw je eigen chips en datacenters.'],
+    ['lab_hr',       'HR-afdeling',             '👥', 600,  'Ontgrendelt het onderdeel Team en de Stagiair', 'Iemand moet de sollicitaties lezen.'],
+    ['lab_safety',   'Veiligheidsteam',         '🦺', 2500, 'Ontgrendelt de Safety-engineer',               'Slimmere modellen vragen om toezicht.'],
+    ['lab_eng',      'Engineeringafdeling',     '🧑‍🔧', 5000, 'Ontgrendelt de Fab-ingenieur',                'Mensen die de fabriek draaiende houden.'],
+    ['lab_design',   'Chipontwerpstudio',       '👩‍🔬', 3e4,  'Ontgrendelt de Chipontwerper',                'Ontwerp je chips zelf, sneller dan de concurrent.'],
+    ['lab_mkt',      'Marketingafdeling',       '📣', 5e4,  'Ontgrendelt de Marketeer',                     'Want een goede app verkoopt zichzelf niet.'],
+    ['lab_talent',   'Talentprogramma',         '🕵️', 1e5,  'Ontgrendelt de Talentscout',                   'Op zoek naar het volgende genie.'],
+    ['lab_finance',  'Financiële afdeling',     '💼', 2e5,  'Ontgrendelt de Financieel directeur',          'Iemand die weet waar al die tokens heen gaan.'],
+    ['lab_sing',     'Singulariteitsinstituut', '🌀', 1e9,  'Ontgrendelt de singulariteit',                 'Onderzoek naar wat er na AGI komt.'],
+  ];
+  G.HELPER_LAB = { intern: 'lab_hr', safety: 'lab_safety', eng: 'lab_eng', design: 'lab_design', mkt: 'lab_mkt', scout: 'lab_talent', cfo: 'lab_finance' };
+  G.TAB_LAB = { apps: 'lab_product', chips: 'lab_hardware', team: 'lab_hr' };
+  G.LAB.forEach(([id, name, icon, cost, unlocks, desc]) => {
+    const u = { id, tree: 'lab', name, icon, sub: 'Lab', desc, cost, kind: 'lab', mult: 0, unlocks, unlock: () => false };
+    G.UPGRADES.push(u);
+    G.TREES.lab.push({ spine: u, left: null, right: null });
+  });
   // zijtakken: bestaande upgrades die in de boom komen te hangen
   const BRANCHES = {
     models: { 4: ['x0', 'c3'], 6: ['x1', 'c4'], 8: ['x2', 'c5'], 9: ['x3'], 10: [null, 'c6'], 11: ['x4', 'c7'], 12: ['x5', 'c8'] },
@@ -80,21 +102,33 @@
   for (const rows of Object.values(G.TREES)) rows.forEach((r, k) => { r.spine.parent = k ? rows[k - 1].spine.id : null; });
 
   G.techById = id => G.UPGRADES.find(u => u.id === id);
-  G.techDone = id => !!G.S.upgrades[id];
-  G.techAvailable = u => !G.S.upgrades[u.id] && (!u.parent || !!G.S.upgrades[u.parent]);
+  const store = id => (id.startsWith('lab_') ? G.S.lab : G.S.upgrades);
+  G.techDone = id => !!store(id)[id];
+  G.techAvailable = u => !G.techDone(u.id) && (!u.parent || G.techDone(u.parent));
   G.buyTech = id => {
     const u = G.techById(id);
     if (!u || !G.techAvailable(u) || G.S.tokens < u.cost) return false;
     G.S.tokens -= u.cost;
-    G.S.upgrades[id] = 1;
+    store(id)[id] = 1;
     G.recalc();
+    if (u.kind === 'lab') G.emit('labDone', u);
     return true;
   };
   G.treeProgress = tree => {
     let done = 0, total = 0;
-    for (const r of G.TREES[tree]) for (const u of [r.spine, r.left, r.right]) if (u) { total++; if (G.S.upgrades[u.id]) done++; }
+    for (const r of G.TREES[tree]) for (const u of [r.spine, r.left, r.right]) if (u) { total++; if (G.techDone(u.id)) done++; }
     return [done, total];
   };
+
+  // ---------- onderdelen en helpers gaan open via het lab ----------
+  G.labDone = id => !!G.S.lab[id];
+  G.tabUnlocked = t => !G.TAB_LAB[t] || G.labDone(G.TAB_LAB[t]);
+  G.tabLock = t => G.techById(G.TAB_LAB[t]);
+  G.helperUnlocked = h => G.labDone(G.HELPER_LAB[h.id]);
+  const hire0 = G.hire;
+  G.hire = h => (G.helperUnlocked(h) ? hire0(h) : false);
+  const prestige0 = G.prestige;
+  G.prestige = () => (G.labDone('lab_sing') ? prestige0() : 0);
   G.treeHasAffordable = tree => G.TREES[tree].some(r => [r.spine, r.left, r.right].some(u => u && G.techAvailable(u) && G.S.tokens >= u.cost));
 
   // ---------- koppeling met modellen, chips en apps ----------
@@ -119,6 +153,16 @@
   // Oudere saves: wat je al bezit telt als onderzocht.
   G.migrateTree = () => {
     const S = G.S;
+    S.lab = S.lab || {};
+    // Oude saves: wat al open was blijft open.
+    const old = [[150, 'lab_product'], [250, 'lab_hardware'], [800, 'lab_hr']];
+    for (const [t, id] of old) if (S.lifeEarned >= t) S.lab[id] = 1;
+    for (const [hid, lid] of Object.entries(G.HELPER_LAB)) if ((S.helpers[hid] || 0) > 0) S.lab[lid] = 1;
+    if (S.prestiges > 0 || S.insights > 0) S.lab.lab_sing = 1;
+    // Het lab is een rechte lijn: een open afdeling betekent dat alles ervoor ook open is.
+    let last = -1;
+    G.LAB.forEach(([id], k) => { if (S.lab[id]) last = k; });
+    for (let k = 0; k <= last; k++) S.lab[G.LAB[k][0]] = 1;
     G.GENS.forEach((g, i) => { if (i >= 2 && S.owned[i] > 0) for (let k = 2; k <= i; k++) S.upgrades['tm' + k] = 1; });
     for (let k = 1; k <= S.chipGen + (S.rnd ? 1 : 0); k++) S.upgrades['tc' + k] = 1;
     G.APPS.forEach((a, i) => { const s = S.apps[a.id]; if (s && (s.v || s.b)) for (let k = 0; k <= i; k++) S.upgrades['ta' + k] = 1; });
@@ -127,7 +171,15 @@
 
   // Ada leert je de boom kennen.
   const qi = G.QUESTS.findIndex(q => q.text === 'Koop een Markov-keten');
-  G.QUESTS.splice(qi + 1, 0, { text: 'Onderzoek Statistische taalmodellen', goal: s => [s.upgrades.tm2 ? 1 : 0, 1], reward: 300, tab: 'research' });
+  G.QUESTS.splice(qi + 1, 0, { text: 'Onderzoek Statistische taalmodellen', goal: s => [s.upgrades.tm2 ? 1 : 0, 1], reward: 300, tab: 'research', tree: 'models' });
+  const labQuest = (before, id, name) => {
+    const k = G.QUESTS.findIndex(q => q.text === before);
+    G.QUESTS.splice(k, 0, { text: `Onderzoek in je lab: ${name}`, goal: s => [s.lab && s.lab[id] ? 1 : 0, 1], reward: 200, tab: 'research', tree: 'lab' });
+  };
+  labQuest('Bouw je eerste app: de Praatbot', 'lab_product', 'Productteam');
+  labQuest('Bouw een Zandgroeve', 'lab_hardware', 'Eigen hardware');
+  labQuest('Neem een Stagiair aan', 'lab_hr', 'HR-afdeling');
+  labQuest('Neem een Safety-engineer aan', 'lab_safety', 'Veiligheidsteam');
 
   G.NEWS.push(
     [3, 'Onderzoekslab publiceert paper met 400 auteurs. Iedereen claimt het idee.'],
