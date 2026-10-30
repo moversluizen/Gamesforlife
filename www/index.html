@@ -100,9 +100,15 @@
       <div id="genList"></div>
     </section>
     <section class="tab" id="tab-research">
-      <div class="tabhead"><h2>Onderzoek</h2><span class="muted" id="researchCount"></span></div>
+      <div class="tabhead">
+        <div class="seg" id="resSeg">
+          <button data-r="models" class="on">🧠 Modellen</button><button data-r="chips">💾 Chips</button><button data-r="apps">📱 Apps</button><button data-r="upg">⚡ Overig</button>
+        </div>
+      </div>
+      <div class="res-head"><b id="resTitle"></b><span class="muted" id="researchCount"></span></div>
       <div class="bar research-bar"><i id="researchBar"></i></div>
-      <div id="upgList"></div>
+      <div id="treeBody"></div>
+      <div id="upgList" class="hidden"></div>
     </section>
     <section class="tab" id="tab-chips">
       <div class="tabhead"><h2>Chips</h2><span class="muted" id="chipHead"></span></div>
@@ -145,8 +151,10 @@
 <script src="js/data.js"></script>
 <script src="js/engine.js"></script>
 <script src="js/industry.js"></script>
+<script src="js/research.js"></script>
 <script src="js/fx.js"></script>
 <script src="js/ui-industry.js"></script>
+<script src="js/ui-research.js"></script>
 <script src="js/ui.js"></script>
 </body>
 </html>

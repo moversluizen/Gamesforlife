@@ -12,7 +12,8 @@ De mechanismen komen uit de populairste idle games (Cookie Clicker, AdVenture Ca
 | Generatoren met exponentiële kosten (×1,15) | 13 AI-modellen, van Perceptron tot Dyson-datacenter |
 | Mijlpalen | Bij 10, 25, 50, 100 … stuks verdubbelt de productie van een model |
 | Kooptoggle | ×1 / ×10 / ×100 / Max |
-| Upgrades | 120+ onderzoeken (per model, voor tikken, infrastructuur, Eureka, offline) |
+| Onderzoeksbomen | Drie bomen (modellen, chips, apps): de hoofdlijn ontgrendelt elk volgend model, elke chipgeneratie en elke app; zijtakken geven boosts |
+| Upgrades | 120+ losse verbeteringen (per model, voor tikken, Eureka, offline, veiligheid) |
 | Gouden bonus | 💡 Eureka-momenten: Doorbraak, Datastorm (×7) of Klikstorm (×777) |
 | Offline-opbrengst | Tot 8 uur, 50% → 100% met upgrades |
 | Prestige | Singulariteit: reset voor Inzichten (+2% productie per stuk) |
@@ -43,7 +44,9 @@ www/                 het spel (HTML/CSS/JS, geen build nodig)
   js/engine.js       spelregels, opslaan, offline, prestige
   js/fx.js           achtergrond-animatie, deeltjes, geluid, trillen
   js/industry.js     supply chain, chips, apps, helpers, opdrachten
+  js/research.js     onderzoeksbomen en de koppeling met modellen, chips en apps
   js/ui-industry.js  interface voor chips, apps, team en opdrachten
+  js/ui-research.js  interface voor de onderzoeksbomen
   js/ui.js           interface en spellus
 resources/           bron voor app-icoon en splash (1024px / 2732px)
 ios/                 Xcode-project (Capacitor, Swift Package Manager)

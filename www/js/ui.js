@@ -28,6 +28,7 @@
 
   function buyGen(i, card) {
     if (!G.isRevealed(i)) return;
+    if (G.genNeedsTech(i)) { G.haptic(); G.uiRes.open('models', 'tm' + i); return; }
     const k = G.buyGen(i);
     if (k) {
       G.sfx.buy(); G.haptic('LIGHT');
@@ -45,12 +46,14 @@
       e.card.style.display = '';
       if (!rev) shownLocked = true;
       e.card.classList.toggle('locked', !rev);
-      const k = G.buyQty(i), cost = G.costOf(i, k);
-      e.card.classList.toggle('can', rev && S.tokens >= cost);
+      const k = G.buyQty(i), cost = G.costOf(i, k), tech = rev && G.genNeedsTech(i) ? G.genTech(i) : null;
+      e.card.classList.toggle('can', rev && !tech && S.tokens >= cost);
+      e.card.classList.toggle('needs', !!tech);
       e.own.textContent = S.owned[i];
       e.own.style.display = S.owned[i] ? '' : 'none';
       e.name.textContent = rev ? g.name : '???';
       if (!rev) e.rate.textContent = 'Nog niet ontdekt';
+      else if (tech) e.rate.textContent = `🔬 Eerst onderzoeken: ${tech.icon} ${tech.name}`;
       else if (S.owned[i]) {
         const r = G.genRate(i);
         e.rate.textContent = `+${G.fmt(r)}/s · ${Math.round(r / tps * 100)}% van totaal`;
@@ -60,8 +63,8 @@
       e.mbar.style.width = next ? ((S.owned[i] - prev) / (next - prev) * 100) + '%' : '100%';
       const ml = !rev ? '' : next ? `2× productie bij ${next}${G.milestoneLevel(S.owned[i]) ? ` · nu ×${G.fmt(Math.pow(2, G.milestoneLevel(S.owned[i])))}` : ''}` : 'Alle mijlpalen gehaald';
       if (e.ml.textContent !== ml) e.ml.textContent = ml;
-      e.q.textContent = rev ? `×${k}` + (next && S.owned[i] + k >= next ? ' ⭐' : '') : '';
-      e.c.textContent = G.fmt(cost);
+      e.q.textContent = tech ? '🔬 onderzoek' : rev ? `×${k}` + (next && S.owned[i] + k >= next ? ' ⭐' : '') : '';
+      e.c.textContent = G.fmt(tech ? tech.cost : cost);
     });
   }
 
@@ -92,10 +95,7 @@
       row.classList.toggle('can', can);
       any = any || can;
     }
-    $('dotResearch').classList.toggle('show', any);
-    const nUp = Object.keys(G.S.upgrades).length;
-    $('researchCount').textContent = `${nUp} / ${G.UPGRADES.length}`;
-    $('researchBar').style.width = (nUp / G.UPGRADES.length * 100) + '%';
+    G.resListAffordable = any;
   }
 
   // ---------- singulariteit ----------
@@ -472,6 +472,8 @@
     if (currentTab === 'more' && moreSub === 'ach' && force) updateAch();
     if (currentTab === 'more' && moreSub === 'set' && force) updateMore();
     G.uiInd.update(currentTab, force);
+    G.uiRes.dots();
+    if (currentTab === 'research') G.uiRes.update();
     if (currentTab === 'models') updateBoosts();
     if (force) updatePager();
     document.querySelectorAll('#tabs button').forEach(b => b.classList.toggle('locked', !G.tabUnlocked(b.dataset.tab)));
@@ -580,6 +582,7 @@
   // ---------- start ----------
   (async () => {
     await G.load();
+    G.migrateTree();
     G.fx.init($('fx'));
     buildGens();
     G.scheduleEureka();

@@ -78,6 +78,7 @@
       if (!t) return;
       const act = t.dataset.act;
       if (act === 'chain') ok(G.buyChain(+t.dataset.i), t);
+      else if (act === 'rnd-research') G.uiRes.open('chips', 'tc' + (G.S.chipGen + 1));
       else if (act === 'rnd-start') {
         if (G.startRnd()) { G.sfx.upgrade(); G.haptic('MEDIUM'); G.ui.toast('🔬', 'Ontwikkeling gestart', 'Tik op het project om het te versnellen.'); }
         else G.sfx.error();
@@ -149,13 +150,14 @@
       return;
     }
     if (!nx) { keyed(el, 'max', curHtml + '<p class="muted">Je hebt de krachtigste chip die er bestaat.</p>'); return; }
-    const litho = S.chain[2] >= nx.litho, aff = S.tokens >= nx.cost;
-    keyed(el, ['ready', S.chipGen, S.chain[2], litho, aff, G.hl('design')].join('|'), curHtml + `
+    const litho = S.chain[2] >= nx.litho, aff = S.tokens >= nx.cost, tech = G.chipTech(S.chipGen + 1), known = G.techDone(tech.id);
+    keyed(el, ['ready', S.chipGen, S.chain[2], litho, aff, known, G.hl('design')].join('|'), curHtml + `
       <div class="rnd-next">
         <div class="rnd-row"><span class="ri">${nx.icon}</span><div><small>Volgende generatie</small><b>${nx.name}</b>
           <span>${nx.node} · ×${G.fmt(nx.power)} per chip · ontwikkeltijd ${G.fmtTime(nx.time * G.mods.rndTime)}</span></div></div>
+        <p class="req ${known ? 'ok' : 'no'}">${known ? '✓' : '✗'} Onderzoek: ${tech.icon} ${tech.name}${known ? '' : ' <button class="pill mini" data-act="rnd-research">🔬 naar boom</button>'}</p>
         <p class="req ${litho ? 'ok' : 'no'}">${litho ? '✓' : '✗'} Vereist ${nx.litho} EUV-machines (je hebt er ${S.chain[2]})</p>
-        <button class="cta" data-act="rnd-start" ${litho && aff ? '' : 'disabled'}>Ontwikkel · ${G.fmt(nx.cost)}</button>
+        <button class="cta" data-act="rnd-start" ${litho && aff && known ? '' : 'disabled'}>Ontwikkel · ${G.fmt(nx.cost)}</button>
       </div>`);
   }
 
@@ -171,12 +173,17 @@
     const list = $('appList'), S = G.S;
     const shown = [];
     for (const a of G.APPS) { shown.push(a); if (appStatus(a) === 'locked') break; }
-    const key = shown.map(a => a.id + ':' + appStatus(a)).join(',');
+    const key = shown.map(a => a.id + ':' + appStatus(a) + (G.appNeedsTech(a) ? 't' : '')).join(',');
     if (keyed(list, key, shown.map(a => {
       const st = appStatus(a), s = G.S.apps[a.id] || {};
       const head = `<div class="gicon"><span>${a.icon}</span>${s.v ? `<span class="own">v${s.v}</span>` : ''}</div>`;
-      if (st === 'locked') return `<div class="app locked"><div class="app-top">${head}<div class="ginfo"><div class="gname">${a.name}</div>
-        <div class="grate">🔒 Vereist ${a.n}× ${G.GENS[a.model].name}</div></div></div></div>`;
+      if (st === 'locked') {
+        const tech = G.appTech(a), known = !G.appNeedsTech(a), model = G.S.owned[a.model] >= a.n;
+        return `<div class="app locked${known ? '' : ' needs'}"><div class="app-top">${head}<div class="ginfo"><div class="gname">${a.name}</div>
+          <div class="grate">${known ? '✓' : '🔬'} Onderzoek: ${tech.icon} ${tech.name}</div>
+          <div class="grate">${model ? '✓' : '🔒'} Vereist ${a.n}× ${G.GENS[a.model].name}</div></div>
+          ${known ? '' : `<button class="gbuy" data-act="app-research" data-id="${a.id}"><span class="q">🔬 onderzoek</span><span class="c">${G.fmt(tech.cost)}</span></button>`}</div></div>`;
+      }
       if (st === 'new') return `<div class="app" data-f="ap-${a.id}"><div class="app-top">${head}<div class="ginfo"><div class="gname">${a.name}</div>
         <div class="grate">${a.desc}</div><div class="grate">Bouwtijd ${G.fmtTime(a.time)} · tot ${G.fmt(a.cap)} gebruikers</div></div>
         <button class="gbuy" data-act="app-build" data-id="${a.id}"><span class="q">bouwen</span><span class="c">${G.fmt(G.appCost(a))}</span></button></div></div>`;
@@ -195,6 +202,7 @@
           const t = e.target.closest('[data-act]');
           if (!t) return;
           const a = G.APPS.find(x => x.id === t.dataset.id);
+          if (t.dataset.act === 'app-research') { G.uiRes.open('apps', 'ta' + G.APPS.indexOf(a)); return; }
           if (t.dataset.act === 'app-build') {
             const wasNew = !G.app(a.id).v;
             if (G.buildApp(a)) {
