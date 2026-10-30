@@ -33,7 +33,7 @@ button { font: inherit; color: inherit; border: 0; background: none; cursor: poi
 #app {
   height: 100vh; height: 100dvh;
   display: grid;
-  grid-template-rows: auto minmax(230px, 42%) 1fr auto;
+  grid-template-rows: auto minmax(150px, 37%) minmax(0, 1fr) auto;
   padding-left: var(--sl); padding-right: var(--sr);
   background:
     radial-gradient(120% 60% at 50% 0%, hsla(var(--hue), 80%, 25%, .35), transparent 70%),
@@ -55,7 +55,14 @@ button { font: inherit; color: inherit; border: 0; background: none; cursor: poi
 .buff { font-size: 12px; font-weight: 700; padding: 4px 10px; border-radius: 99px; background: linear-gradient(90deg, #6a3cff, #ff3ca6); box-shadow: 0 0 14px rgba(255, 60, 166, .5); animation: pulse 1s infinite alternate; }
 
 /* ---------- speelveld ---------- */
-#stage { position: relative; overflow: hidden; display: flex; align-items: center; justify-content: center; }
+#stage {
+  position: relative; overflow: hidden; display: flex; align-items: center; justify-content: center;
+  container-type: size;
+  padding-bottom: 30px; /* ruimte voor de nieuwsregel */
+  /* kern en helpers schalen mee met de ruimte die het speelveld krijgt */
+  --core: min(62cqw, 64cqh, 270px);
+  --orb: min(88cqw, 92cqh, 380px);
+}
 #fx { position: absolute; inset: 0; width: 100%; height: 100%; }
 #stage::before {
   content: ''; position: absolute; left: 50%; top: 50%; width: 140%; aspect-ratio: 2; translate: -50% -42%;
@@ -77,7 +84,7 @@ button { font: inherit; color: inherit; border: 0; background: none; cursor: poi
   background: radial-gradient(closest-side, hsla(var(--hue), 100%, 60%, .55), transparent); filter: blur(4px); z-index: -1;
 }
 #core {
-  position: relative; z-index: 2; width: min(62vw, 34vh, 260px); aspect-ratio: 1;
+  position: relative; z-index: 2; width: min(62vw, 34vh, 260px); width: var(--core); aspect-ratio: 1;
   border-radius: 50%; touch-action: manipulation; transition: transform .08s;
   filter: drop-shadow(0 0 30px hsla(var(--hue), 100%, 60%, .45));
 }
@@ -341,12 +348,12 @@ button:focus-visible { outline: 2px solid var(--c1); outline-offset: 2px; }
 
 /* ---------- helpers rond de kern ---------- */
 #orbit {
-  position: absolute; z-index: 3; width: min(86vw, 48vh, 360px); aspect-ratio: 1; pointer-events: none;
+  position: absolute; z-index: 3; width: var(--orb); aspect-ratio: 1; pointer-events: none;
   left: 50%; top: 50%; translate: -50% -50%; animation: spin 40s linear infinite;
 }
 #orbit .hav {
   position: absolute; left: 50%; top: 50%; width: 0; height: 0;
-  transform: rotate(var(--a)) translateY(calc(min(86vw, 48vh, 360px) * -.5 + 18px)) rotate(calc(-1 * var(--a)));
+  transform: rotate(var(--a)) translateY(calc(var(--orb) * -.5 + 18px)) rotate(calc(-1 * var(--a)));
 }
 #orbit .hav i {
   position: absolute; left: -17px; top: -17px; width: 34px; height: 34px; border-radius: 50%; display: grid; place-items: center;
@@ -421,15 +428,14 @@ button:focus-visible { outline: 2px solid var(--c1); outline-offset: 2px; }
 #sub-ach > p { margin: 0 4px 10px; }
 
 /* breed scherm (iPad / desktop) */
-@media (min-width: 900px) {
+/* breed scherm of telefoon/tablet liggend: speelveld links, paneel rechts */
+@media (min-width: 900px), (orientation: landscape) and (min-width: 640px) {
   #app { grid-template-columns: 1fr 460px; grid-template-rows: auto 1fr auto; }
   #top { grid-column: 1; grid-row: 1; }
   #stage { grid-column: 1; grid-row: 2 / 4; }
   #panel { grid-column: 2; grid-row: 1 / 3; border-radius: 0; border-top: 0; border-left: 1px solid var(--line); }
   #tabs { grid-column: 2; grid-row: 3; }
-  #core { width: min(40vw, 50vh, 360px); }
-  #orbit { width: min(52vw, 66vh, 470px); }
-  #orbit .hav { transform: rotate(var(--a)) translateY(calc(min(52vw, 66vh, 470px) * -.5 + 18px)) rotate(calc(-1 * var(--a))); }
+  #stage { --core: min(54cqw, 56cqh, 380px); --orb: min(78cqw, 84cqh, 500px); }
   .tokens { font-size: 44px; }
   #toasts { right: 460px; }
 }
@@ -441,4 +447,80 @@ button:focus-visible { outline: 2px solid var(--c1); outline-offset: 2px; }
 @media (prefers-reduced-motion: reduce) {
   .tab.in-next, .tab.in-prev { animation: none; }
   #tabInd { transition: none; }
+}
+
+/* ---------- schalen op schermgrootte ---------- */
+/* Brede telefoon/tablet staand: paneelinhoud niet eindeloos breed */
+@media (min-width: 600px) and (max-width: 899px) and (orientation: portrait) {
+  .tab { padding-left: max(12px, calc((100% - 640px) / 2)); padding-right: max(12px, calc((100% - 640px) / 2)); }
+  #pager { padding-left: max(14px, calc((100% - 640px) / 2)); padding-right: max(14px, calc((100% - 640px) / 2)); }
+}
+
+/* Smalle telefoons */
+@media (max-width: 370px) {
+  #top { padding-left: 12px; padding-right: 12px; }
+  .tab { padding-left: 8px; padding-right: 8px; }
+  .gen, .upg { grid-template-columns: 44px 1fr auto; gap: 8px; padding: 8px; }
+  .app-top { grid-template-columns: 44px 1fr auto; gap: 8px; }
+  .gicon { width: 44px; height: 44px; font-size: 24px; border-radius: 12px; }
+  .gbuy { min-width: 78px; padding: 7px 8px; }
+  .gname { font-size: 14px; }
+  .stats3 b { font-size: 15px; }
+  .fnode { width: 48px; }
+  .fnode span { font-size: 19px; }
+  #tabs .lb { font-size: 9.5px; }
+  #tabs .ic { width: 44px; }
+  .boost .bl { font-size: 9px; letter-spacing: 0; }
+  .seg button { padding: 5px 8px; }
+  #moreSeg button { font-size: 11px; }
+}
+
+/* Lagere schermen (of veel ruimte voor de app-balk): compacter bovenin */
+@media (max-height: 880px) {
+  #top { padding-top: calc(6px + var(--st)); padding-bottom: 4px; }
+  .tokens { font-size: 28px; }
+  .tps { font-size: 13px; }
+  .agi { margin-top: 6px; }
+  #quest { margin-top: 6px; padding: 5px 10px; }
+  #quest .qa { font-size: 19px; }
+  #app { grid-template-rows: auto minmax(140px, 32%) minmax(0, 1fr) auto; }
+  #ticker { font-size: 11px; bottom: 2px; }
+  .boost-intro { display: none; }
+}
+
+@media (max-height: 760px) {
+  #ticker { display: none; }
+  #stage { padding-bottom: 4px; }
+}
+
+@media (max-height: 680px) {
+  .tokens { font-size: 24px; }
+  .tps { font-size: 12px; }
+  .agi-label { font-size: 11px; margin-bottom: 2px; }
+  .bar { height: 6px; }
+  #quest .qt small { display: none; }
+  #quest .qbar { margin-top: 3px; }
+  #app { grid-template-rows: auto minmax(120px, 30%) minmax(0, 1fr) auto; }
+  #pager { height: 28px; padding-top: 4px; }
+  .tabhead { min-height: 42px; padding: 4px 4px 6px; }
+  .tabhead h2 { font-size: 16px; }
+  .boost-intro { display: none; }
+  .boost { padding: 6px 4px; }
+  .boost .bi { font-size: 15px; }
+  #tabs { padding-top: 4px; padding-bottom: calc(4px + var(--sb)); }
+  #tabs button { height: 44px; gap: 3px; }
+  #tabs .ic { height: 26px; }
+  #tabs svg { width: 21px; height: 21px; }
+}
+
+/* Liggend op een telefoon: alles boven elkaar in de linkerkolom passen */
+@media (orientation: landscape) and (max-height: 520px) {
+  .tokens { font-size: 24px; }
+  #quest .qt small { display: none; }
+  #ticker { display: none; }
+}
+
+/* Liggende layout houdt zijn eigen rijen, ook op lage schermen */
+@media (min-width: 900px), (orientation: landscape) and (min-width: 640px) {
+  #app { grid-template-rows: auto 1fr auto; }
 }
