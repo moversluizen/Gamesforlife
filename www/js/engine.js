@@ -17,6 +17,7 @@
     started: Date.now(), runStarted: Date.now(), lastTick: Date.now(),
     buyMode: 1,
     settings: { sound: true, haptics: true },
+    ...(G.industryDefaults ? G.industryDefaults() : {}),
   });
 
   G.S = G.newState();
@@ -24,7 +25,7 @@
   // ---------- multipliers ----------
   G.recalc = function () {
     const S = G.S;
-    const m = { gen: G.GENS.map(() => 1), global: 1, click: 1, clickPct: 0, euFreq: 1, euDur: 1, offline: 0.5 };
+    const m = { gen: G.GENS.map(() => 1), global: 1, click: 1, clickPct: 0, euFreq: 1, euDur: 1, offline: 0.5, chain: 1, slots: 1, app: 1, rndTime: 1 };
     for (const u of G.UPGRADES) {
       if (!S.upgrades[u.id]) continue;
       if (u.kind === 'gen') m.gen[u.gen] *= u.mult;
@@ -34,7 +35,11 @@
       else if (u.kind === 'eurekaFreq') m.euFreq *= u.mult;
       else if (u.kind === 'eurekaDur') m.euDur *= u.mult;
       else if (u.kind === 'offline') m.offline = Math.max(m.offline, u.mult);
+      else if (u.kind === 'chain') m.chain *= u.mult;
+      else if (u.kind === 'slots') m.slots *= u.mult;
+      else if (u.kind === 'app') m.app *= u.mult;
     }
+    if (G.industryMods) G.industryMods(m);
     m.achCount = Object.keys(S.ach).length;
     m.insightBonus = 1 + 0.02 * S.insights;
     m.achBonus = 1 + 0.01 * m.achCount;
@@ -53,10 +58,10 @@
   G.milestoneLevel = owned => { let n = 0; for (const m of G.MILESTONES) if (owned >= m) n++; return n; };
   G.nextMilestone = owned => G.MILESTONES.find(m => owned < m) || null;
 
-  G.genUnitRate = i => G.GENS[i].rate * G.mods.gen[i] * Math.pow(2, G.milestoneLevel(G.S.owned[i])) * G.mods.global * G.mods.perm;
+  G.genUnitRate = i => G.GENS[i].rate * G.mods.gen[i] * Math.pow(2, G.milestoneLevel(G.S.owned[i])) * G.mods.global * G.mods.perm * (G.computeBonus ? G.computeBonus() : 1);
   G.genRate = i => G.genUnitRate(i) * G.S.owned[i] * G.buffMult('prod');
   G.tps = () => { let t = 0; for (let i = 0; i < G.GENS.length; i++) t += G.genRate(i); return t; };
-  G.baseTps = () => G.tps() / G.buffMult('prod');
+  G.baseTps = () => (G.totalTps ? G.totalTps() : G.tps()) / G.buffMult('prod');
   G.clickValue = () => (G.mods.click * G.mods.perm + G.tps() * G.mods.clickPct) * G.buffMult('click');
 
   G.earn = x => { G.S.tokens += x; G.S.runEarned += x; G.S.lifeEarned += x; };
@@ -120,6 +125,7 @@
       lifeEarned: old.lifeEarned, clicks: old.clicks, clickEarned: old.clickEarned,
       eurekas: old.eurekas, ach: old.ach, agiCount: old.agiCount,
       started: old.started, settings: old.settings, buyMode: old.buyMode,
+      quest: old.quest || 0,
     });
     G.S = s;
     G.recalc();
@@ -153,7 +159,7 @@
 
   // ---------- prestaties ----------
   G.checkAchievements = () => {
-    const tps = G.tps();
+    const tps = G.totalTps();
     let got = [];
     for (const a of G.ACHS) if (!G.S.ach[a.id] && a.check(G.S, tps)) { G.S.ach[a.id] = Date.now(); got.push(a); }
     if (got.length) G.recalc();
@@ -169,12 +175,13 @@
     if (dt <= 0) return 0;
     if (dt > 5) {
       const secs = Math.min(dt, OFFLINE_CAP);
-      const amt = G.baseTps() * secs * G.mods.offline;
+      const ind = G.industryTick(secs) / G.buffMult('prod');
+      const amt = (G.tps() / G.buffMult('prod') * secs + ind) * G.mods.offline;
       G.earn(amt);
       G.S.buffs = G.S.buffs.filter(b => b.until > now);
       return { secs, amt };
     }
-    G.earn(G.tps() * dt);
+    G.earn(G.tps() * dt + G.industryTick(dt));
     if (G.S.buffs.length && G.S.buffs.some(b => b.until <= now)) G.S.buffs = G.S.buffs.filter(b => b.until > now);
     return 0;
   };
@@ -196,6 +203,7 @@
         Object.assign(s, d);
         s.settings = Object.assign(G.newState().settings, d.settings || {});
         s.owned = G.GENS.map((_, i) => (d.owned && d.owned[i]) || 0);
+        s.chain = G.CHAIN.map((_, i) => (d.chain && d.chain[i]) || 0);
         G.S = s;
       } catch (e) { G.S = G.newState(); }
     }

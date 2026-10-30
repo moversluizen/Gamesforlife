@@ -17,8 +17,13 @@ De mechanismen komen uit de populairste idle games (Cookie Clicker, AdVenture Ca
 | Offline-opbrengst | Tot 8 uur, 50% → 100% met upgrades |
 | Prestige | Singulariteit: reset voor Inzichten (+2% productie per stuk) |
 | Eindbaas | Project AGI: permanent ×2, daarna elke keer 10× groter |
-| Prestaties | 70+ prestaties, elk +1% productie |
+| Prestaties | 80+ prestaties, elk +1% productie |
 | Sfeer | Nieuwsticker, kleuren per tijdperk, geanimeerd neuraal netwerk, geluid en trillen |
+| Productieketen | Supply chain voor chips: zandgroeve → waferfabriek → EUV-lithografie → chipfabriek → datacenter. De traagste schakel (bottleneck) bepaalt de output |
+| Technologieboom | 8 chipgeneraties (CPU → GPU → … → Quantumchip) met ontwikkeltijd; tikken versnelt het onderzoek |
+| Tweede inkomstenbron | 10 apps (Praatbot → Code-copiloot → Robot-butler) met groeiende gebruikers, campagnes en versies |
+| Managers | 6 helpers: stagiair (auto-tikken), fab-ingenieur, chipontwerper, marketeer, talentscout, financieel directeur |
+| Opdrachten | Ada, je AI-assistent, geeft 20 opdrachten met beloningen die je door het hele spel leiden |
 
 ## Lokaal spelen
 
@@ -31,6 +36,8 @@ www/                 het spel (HTML/CSS/JS, geen build nodig)
   js/data.js         modellen, upgrades, prestaties, nieuws
   js/engine.js       spelregels, opslaan, offline, prestige
   js/fx.js           achtergrond-animatie, deeltjes, geluid, trillen
+  js/industry.js     supply chain, chips, apps, helpers, opdrachten
+  js/ui-industry.js  interface voor chips, apps, team en opdrachten
   js/ui.js           interface en spellus
 resources/           bron voor app-icoon en splash (1024px / 2732px)
 ios/                 Xcode-project (Capacitor, Swift Package Manager)

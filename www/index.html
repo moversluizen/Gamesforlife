@@ -21,11 +21,17 @@
       <div class="agi-label"><span id="eraName">Het begin</span><span id="agiPct">0%</span></div>
       <div class="bar"><i id="agiBar"></i></div>
     </div>
+    <button id="quest" class="hidden" aria-live="polite">
+      <span class="qa">🤖</span>
+      <span class="qt"><small>Ada · opdracht <span id="questNum"></span></small><span id="questText"></span><i class="qbar"><b id="questBar"></b></i></span>
+      <span class="qr" id="questReward"></span>
+    </button>
     <div id="buffs"></div>
   </header>
 
   <section id="stage">
     <canvas id="fx"></canvas>
+    <div id="orbit" aria-hidden="true"></div>
     <button id="core" aria-label="Train het model">
       <svg viewBox="0 0 200 200" aria-hidden="true">
         <defs>
@@ -73,26 +79,37 @@
       <div class="tabhead"><h2>Onderzoek</h2><span class="muted" id="researchCount"></span></div>
       <div id="upgList"></div>
     </section>
-    <section class="tab" id="tab-sing">
-      <div class="tabhead"><h2>Singulariteit</h2></div>
-      <div id="singBody"></div>
+    <section class="tab" id="tab-chips">
+      <div class="tabhead"><h2>Chips</h2><span class="muted" id="chipHead"></span></div>
+      <div id="chipBody"></div>
     </section>
-    <section class="tab" id="tab-ach">
-      <div class="tabhead"><h2>Prestaties</h2><span class="muted" id="achCount"></span></div>
-      <div id="achGrid"></div>
+    <section class="tab" id="tab-apps">
+      <div class="tabhead"><h2>Apps</h2><span class="muted" id="appHead"></span></div>
+      <div id="appList"></div>
+    </section>
+    <section class="tab" id="tab-team">
+      <div class="tabhead"><h2>Team</h2><span class="muted" id="teamHead"></span></div>
+      <div id="teamList"></div>
     </section>
     <section class="tab" id="tab-more">
-      <div class="tabhead"><h2>Meer</h2></div>
-      <div id="moreBody"></div>
+      <div class="tabhead">
+        <div class="seg" id="moreSeg">
+          <button data-s="sing" class="on">🌀 Singulariteit</button><button data-s="ach">🏆 Prestaties</button><button data-s="set">⚙️ Overig</button>
+        </div>
+      </div>
+      <div class="sub" id="sub-sing"><div id="singBody"></div></div>
+      <div class="sub hidden" id="sub-ach"><p class="muted" id="achCount"></p><div id="achGrid"></div></div>
+      <div class="sub hidden" id="sub-set"><div id="moreBody"></div></div>
     </section>
   </main>
 
   <nav id="tabs">
     <button data-tab="models" class="on"><b>🧠</b><span>Modellen</span></button>
     <button data-tab="research"><b>🔬</b><span>Onderzoek</span><i class="dot" id="dotResearch"></i></button>
-    <button data-tab="sing"><b>🌀</b><span>Singulariteit</span><i class="dot" id="dotSing"></i></button>
-    <button data-tab="ach"><b>🏆</b><span>Prestaties</span></button>
-    <button data-tab="more"><b>⚙️</b><span>Meer</span></button>
+    <button data-tab="chips"><b>💾</b><span>Chips</span><i class="dot" id="dotChips"></i></button>
+    <button data-tab="apps"><b>📱</b><span>Apps</span><i class="dot" id="dotApps"></i></button>
+    <button data-tab="team"><b>👥</b><span>Team</span><i class="dot" id="dotTeam"></i></button>
+    <button data-tab="more"><b>🌀</b><span>Meer</span><i class="dot" id="dotSing"></i></button>
   </nav>
 </div>
 
@@ -101,7 +118,9 @@
 
 <script src="js/data.js"></script>
 <script src="js/engine.js"></script>
+<script src="js/industry.js"></script>
 <script src="js/fx.js"></script>
+<script src="js/ui-industry.js"></script>
 <script src="js/ui.js"></script>
 </body>
 </html>

@@ -204,7 +204,7 @@ button { font: inherit; color: inherit; border: 0; background: none; cursor: poi
 
 /* tabbalk */
 #tabs {
-  display: grid; grid-template-columns: repeat(5, 1fr); background: #070c1c; border-top: 1px solid var(--line);
+  display: grid; grid-template-columns: repeat(6, 1fr); background: #070c1c; border-top: 1px solid var(--line);
   padding: 6px 4px calc(6px + var(--sb)); position: relative; z-index: 3;
 }
 #tabs button { display: flex; flex-direction: column; align-items: center; gap: 2px; padding: 4px 0; color: var(--mute); position: relative; }
@@ -246,6 +246,105 @@ button { font: inherit; color: inherit; border: 0; background: none; cursor: poi
 .agi-burst { position: fixed; inset: 0; z-index: 40; pointer-events: none; background: radial-gradient(circle, #fff, hsla(var(--hue), 100%, 70%, .6) 30%, transparent 70%); animation: agiFlash 2.5s ease-out forwards; }
 @keyframes agiFlash { from { opacity: 1; transform: scale(.2); } 30% { opacity: 1; } to { opacity: 0; transform: scale(3); } }
 
+/* ---------- Ada's opdracht ---------- */
+#quest {
+  display: flex; align-items: center; gap: 10px; width: 100%; max-width: 520px; margin: 10px auto 0; text-align: left;
+  background: rgba(255, 255, 255, .05); border: 1px solid var(--line); border-radius: 14px; padding: 7px 10px;
+}
+#quest .qa { font-size: 22px; }
+#quest .qt { flex: 1; min-width: 0; font-size: 13px; font-weight: 600; }
+#quest .qt small { display: block; font-size: 10px; color: var(--c1); text-transform: uppercase; letter-spacing: .5px; font-weight: 800; }
+#quest .qt > span { display: block; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
+#quest .qbar { display: block; height: 3px; border-radius: 3px; background: rgba(255, 255, 255, .08); margin-top: 4px; overflow: hidden; }
+#quest .qbar b { display: block; height: 100%; background: var(--c1); width: 0; transition: width .3s; }
+#quest .qr { font-size: 12px; font-weight: 800; color: var(--gold); white-space: nowrap; }
+#quest.done { border-color: var(--gold); background: rgba(255, 207, 74, .1); animation: pulse .8s infinite alternate; }
+#quest.done .qr { background: var(--gold); color: #2a1c00; padding: 6px 10px; border-radius: 10px; }
+
+/* ---------- helpers rond de kern ---------- */
+#orbit {
+  position: absolute; z-index: 3; width: min(86vw, 48vh, 360px); aspect-ratio: 1; pointer-events: none;
+  left: 50%; top: 50%; translate: -50% -50%; animation: spin 40s linear infinite;
+}
+#orbit .hav {
+  position: absolute; left: 50%; top: 50%; width: 0; height: 0;
+  transform: rotate(var(--a)) translateY(calc(min(86vw, 48vh, 360px) * -.5 + 18px)) rotate(calc(-1 * var(--a)));
+}
+#orbit .hav i {
+  position: absolute; left: -17px; top: -17px; width: 34px; height: 34px; border-radius: 50%; display: grid; place-items: center;
+  font-style: normal; font-size: 19px; background: rgba(12, 18, 40, .85); border: 1px solid hsla(var(--hue), 100%, 70%, .5);
+  box-shadow: 0 0 12px hsla(var(--hue), 100%, 60%, .4); animation: spin 40s linear infinite reverse;
+}
+.floater.auto { font-size: 14px; opacity: .8; }
+.floater.fixed { position: fixed; z-index: 70; pointer-events: none; }
+
+/* ---------- chips ---------- */
+.ind-card { background: var(--card); border: 1px solid var(--line); border-radius: 16px; padding: 14px; margin-bottom: 10px; }
+.stats3 { display: grid; grid-template-columns: repeat(3, 1fr); gap: 8px; margin-bottom: 10px; }
+.stats3 small { display: block; font-size: 11px; color: var(--mute); font-weight: 600; }
+.stats3 b { font-size: 17px; font-variant-numeric: tabular-nums; }
+.ind-card .muted { margin: 8px 0 0; line-height: 1.45; }
+.flow { display: flex; align-items: center; margin: 4px 0 12px; }
+.fnode {
+  flex: 0 0 auto; width: 56px; padding: 6px 0; border-radius: 14px; text-align: center; background: var(--card);
+  border: 1px solid var(--line); transition: border-color .3s, box-shadow .3s;
+}
+.fnode span { display: block; font-size: 22px; }
+.fnode small { display: block; font-size: 10px; color: var(--mute); font-weight: 700; font-variant-numeric: tabular-nums; }
+.fnode.off { opacity: .35; filter: grayscale(1); }
+.fnode.bn { border-color: var(--bad); box-shadow: 0 0 14px rgba(255, 90, 122, .45); }
+.fnode.bn small { color: var(--bad); }
+.arrow { flex: 1; height: 2px; background: rgba(255, 255, 255, .1); position: relative; overflow: hidden; margin: 0 2px; }
+.arrow.live { background: hsla(var(--hue), 100%, 60%, .3); }
+.arrow.live i { position: absolute; top: -2px; left: 0; width: 6px; height: 6px; border-radius: 50%; background: var(--c1); box-shadow: 0 0 6px var(--c1); animation: flowDot 1.2s linear infinite; }
+@keyframes flowDot { from { left: -6px; } to { left: 100%; } }
+.subhead { font-weight: 800; font-size: 15px; margin: 16px 4px 8px; }
+.subhead .muted { font-weight: 500; font-size: 12px; }
+.rnd-row { display: flex; gap: 12px; align-items: center; }
+.rnd-row .ri { font-size: 32px; width: 48px; height: 48px; display: grid; place-items: center; border-radius: 14px; background: rgba(255, 255, 255, .06); flex: 0 0 auto; }
+.rnd-row .ri.spin { animation: pulse .6s infinite alternate; }
+.rnd-row small { display: block; font-size: 11px; color: var(--mute); text-transform: uppercase; letter-spacing: .4px; font-weight: 700; }
+.rnd-row b { display: block; font-size: 16px; }
+.rnd-row span { font-size: 12px; color: var(--mute); }
+.rnd-next { margin-top: 12px; padding-top: 12px; border-top: 1px dashed var(--line); }
+.req { font-size: 13px; margin: 10px 0 0; font-weight: 600; }
+.req.ok { color: var(--ok); }
+.req.no { color: var(--bad); }
+.rnd .cta { width: 100%; }
+.rnd-run { cursor: pointer; }
+.rnd-run:active { transform: scale(.99); }
+.bar.big { height: 12px; margin-top: 12px; }
+.tapme { text-align: center; font-size: 13px; color: var(--c1); font-weight: 700; margin: 10px 0 0; animation: pulse .8s infinite alternate; }
+
+/* ---------- apps ---------- */
+.app { background: var(--card); border: 1px solid var(--line); border-radius: 16px; padding: 10px; margin-bottom: 8px; }
+.app.can { background: linear-gradient(90deg, var(--card-hi), var(--card)); border-color: hsla(var(--hue), 100%, 60%, .35); }
+.app.can .gbuy { background: var(--c1); color: #061024; }
+.app.locked { opacity: .5; }
+.app.locked .gicon { filter: grayscale(1) brightness(.4); }
+.app-top { display: grid; grid-template-columns: 52px 1fr auto; gap: 10px; align-items: center; }
+.app .ver { font-size: 11px; color: var(--c1); font-weight: 800; }
+.app .earn { color: var(--ok); }
+.app .bar { margin-top: 6px; height: 5px; }
+.app .bar.users i { background: linear-gradient(90deg, var(--ok), var(--c1)); }
+.app-btns { display: flex; gap: 8px; margin-top: 10px; }
+.pill { flex: 1; padding: 9px 8px; border-radius: 11px; background: rgba(255, 255, 255, .07); font-weight: 800; font-size: 13px; }
+.pill:disabled { opacity: .45; }
+.pill.up.can { background: var(--gold); color: #2a1c00; }
+
+/* ---------- team ---------- */
+.helper .eff { color: var(--c1); font-weight: 600; white-space: normal; }
+.helper .gname .muted { font-size: 12px; font-weight: 600; }
+.gbuy:disabled { opacity: .6; }
+
+/* ---------- tabbalk & meer ---------- */
+#tabs button.locked b { filter: grayscale(1) brightness(.5); }
+#tabs button.locked span { opacity: .5; }
+#tabs span { font-size: 9.5px; }
+#moreSeg { width: 100%; }
+#moreSeg button { flex: 1; font-size: 12px; padding: 7px 4px; }
+#sub-ach > p { margin: 0 4px 10px; }
+
 /* breed scherm (iPad / desktop) */
 @media (min-width: 900px) {
   #app { grid-template-columns: 1fr 460px; grid-template-rows: auto 1fr auto; }
@@ -254,6 +353,8 @@ button { font: inherit; color: inherit; border: 0; background: none; cursor: poi
   #panel { grid-column: 2; grid-row: 1 / 3; border-radius: 0; border-top: 0; border-left: 1px solid var(--line); }
   #tabs { grid-column: 2; grid-row: 3; }
   #core { width: min(40vw, 50vh, 360px); }
+  #orbit { width: min(52vw, 66vh, 470px); }
+  #orbit .hav { transform: rotate(var(--a)) translateY(calc(min(52vw, 66vh, 470px) * -.5 + 18px)) rotate(calc(-1 * var(--a))); }
   .tokens { font-size: 44px; }
   #toasts { right: 460px; }
 }

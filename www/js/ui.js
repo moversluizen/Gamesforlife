@@ -4,7 +4,7 @@
   const $ = id => document.getElementById(id);
   const el = (tag, cls, html) => { const e = document.createElement(tag); if (cls) e.className = cls; if (html != null) e.innerHTML = html; return e; };
 
-  let currentTab = 'models';
+  let currentTab = 'models', moreSub = 'sing';
   const genEls = [];
 
   // ---------- modellen ----------
@@ -110,7 +110,7 @@
           <p>AGI gebouwd: <b>${S.agiCount}×</b> (bonus ×${G.fmt(G.mods.agiBonus)})</p></div>`;
     $('singBody').innerHTML = agiHtml + `
       <div class="big-card"><div style="font-size:44px">🌀</div><h3>Singulariteit</h3>
-        <p>Reset je modellen, onderzoek en tokens. In ruil krijg je <b>Inzichten</b>: elk inzicht geeft permanent <b>+2% productie</b>.</p>
+        <p>Reset je modellen, onderzoek, chips, apps, team en tokens. In ruil krijg je <b>Inzichten</b>: elk inzicht geeft permanent <b>+2% productie</b>.</p>
         <p>Inzichten nu: <b>${S.insights}</b> (+${Math.round((G.mods.insightBonus - 1) * 100)}%)</p>
         <div class="big-num">+${G.fmt(p)}</div>
         <p>${p >= 1 ? 'inzichten bij activeren' : `Volgend inzicht bij ${G.fmt(nextAt)} totaal verdiende tokens`}</p>
@@ -185,6 +185,10 @@
       <div class="row"><span>Verdiend met tikken</span><b>${G.fmt(S.clickEarned)}</b></div>
       <div class="row"><span>Eureka-momenten</span><b>${S.eurekas}</b></div>
       <div class="row"><span>Singulariteiten</span><b>${S.prestiges}</b></div>
+      <div class="row"><span>Rekenkracht</span><b>${G.fmt(G.compute())} (×${G.computeBonus().toFixed(2).replace('.', ',')})</b></div>
+      <div class="row"><span>Modellen per seconde</span><b>${G.fmt(G.tps())}</b></div>
+      <div class="row"><span>Apps per seconde</span><b>${G.fmt(G.appRevenue())}</b></div>
+      <div class="row"><span>Chipverkoop per seconde</span><b>${G.fmt(G.chipSales())}</b></div>
       <div class="row"><span>Totale bonus</span><b>×${G.fmt(G.mods.perm)}</b></div>
       <div class="row"><span>Offline productie</span><b>${Math.round(G.mods.offline * 100)}%</b></div>
       <div class="row"><span>Speeltijd</span><b>${G.fmtTime(played)}</b></div>
@@ -192,26 +196,39 @@
       <div class="row"><span>Geluid</span><button class="switch ${S.settings.sound ? 'on' : ''}" data-set="sound" aria-label="Geluid"></button></div>
       <div class="row"><span>Trillen</span><button class="switch ${S.settings.haptics ? 'on' : ''}" data-set="haptics" aria-label="Trillen"></button></div>
       <div class="section-title">Hoe speel je?</div>
-      <div class="small-print">Tik op de kern om tokens te verdienen. Koop modellen die automatisch tokens maken; bij 10, 25, 50, 100… stuks verdubbelt hun productie. Onderzoek geeft extra boosts. Tik op een gouden 💡 voor een Eureka-moment. Bouw uiteindelijk AGI en activeer de singulariteit voor permanente bonussen. Ook als de app dicht is gaat de training door.</div>
+      <div class="small-print">Tik op de kern om tokens te verdienen. Koop modellen die automatisch tokens maken; bij 10, 25, 50, 100… stuks verdubbelt hun productie. Onderzoek geeft extra boosts. Bouw een supply chain voor chips: rekenkracht maakt al je modellen sneller, en de traagste schakel bepaalt hoeveel chips je maakt. Lanceer apps voor extra inkomsten en neem helpers aan die werk voor je doen. Ada geeft je steeds een nieuwe opdracht met een beloning. Tik op een gouden 💡 voor een Eureka-moment. Bouw uiteindelijk AGI en activeer de singulariteit voor permanente bonussen. Ook als de app dicht is gaat de training door.</div>
       <button class="danger" id="wipeBtn">Voortgang wissen</button>
-      <div class="small-print">Road to AGI · versie 1.0<br>Dit spel verzamelt geen persoonsgegevens. Je voortgang wordt alleen op dit apparaat opgeslagen.</div>`;
+      <div class="small-print">Road to AGI · versie 1.1<br>Dit spel verzamelt geen persoonsgegevens. Je voortgang wordt alleen op dit apparaat opgeslagen.</div>`;
     for (const sw of $('moreBody').querySelectorAll('.switch')) {
       sw.onclick = () => { const k = sw.dataset.set; S.settings[k] = !S.settings[k]; sw.classList.toggle('on', S.settings[k]); G.haptic(); G.save(); };
     }
     $('wipeBtn').onclick = () => modal('⚠️', 'Alles wissen?', 'Al je voortgang, inzichten en prestaties worden definitief verwijderd.', [
       { label: 'Annuleren' },
-      { label: 'Wissen', cls: 'bad', onClick: async () => { await G.wipe(); buildGens(); $('achGrid').innerHTML = ''; refresh(true); switchTab('models'); } },
+      { label: 'Wissen', cls: 'bad', onClick: async () => { await G.wipe(); buildGens(); $('achGrid').innerHTML = ''; G.uiInd.reset(); refresh(true); switchTab('models'); } },
     ]);
   }
 
   // ---------- tabs ----------
+  const TAB_NAMES = { chips: 'Chips', apps: 'Apps', team: 'Team' };
   function switchTab(t) {
+    if (!G.tabUnlocked(t)) {
+      G.sfx.error();
+      toast('🔒', `${TAB_NAMES[t]} is nog op slot`, `Verdien in totaal ${G.fmt(G.TAB_UNLOCK[t])} tokens om dit te ontgrendelen.`);
+      return;
+    }
     currentTab = t;
     document.querySelectorAll('#tabs button').forEach(b => b.classList.toggle('on', b.dataset.tab === t));
     document.querySelectorAll('.tab').forEach(s => s.classList.toggle('active', s.id === 'tab-' + t));
     refresh(true);
   }
   document.querySelectorAll('#tabs button').forEach(b => b.addEventListener('click', () => { G.haptic(); switchTab(b.dataset.tab); }));
+  function switchSub(sub) {
+    moreSub = sub;
+    document.querySelectorAll('#moreSeg button').forEach(b => b.classList.toggle('on', b.dataset.s === sub));
+    document.querySelectorAll('#tab-more .sub').forEach(s => s.classList.toggle('hidden', s.id !== 'sub-' + sub));
+    refresh(true);
+  }
+  document.querySelectorAll('#moreSeg button').forEach(b => b.addEventListener('click', () => { G.haptic(); switchSub(b.dataset.s); }));
   document.querySelectorAll('#buyMode button').forEach(b => b.addEventListener('click', () => {
     G.S.buyMode = b.dataset.m === 'max' ? 'max' : +b.dataset.m;
     G.haptic(); refresh(true);
@@ -236,29 +253,44 @@
     box.appendChild(t);
     setTimeout(() => { t.classList.add('out'); setTimeout(() => t.remove(), 400); }, 2600);
   }
-  G.ui = { modal, toast };
+  G.ui = { modal, toast, switchTab };
 
   // ---------- kern tikken ----------
   const stage = $('stage'), core = $('core'), floaters = $('floaters');
-  core.addEventListener('pointerdown', e => {
-    e.preventDefault();
+  // auto = getikt door een helper (telt niet mee als eigen tik)
+  function tapAt(cx, cy, auto) {
     const v = G.clickValue();
-    G.earn(v); G.S.clicks++; G.S.clickEarned += v;
+    G.earn(v); G.S.clickEarned += v;
+    if (!auto) G.S.clicks++;
     const r = stage.getBoundingClientRect();
-    const x = e.clientX - r.left, y = e.clientY - r.top;
+    const x = cx - r.left, y = cy - r.top;
     const crit = G.buffMult('click') > 1;
-    if (floaters.children.length < 30) {
-      const f = el('div', 'floater' + (crit ? ' crit' : ''), '+' + G.fmt(v));
+    if (auto ? (floaters.querySelectorAll('.auto').length < 4 && Math.random() < 0.5) : floaters.children.length < 30) {
+      const f = el('div', 'floater' + (crit ? ' crit' : '') + (auto ? ' auto' : ''), '+' + G.fmt(v));
       f.style.left = (x + (Math.random() - 0.5) * 30) + 'px';
       f.style.top = (y - 10) + 'px';
       floaters.appendChild(f);
       setTimeout(() => f.remove(), 900);
     }
-    G.fx.burst(x, y, crit ? 18 : 8);
+    G.fx.burst(x, y, auto ? 3 : crit ? 18 : 8);
+    if (auto) return;
     core.classList.add('hit');
     setTimeout(() => core.classList.remove('hit'), 70);
     G.sfx.tap(); G.haptic('LIGHT');
-  });
+  }
+  core.addEventListener('pointerdown', e => { e.preventDefault(); tapAt(e.clientX, e.clientY, false); });
+  let autoAcc = 0;
+  function autoTaps(dt) {
+    const n = G.hl('intern');
+    if (!n) return;
+    autoAcc += n * dt;
+    if (autoAcc < 1) return;
+    const p = G.helperPos('intern'), c = core.getBoundingClientRect();
+    while (autoAcc >= 1) {
+      autoAcc--;
+      if (p) tapAt(c.left + c.width * (0.3 + Math.random() * 0.4), c.top + c.height * (0.3 + Math.random() * 0.4), true);
+    }
+  }
 
   // ---------- Eureka ----------
   let eurekaEl = null;
@@ -281,6 +313,12 @@
       refresh(true);
     });
     stage.appendChild(me);
+    if (G.hl('scout') >= 5) setTimeout(() => {
+      if (eurekaEl !== me) return;
+      const b = me.getBoundingClientRect();
+      me.dispatchEvent(new PointerEvent('pointerdown', { clientX: b.left + 32, clientY: b.top + 32 }));
+      toast('🕵️', 'De talentscout ving een Eureka!', '');
+    }, 2500);
     setTimeout(() => {
       if (eurekaEl !== me) return;
       me.classList.add('fade');
@@ -296,7 +334,7 @@
   function updateTop() {
     const S = G.S;
     $('tokens').textContent = G.fmt(S.tokens);
-    $('tps').textContent = G.fmt(G.tps());
+    $('tps').textContent = G.fmt(G.totalTps());
     const p = G.agiProgress();
     $('agiBar').style.width = (p * 100).toFixed(1) + '%';
     $('agiPct').textContent = S.agi ? 'AGI ✨' : `AGI ${(p * 100).toFixed(p < 0.1 ? 1 : 0).replace('.', ',')}%`;
@@ -331,9 +369,30 @@
     if (currentTab === 'models' || force) updateGens();
     updateResearch(force);
     if (force) updateSing();
-    if (currentTab === 'ach' && force) updateAch();
-    if (currentTab === 'more' && force) updateMore();
+    if (currentTab === 'more' && moreSub === 'ach' && force) updateAch();
+    if (currentTab === 'more' && moreSub === 'set' && force) updateMore();
+    G.uiInd.update(currentTab, force);
+    document.querySelectorAll('#tabs button').forEach(b => b.classList.toggle('locked', !G.tabUnlocked(b.dataset.tab)));
     document.querySelectorAll('#buyMode button').forEach(b => b.classList.toggle('on', String(G.S.buyMode) === b.dataset.m));
+  }
+
+  G.uiRefresh = refresh;
+  G.on('chipDone', c => {
+    G.sfx.big(); G.haptic('HEAVY'); G.fx.wave();
+    toast(c.icon, `${c.name} ontwikkeld!`, `Al je chips zijn geüpgraded: ×${G.fmt(c.power)} rekenkracht per chip.`);
+  });
+  G.on('appLive', a => {
+    G.sfx.milestone(); G.haptic('HEAVY');
+    toast(a.icon, `${a.name} is live!`, 'Gebruikers stromen binnen. Start een campagne voor een boost.');
+  });
+  G.on('autoCampaign', () => { if (currentTab === 'apps') toast('📣', 'De marketeer startte een campagne', ''); });
+  const seenTabs = {};
+  function checkUnlocks() {
+    for (const t of Object.keys(G.TAB_UNLOCK)) {
+      const u = G.tabUnlocked(t);
+      if (u && seenTabs[t] === false) { G.sfx.achievement(); toast('🔓', `Nieuw: ${TAB_NAMES[t]}!`, { chips: 'Bouw je eigen chip-supply chain.', apps: 'Bouw apps met je modellen.', team: 'Neem helpers aan.' }[t]); }
+      seenTabs[t] = u;
+    }
   }
 
   G.on('milestone', ({ i }) => {
@@ -354,6 +413,7 @@
     const off = G.tick();
     if (off) { showOffline(off); refresh(true); }
     G.fx.frame(dt, t);
+    autoTaps(dt);
 
     uiTimer += dt; achTimer += dt; saveTimer += dt; newsTimer += dt;
     if (uiTimer > 0.15) { uiTimer = 0; refresh(false); }
@@ -361,8 +421,9 @@
       achTimer = 0;
       for (const a of G.checkAchievements()) { toast(a.icon, 'Prestatie: ' + a.name, a.desc + ' (+1% productie)'); G.sfx.achievement(); }
       if (!eurekaEl && Date.now() > G.nextEureka) spawnEureka();
-      if (currentTab === 'ach') updateAch();
+      if (currentTab === 'more' && moreSub === 'ach') updateAch();
       updateSing();
+      checkUnlocks();
     }
     if (saveTimer > 10) { saveTimer = 0; G.save(); }
     if (newsTimer > 9) { newsTimer = 0; nextNews(); }
@@ -403,6 +464,7 @@
     const off = G.tick();
     refresh(true);
     nextNews();
+    checkUnlocks();
     if (off) showOffline(off);
     else if (G.S.lifeEarned === 0) {
       modal('🧠', 'Road to AGI', 'Jij leidt een klein AI-lab met één perceptron. <b>Tik op de kern</b> om je model te trainen, koop steeds slimmere modellen en bouw uiteindelijk de eerste <b>algemene intelligentie</b>.', [{ label: 'Start training', cls: 'primary' }]);
