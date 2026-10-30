@@ -200,7 +200,7 @@
       <div class="row"><span>Geluidseffecten</span><button class="switch ${S.settings.sound ? 'on' : ''}" data-set="sound" aria-label="Geluidseffecten"></button></div>
       <div class="row"><span>Trillen</span><button class="switch ${S.settings.haptics ? 'on' : ''}" data-set="haptics" aria-label="Trillen"></button></div>
       <div class="section-title">Hoe speel je?</div>
-      <div class="small-print">Tik op de kern om tokens te verdienen. Koop modellen die automatisch tokens maken; bij 10, 25, 50, 100… stuks verdubbelt hun productie. Onderzoek geeft extra boosts. Bouw een supply chain voor chips: rekenkracht maakt al je modellen sneller, en de traagste schakel bepaalt hoeveel chips je maakt. Lanceer apps: hun gebruikers leveren trainingsdata die je modellen versterkt. Neem helpers aan die werk voor je doen. Veeg links of rechts over het paneel om van onderdeel te wisselen. Ada geeft je steeds een nieuwe opdracht met een beloning. Tik op een gouden 💡 voor een Eureka-moment. Bouw uiteindelijk AGI en activeer de singulariteit voor permanente bonussen. Ook als de app dicht is gaat de training door.</div>
+      <div class="small-print">Tik op de kern om tokens te verdienen. Koop modellen die automatisch tokens maken; bij 10, 25, 50, 100… stuks verdubbelt hun productie. Onderzoek geeft extra boosts. Chips geven rekenkracht die al je modellen sneller maakt: eerst koop je ze in en plaats je ze in een datacenter, later ontwerp je ze zelf en bouw je je eigen fabriek. Nieuwe chips vervangen de oude geleidelijk. Lanceer apps: hun gebruikers leveren trainingsdata die je modellen versterkt. Neem helpers aan die werk voor je doen. Veeg links of rechts over het paneel om van onderdeel te wisselen. Ada geeft je steeds een nieuwe opdracht met een beloning. Tik op een gouden 💡 voor een Eureka-moment. Bouw uiteindelijk AGI en activeer de singulariteit voor permanente bonussen. Ook als de app dicht is gaat de training door.</div>
       <button class="danger" id="wipeBtn">Voortgang wissen</button>
       <div class="small-print">Road to AGI · versie 1.1<br>Dit spel verzamelt geen persoonsgegevens. Je voortgang wordt alleen op dit apparaat opgeslagen.</div>`;
     for (const sw of $('moreBody').querySelectorAll('.switch')) {
@@ -379,6 +379,14 @@
   // ---------- kern tikken ----------
   const stage = $('stage'), core = $('core'), floaters = $('floaters');
   // auto = getikt door een helper (telt niet mee als eigen tik)
+  // De kern groeit mee met het verhaal: van één neuron tot AGI.
+  function setCoreArt(k) {
+    core.dataset.ch = k;
+    core.querySelector('.net').innerHTML = G.CORE_ART[k];
+    const orb = core.querySelector('.orb');
+    orb.setAttribute('r', 50 + k * 1.6);
+    orb.setAttribute('fill', k === G.CHAPTERS.length - 1 ? 'url(#orbGold)' : 'url(#orbGrad)');
+  }
   // Flow: snel achter elkaar tikken bouwt een combo op (tot ×3).
   let flow = 0, lastTap = 0;
   const flowMult = () => 1 + 2 * flow;
@@ -409,6 +417,8 @@
     G.fx.burst(x, y, auto ? 3 : crit ? 50 : storm ? 18 : 6 + Math.round(flow * 10), crit ? 45 : undefined);
     if (auto) return;
     core.classList.add('hit');
+    const net = core.querySelector('.net');
+    net.classList.remove('zap'); void net.getBoundingClientRect(); net.classList.add('zap');
     setTimeout(() => core.classList.remove('hit'), 70);
     if (crit) {
       G.sfx.eureka(); G.haptic('HEAVY');
@@ -489,7 +499,11 @@
     const ti = topIndex();
     core.dataset.era = Math.min(3, Math.floor((ti + 1) / 3));
     const ck = G.chapterIndex(), ch = G.CHAPTERS[ck];
-    if ($('eraName').textContent !== ch.title) { $('eraName').textContent = ch.title; $('chIcon').textContent = ch.icon; $('chNum').textContent = 'H' + (ck + 1); G.music.setLevel(ck, !!S.agi); }
+    if ($('eraName').textContent !== ch.title) {
+      $('eraName').textContent = ch.title; $('chIcon').textContent = ch.icon; $('chNum').textContent = 'H' + (ck + 1);
+      G.music.setLevel(ck, !!S.agi);
+      setCoreArt(ck);
+    }
     const hue = S.agi ? 290 : 195 + Math.max(0, ti) * 9;
     document.documentElement.style.setProperty('--hue', hue % 360);
     G.fx.setHue(hue % 360);
@@ -566,7 +580,7 @@
   // ---------- verhaal ----------
   function showChapter(k) {
     const ch = G.CHAPTERS[k];
-    modal(ch.icon, `Hoofdstuk ${k + 1} · ${ch.title}`, `${ch.text}<br><br><b>Doel:</b> ${ch.goal}`, [{ label: 'Verder', cls: 'primary' }]);
+    modal(ch.icon, `Hoofdstuk ${k + 1} · ${ch.title}`, `<span class="ch-year">${ch.year}</span><br>${ch.text}<br><br><b>Doel:</b> ${ch.goal}`, [{ label: 'Verder', cls: 'primary' }]);
   }
   function showNewChapter() {
     if (!$('modal').classList.contains('hidden')) return;

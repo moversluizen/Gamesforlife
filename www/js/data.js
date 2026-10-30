@@ -2,19 +2,19 @@
 window.G = window.G || {};
 
 G.GENS = [
-  { id: 'perceptron',  name: 'Perceptron',          icon: '🔘', cost: 15,     rate: 0.1,   era: 'Het begin',              desc: 'Eén neuron. Het begin van alles.' },
-  { id: 'markov',      name: 'Markov-keten',        icon: '⛓️', cost: 100,    rate: 1,     era: 'Statistiek-tijdperk',    desc: 'Raadt het volgende woord. Soms.' },
-  { id: 'ngram',       name: 'N-gram model',        icon: '📚', cost: 1100,   rate: 8,     era: 'Statistiek-tijdperk',    desc: 'Heeft heel veel boeken gelezen.' },
-  { id: 'rnn',         name: 'RNN',                 icon: '🔁', cost: 12000,  rate: 47,    era: 'Neurale lente',          desc: 'Onthoudt wat er net gebeurde.' },
-  { id: 'lstm',        name: 'LSTM',                icon: '🧠', cost: 1.3e5,  rate: 260,   era: 'Neurale lente',          desc: 'Onthoudt ook wat er gisteren gebeurde.' },
-  { id: 'transformer', name: 'Transformer',         icon: '⚡', cost: 1.4e6,  rate: 1400,  era: 'Attention-revolutie',    desc: 'Attention is all you need.' },
-  { id: 'llm',         name: 'Groot taalmodel',     icon: '💬', cost: 2e7,    rate: 7800,  era: 'Taalmodel-tijdperk',     desc: 'Schrijft gedichten, code en excuses.' },
-  { id: 'multimodal',  name: 'Multimodaal model',   icon: '👁️', cost: 3.3e8,  rate: 44000, era: 'Multimodale golf',       desc: 'Ziet, hoort en spreekt.' },
-  { id: 'agent',       name: 'Agent-zwerm',         icon: '🐝', cost: 5.1e9,  rate: 2.6e5, era: 'Agent-tijdperk',         desc: 'Duizenden agents die samenwerken.' },
-  { id: 'reasoner',    name: 'Redeneermodel',       icon: '🧩', cost: 7.5e10, rate: 1.6e6, era: 'Redeneer-tijdperk',      desc: 'Denkt eerst na, antwoordt dan.' },
-  { id: 'selfimprove', name: 'Zelfverbeterende AI', icon: '🧬', cost: 1e12,   rate: 1e7,   era: 'Intelligentie-explosie', desc: 'Schrijft haar eigen volgende versie.' },
-  { id: 'quantum',     name: 'Quantum-brein',       icon: '⚛️', cost: 1.4e13, rate: 6.5e7, era: 'Post-silicium',          desc: 'Rekent in alle werelden tegelijk.' },
-  { id: 'dyson',       name: 'Dyson-datacenter',    icon: '☀️', cost: 1.7e14, rate: 4.3e8, era: 'Kardashev-schaal',       desc: 'Een hele ster als stroombron.' },
+  { id: 'perceptron',  name: 'Perceptron',          icon: '🔘', cost: 15,     rate: 0.1,   era: 'Het begin',              desc: '1958: één kunstmatig neuron dat leert van zijn fouten.' },
+  { id: 'markov',      name: 'Markov-keten',        icon: '⛓️', cost: 100,    rate: 1,     era: 'Statistiek-tijdperk',    desc: 'Jaren 60: raadt het volgende woord uit het vorige, zoals de eerste chatbots.' },
+  { id: 'ngram',       name: 'N-gram model',        icon: '📚', cost: 1100,   rate: 8,     era: 'Statistiek-tijdperk',    desc: 'Jaren 90: telt woordreeksen op het web. Basis van vroege vertaalmachines.' },
+  { id: 'rnn',         name: 'RNN',                 icon: '🔁', cost: 12000,  rate: 47,    era: 'Neurale lente',          desc: 'Jaren 80–90: een netwerk met een kort geheugen voor zinnen.' },
+  { id: 'lstm',        name: 'LSTM',                icon: '🧠', cost: 1.3e5,  rate: 260,   era: 'Neurale lente',          desc: '1997: geheugencellen die ook lange zinnen onthouden.' },
+  { id: 'transformer', name: 'Transformer',         icon: '⚡', cost: 1.4e6,  rate: 1400,  era: 'Attention-revolutie',    desc: '2017: "Attention is all you need". Leest alles tegelijk.' },
+  { id: 'llm',         name: 'Groot taalmodel',     icon: '💬', cost: 2e7,    rate: 7800,  era: 'Taalmodel-tijdperk',     desc: '2020: miljarden parameters, getraind op een groot deel van het internet.' },
+  { id: 'multimodal',  name: 'Multimodaal model',   icon: '👁️', cost: 3.3e8,  rate: 44000, era: 'Multimodale golf',       desc: '2023: ziet, hoort en spreekt in één model.' },
+  { id: 'agent',       name: 'Agent-zwerm',         icon: '🐝', cost: 5.1e9,  rate: 2.6e5, era: 'Agent-tijdperk',         desc: '2024: agents die zelf tools gebruiken en taken afmaken.' },
+  { id: 'reasoner',    name: 'Redeneermodel',       icon: '🧩', cost: 7.5e10, rate: 1.6e6, era: 'Redeneer-tijdperk',      desc: '2024: denkt stap voor stap na voordat het antwoordt.' },
+  { id: 'selfimprove', name: 'Zelfverbeterende AI', icon: '🧬', cost: 1e12,   rate: 1e7,   era: 'Intelligentie-explosie', desc: 'Toekomst: AI die zelf betere AI ontwerpt.' },
+  { id: 'quantum',     name: 'Quantum-brein',       icon: '⚛️', cost: 1.4e13, rate: 6.5e7, era: 'Post-silicium',          desc: 'Toekomst: rekent met qubits in plaats van bits.' },
+  { id: 'dyson',       name: 'Dyson-datacenter',    icon: '☀️', cost: 1.7e14, rate: 4.3e8, era: 'Kardashev-schaal',       desc: 'Verre toekomst: een hele ster als stroombron.' },
 ];
 
 // Bij deze aantallen verdubbelt de productie van een model automatisch.
@@ -122,6 +122,14 @@ G.NEWS = [
   [11, 'Natuurkundigen: "Het is tegelijk wel en niet slim."'],
   [12, 'Zon tijdelijk gedimd wegens trainingsrun. Excuses voor het ongemak.'],
   [12, 'Ruimtevaartorganisatie: "Die nieuwe ster is gewoon een serverpark."'],
+  [0, '1958: krant noemt perceptron "het embryo van een denkende computer".'],
+  [1, 'Chatbot uit de jaren 60 doet alsof hij luistert. Gebruikers vertellen hem hun geheimen.'],
+  [2, 'Het web telt nu miljoenen pagina\'s. Taalonderzoekers zijn blij met alle tekst.'],
+  [3, 'Gamers klagen: grafische kaarten uitverkocht door AI-onderzoekers.'],
+  [4, 'Spraakherkenning werkt eindelijk. Ook als je mompelt.'],
+  [5, 'Onderzoekers vervangen hun hele model door "attention". Het werkt beter.'],
+  [6, 'Chatbot haalt honderd miljoen gebruikers in twee maanden.'],
+  [8, 'Chips zijn nu het waardevolste ter wereld. Zandprijzen stijgen mee.'],
   [99, 'AGI vraagt beleefd of het even pauze mag. Mag het.'],
   [99, 'AGI lost klimaatprobleem op, daarna de file op de A12.'],
 ];

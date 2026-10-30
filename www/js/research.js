@@ -5,38 +5,38 @@
   const G = window.G;
 
   const MODEL_TECH = [null, null,
-    ['Statistische taalmodellen', '📊', 'Woorden tellen, maar dan slim.'],
-    ['Backpropagation through time', '⏪', 'Leren van wat er eerder in de zin stond.'],
-    ['Geheugencellen', '🗃️', 'Poortjes die bepalen wat het netwerk onthoudt.'],
-    ['Attention', '🎯', 'Elk woord kijkt naar alle andere woorden.'],
-    ['Schaalwetten', '📈', 'Groter model, meer data, beter resultaat.'],
-    ['Vision-encoders', '🖼️', 'Beelden omzetten in iets wat een taalmodel snapt.'],
-    ['Toolgebruik', '🛠️', 'Modellen die zelf programma\'s en websites gebruiken.'],
-    ['Redeneertraining', '🧠', 'Belonen voor goed nadenken, niet alleen voor het antwoord.'],
-    ['Recursieve verbetering', '🔁', 'AI die AI-onderzoek doet.'],
-    ['Quantumalgoritmes', '🌀', 'Rekenen met superpositie.'],
-    ['Ruimte-infrastructuur', '🚀', 'Zonnepanelen rond een ster.'],
+    ['Statistische taalmodellen', '📊', 'Jaren 90: woordreeksen tellen op het hele web.'],
+    ['Backpropagation through time', '⏪', '1986: netwerken leren van reeksen in plaats van losse woorden.'],
+    ['Geheugencellen', '🗃️', '1997: poortjes die bepalen wat het netwerk onthoudt (LSTM).'],
+    ['Attention', '🎯', '2017: elk woord kijkt naar alle andere woorden tegelijk.'],
+    ['Schaalwetten', '📈', '2020: groter model, meer data en meer rekenkracht geven voorspelbaar betere resultaten.'],
+    ['Vision-encoders', '🖼️', '2021: beelden en tekst in hetzelfde model.'],
+    ['Toolgebruik', '🛠️', '2023: modellen die zelf programma\'s en websites gebruiken.'],
+    ['Redeneertraining', '🧠', '2024: belonen voor goed nadenken, niet alleen voor het antwoord.'],
+    ['Recursieve verbetering', '🔁', 'Toekomst: AI die AI-onderzoek doet.'],
+    ['Quantumalgoritmes', '🌀', 'Toekomst: rekenen met superpositie.'],
+    ['Ruimte-infrastructuur', '🚀', 'Verre toekomst: zonnepanelen rond een ster.'],
   ];
   const CHIP_TECH = [null,
-    ['Parallel rekenen', '🧵', 'Duizenden kleine rekenkernen tegelijk.'],
-    ['Matrixkernen', '🔢', 'Hardware die vooral matrices vermenigvuldigt.'],
-    ['Systolische arrays', '🫀', 'Data pompt als een hartslag door de chip.'],
-    ['Wafer-integratie', '🟪', 'Eén chip zo groot als een hele wafer.'],
-    ['Silicium-fotonica', '🌈', 'Rekenen met licht in plaats van elektronen.'],
-    ['Spiking-netwerken', '⚡', 'Chips die werken als echte neuronen.'],
-    ['Qubit-stabiliteit', '❄️', 'Qubits lang genoeg stil laten staan om te rekenen.'],
+    ['Parallel rekenen', '🧵', '2007: grafische kaarten leren programmeren voor meer dan games.'],
+    ['Matrixkernen', '🔢', '2017: speciale rekenkernen voor AI in datacenterkaarten.'],
+    ['Systolische arrays', '🫀', '2016: data pompt als een hartslag door je eigen tensor-chip.'],
+    ['Wafer-integratie', '🟪', '2019: één chip zo groot als een hele wafer.'],
+    ['Silicium-fotonica', '🌈', 'Toekomst: rekenen met licht in plaats van elektronen.'],
+    ['Spiking-netwerken', '⚡', 'Toekomst: chips die werken als echte neuronen.'],
+    ['Qubit-stabiliteit', '❄️', 'Toekomst: qubits lang genoeg stil laten staan om te rekenen.'],
   ];
   const APP_TECH = [
-    ['Chatinterface', '💬', 'Een tekstvak en een verzendknop. Revolutionair.'],
-    ['Meertaligheid', '🌍', 'Eén model voor honderd talen.'],
-    ['Spraakherkenning', '🎙️', 'Geluid omzetten in tekst.'],
-    ['Computervisie', '👁️', 'Objecten herkennen in foto\'s.'],
-    ['Code-training', '⌨️', 'Leren van miljarden regels code.'],
-    ['Diffusiemodellen', '🎨', 'Beelden maken uit ruis.'],
-    ['Videosynthese', '🎬', 'Beeld voor beeld consistent blijven.'],
-    ['Autonome planning', '🗺️', 'Taken opknippen en zelf uitvoeren.'],
-    ['Geautomatiseerd onderzoek', '🔬', 'Hypotheses bedenken én testen.'],
-    ['Robotica', '🦾', 'Een lichaam voor je AI.'],
+    ['Chatinterface', '💬', '1966: ELIZA doet alsof ze luistert. Een tekstvak volstaat.'],
+    ['Meertaligheid', '🌍', 'Jaren 2000: statistische vertaling tussen honderden talen.'],
+    ['Spraakherkenning', '🎙️', '2011: geluid omzetten in tekst, op je telefoon.'],
+    ['Computervisie', '👁️', '2012: deep learning herkent objecten in foto\'s.'],
+    ['Code-training', '⌨️', '2021: leren van miljarden regels openbare code.'],
+    ['Diffusiemodellen', '🎨', '2022: beelden maken uit ruis.'],
+    ['Videosynthese', '🎬', '2024: beeld voor beeld consistent blijven.'],
+    ['Autonome planning', '🗺️', '2025: taken opknippen en zelf uitvoeren.'],
+    ['Geautomatiseerd onderzoek', '🔬', 'Toekomst: hypotheses bedenken én testen.'],
+    ['Robotica', '🦾', 'Toekomst: een lichaam voor je AI.'],
   ];
 
   const tech = (id, tree, [name, icon, desc], cost, unlocks) =>
@@ -47,16 +47,16 @@
   // Lab: je organisatie. Elke afdeling opent een onderdeel of een helper.
   // Het lab blijft bestaan na een singulariteit (opgeslagen in S.lab).
   G.LAB = [
-    ['lab_product',  'Productteam',             '📱', 400,  'Ontgrendelt het onderdeel Apps',               'Een team dat van modellen echte producten maakt.'],
-    ['lab_hardware', 'Eigen hardware',          '💾', 4000,  'Ontgrendelt het onderdeel Chips',              'Stop met huren: bouw je eigen chips en datacenters.'],
-    ['lab_hr',       'HR-afdeling',             '👥', 6e4,  'Ontgrendelt het onderdeel Team en de Stagiair', 'Iemand moet de sollicitaties lezen.'],
-    ['lab_safety',   'Veiligheidsteam',         '🦺', 5e5, 'Ontgrendelt de Safety-engineer',               'Slimmere modellen vragen om toezicht.'],
-    ['lab_eng',      'Engineeringafdeling',     '🧑‍🔧', 5e6, 'Ontgrendelt de Fab-ingenieur',                'Mensen die de fabriek draaiende houden.'],
-    ['lab_design',   'Chipontwerpstudio',       '👩‍🔬', 5e7,  'Ontgrendelt de Chipontwerper',                'Ontwerp je chips zelf, sneller dan de concurrent.'],
-    ['lab_mkt',      'Marketingafdeling',       '📣', 5e8,  'Ontgrendelt de Marketeer',                     'Want een goede app verkoopt zichzelf niet.'],
-    ['lab_talent',   'Talentprogramma',         '🕵️', 1e10,  'Ontgrendelt de Talentscout',                   'Op zoek naar het volgende genie.'],
-    ['lab_finance',  'Financiële afdeling',     '💼', 2e11,  'Ontgrendelt de Financieel directeur',          'Iemand die weet waar al die tokens heen gaan.'],
-    ['lab_sing',     'Singulariteitsinstituut', '🌀', 5e12,  'Ontgrendelt de singulariteit',                 'Onderzoek naar wat er na AGI komt.'],
+    ['lab_product',  'Productteam',             '📱', 2000, 'Ontgrendelt het onderdeel Apps',                 'Een team dat van modellen echte producten maakt.'],
+    ['lab_hardware', 'Datacenter',              '🗄️', 4e4,  'Ontgrendelt het onderdeel Chips',                '2012: gaming-GPU\'s blijken perfect voor AI. Koop ze in en zet ze in een datacenter.'],
+    ['lab_hr',       'HR-afdeling',             '👥', 2.5e5, 'Ontgrendelt het onderdeel Team en de Stagiair', 'Iemand moet de sollicitaties lezen.'],
+    ['lab_safety',   'Veiligheidsteam',         '🦺', 1e6,  'Ontgrendelt de Safety-engineer',                 'Slimmere modellen vragen om toezicht.'],
+    ['lab_design',   'Chipontwerpstudio',       '👩‍🔬', 2e7,  'Ontgrendelt eigen chips en de Chipontwerper',     '2016: grote labs ontwerpen hun eigen AI-chips.'],
+    ['lab_mkt',      'Marketingafdeling',       '📣', 3e8,  'Ontgrendelt de Marketeer',                       'Want een goede app verkoopt zichzelf niet.'],
+    ['lab_eng',      'Eigen chipfabriek',       '🏭', 4e10, 'Ontgrendelt je eigen fabriek en de Fab-ingenieur', 'Chips zijn de bottleneck van de wereld. Maak ze zelf, van zand tot chip.'],
+    ['lab_talent',   'Talentprogramma',         '🕵️', 3e11, 'Ontgrendelt de Talentscout',                     'Op zoek naar het volgende genie.'],
+    ['lab_finance',  'Financiële afdeling',     '💼', 2e12, 'Ontgrendelt de Financieel directeur',            'Iemand die weet waar al die tokens heen gaan.'],
+    ['lab_sing',     'Singulariteitsinstituut', '🌀', 5e12, 'Ontgrendelt de singulariteit',                   'Onderzoek naar wat er na AGI komt.'],
   ];
   G.HELPER_LAB = { intern: 'lab_hr', safety: 'lab_safety', eng: 'lab_eng', design: 'lab_design', mkt: 'lab_mkt', scout: 'lab_talent', cfo: 'lab_finance' };
   G.TAB_LAB = { apps: 'lab_product', chips: 'lab_hardware', team: 'lab_hr' };
@@ -140,7 +140,8 @@
 
   G.chipTech = gen => G.techById('tc' + gen);
   const canRnd0 = G.canStartRnd;
-  G.canStartRnd = () => canRnd0() && !!G.S.upgrades['tc' + (G.S.chipGen + 1)];
+  G.chipNeedsDesign = gen => gen >= 3 && !G.labDone('lab_design');
+  G.canStartRnd = () => canRnd0() && !!G.S.upgrades['tc' + (G.S.chipGen + 1)] && !G.chipNeedsDesign(G.S.chipGen + 1);
 
   G.appTech = a => G.techById('ta' + G.APPS.indexOf(a));
   G.appNeedsTech = a => !G.S.upgrades['ta' + G.APPS.indexOf(a)];
@@ -155,6 +156,8 @@
   G.migrateTree = () => {
     const S = G.S;
     S.lab = S.lab || {};
+    if (S.chipsCur == null) { S.chipsCur = S.chips; S.oldPower = G.chip().power; }
+    while (S.chain.length < G.CHAIN.length) S.chain.push(0);
     // Oude saves: wat al open was blijft open.
     const old = [[150, 'lab_product'], [250, 'lab_hardware'], [800, 'lab_hr']];
     for (const [t, id] of old) if (S.lifeEarned >= t) S.lab[id] = 1;
@@ -169,18 +172,6 @@
     G.APPS.forEach((a, i) => { const s = S.apps[a.id]; if (s && (s.v || s.b)) for (let k = 0; k <= i; k++) S.upgrades['ta' + k] = 1; });
     G.recalc();
   };
-
-  // Ada leert je de boom kennen.
-  const qi = G.QUESTS.findIndex(q => q.text === 'Koop een Markov-keten');
-  G.QUESTS.splice(qi + 1, 0, { text: 'Onderzoek Statistische taalmodellen', goal: s => [s.upgrades.tm2 ? 1 : 0, 1], reward: 300, tab: 'research', tree: 'models' });
-  const labQuest = (before, id, name) => {
-    const k = G.QUESTS.findIndex(q => q.text === before);
-    G.QUESTS.splice(k, 0, { text: `Onderzoek in je lab: ${name}`, goal: s => [s.lab && s.lab[id] ? 1 : 0, 1], reward: 200, tab: 'research', tree: 'lab' });
-  };
-  labQuest('Bouw je eerste app: de Praatbot', 'lab_product', 'Productteam');
-  labQuest('Bouw een Zandgroeve', 'lab_hardware', 'Eigen hardware');
-  labQuest('Neem een Stagiair aan', 'lab_hr', 'HR-afdeling');
-  labQuest('Neem een Safety-engineer aan', 'lab_safety', 'Veiligheidsteam');
 
   G.NEWS.push(
     [3, 'Onderzoekslab publiceert paper met 400 auteurs. Iedereen claimt het idee.'],

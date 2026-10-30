@@ -34,32 +34,45 @@ Grote sprongen komen uit: mijlpalen (×2), een nieuwe chipgeneratie, Eureka (Dat
 
 ## Lab-tijdlijn (eerste keer spelen)
 
+De volgorde volgt de geschiedenis: eerst producten, dan ingekochte GPU's in een datacenter (2012), eigen chipontwerp (2016), en pas veel later een eigen fabriek.
+
 | Afdeling | Opent | Kosten | Simulatie |
 | --- | --- | --- | --- |
-| Productteam | Apps | 400 | 1 min |
-| Eigen hardware | Chips | 4 K | 6 min |
-| HR-afdeling | Team, Stagiair | 60 K | 12–15 min |
-| Veiligheidsteam | Safety-engineer | 500 K | 18–31 min |
-| Engineeringafdeling | Fab-ingenieur | 5 M | 22–33 min |
-| Chipontwerpstudio | Chipontwerper | 50 M | 33–49 min |
-| Marketingafdeling | Marketeer | 500 M | 45–58 min |
-| Talentprogramma | Talentscout | 10 B | 64–83 min |
-| Financiële afdeling | Financieel directeur | 200 B | 103–106 min |
-| Singulariteitsinstituut | Singulariteit | 5 T | ±145 min |
+| Productteam | Apps | 2 K | 3 min |
+| Datacenter | Chips (inkoop + datacenter) | 40 K | 10 min |
+| HR-afdeling | Team, Stagiair | 250 K | 13 min |
+| Veiligheidsteam | Safety-engineer | 1 M | 19 min |
+| Chipontwerpstudio | Tensor-chip en verder, Chipontwerper | 20 M | 30 min |
+| Marketingafdeling | Marketeer | 300 M | 40 min |
+| Eigen chipfabriek | Zandgroeve, waferfabriek, EUV, chipfabriek, Fab-ingenieur | 40 B | ±80 min |
+| Talentprogramma | Talentscout | 300 B | ±115 min |
+| Financiële afdeling | Financieel directeur | 2 T | ±145 min |
+| Singulariteitsinstituut | Singulariteit | 5 T | ±160 min |
+
+## Chips: geleidelijk profijt
+
+- Eerst **inkopen** (duur per chip) en een **datacenter** voor ruimte.
+- Een nieuwe chipgeneratie **vervangt je oude chips geleidelijk**, op het tempo van je productie. Je rekenkracht stijgt dus niet meteen.
+- De **eigen fabriek** is veel productiever, maar kost bij opening al tientallen miljarden; de traagste schakel bepaalt de output.
+- Vanaf de Wafer-scale chip zijn EUV-machines uit je eigen fabriek nodig.
 
 ## Verhaallijn
 
 Negen hoofdstukken, gekoppeld aan je slimste model. Elk hoofdstuk opent met een kort verhaalmoment van Ada.
 
-1. De garage · Perceptron, Markov-keten
-2. Statistiek en stof · N-gram model
-3. De neurale lente · RNN, LSTM
-4. Attention · Transformer
-5. Het taalmodel-tijdperk · Groot taalmodel, Multimodaal model
-6. Agents en redeneren · Agent-zwerm, Redeneermodel
-7. De intelligentie-explosie · Zelfverbeterende AI, Quantum-brein
-8. Kardashev · Dyson-datacenter
-9. AGI · na het bouwen van Project AGI
+| Hoofdstuk | Echte geschiedenis | Wat er opengaat |
+| --- | --- | --- |
+| 1. De garage | 1958, de perceptron | Modellen, onderzoek |
+| 2. Statistiek en stof | jaren 90, het web en woordtellingen | Apps (Praatbot, Vertaal-app) |
+| 3. De neurale lente | 2012, deep learning op gaming-GPU's | Chips (inkoop, datacenter), Team |
+| 4. Attention | 2017, de Transformer | Eigen chipontwerp, veiligheid |
+| 5. Het taalmodel-tijdperk | 2020–2023, de chatbot-boom | Marketing |
+| 6. Agents en redeneren | 2024–2026, agents en chips als bottleneck | Eigen chipfabriek |
+| 7. De intelligentie-explosie | toekomst | Zelfverbeterende AI, quantum |
+| 8. Kardashev | verre toekomst | Dyson-datacenter, Project AGI |
+| 9. AGI | ? | Singulariteit en opnieuw beginnen |
+
+De kern groeit mee: één neuron, staafdiagram, lagen, attention, dicht netwerk, agents, recursieve vormen, een ster, en een gouden AGI-ster.
 
 ## Schrijfwijze
 

@@ -4,37 +4,42 @@
 
   // ---------- data ----------
   // Schakels 0-3 bepalen samen de chipproductie (de traagste wint); 4 is opslag.
+  // Schakels 0-3 vormen je eigen fabriek (pas open met de afdeling Eigen chipfabriek; de traagste wint).
+  // 4 is het datacenter (ruimte), 5 is inkoop bij een leverancier: duur per chip, maar meteen beschikbaar.
   G.CHAIN = [
-    { id: 'mine',  name: 'Zandgroeve',       icon: '⛏️', cost: 300,  grow: 1.18, cap: 0.5,  desc: 'Haalt zuiver silicium uit zand.' },
-    { id: 'wafer', name: 'Waferfabriek',     icon: '💿', cost: 1000, grow: 1.18, cap: 0.4,  desc: 'Zaagt siliciumstaven tot spiegelgladde wafers.' },
-    { id: 'litho', name: 'EUV-lithografie',  icon: '🔦', cost: 5000, grow: 1.18, cap: 0.25, desc: 'Belicht chippatronen met extreem UV-licht. De moeilijkste machine ter wereld.' },
-    { id: 'fab',   name: 'Chipfabriek',      icon: '🏭', cost: 2500, grow: 1.18, cap: 0.35, desc: 'Etst, test en verpakt de chips.' },
-    { id: 'dc',    name: 'Datacenter',       icon: '🗄️', cost: 1500, grow: 1.22, slots: 25, desc: 'Ruimte voor 25 extra chips per uitbreiding.' },
+    { id: 'mine',  name: 'Zandgroeve',             icon: '⛏️', cost: 2e9,  grow: 1.18, cap: 60, desc: 'Haalt zuiver silicium uit zand.' },
+    { id: 'wafer', name: 'Waferfabriek',           icon: '💿', cost: 5e9,  grow: 1.18, cap: 50, desc: 'Zaagt siliciumstaven tot spiegelgladde wafers.' },
+    { id: 'litho', name: 'EUV-lithografie',        icon: '🔦', cost: 2e10, grow: 1.18, cap: 30, desc: 'Belicht chippatronen met extreem UV-licht. De moeilijkste machine ter wereld.' },
+    { id: 'fab',   name: 'Chipfabriek',            icon: '🏭', cost: 1e10, grow: 1.18, cap: 40, desc: 'Etst, test en verpakt de chips.' },
+    { id: 'dc',    name: 'Datacenter',             icon: '🗄️', cost: 1500, grow: 1.22, slots: 25, desc: 'Ruimte voor 25 extra chips per uitbreiding.' },
+    { id: 'buy',   name: 'Inkoop bij leverancier', icon: '🛒', cost: 3000, grow: 1.22, cap: 0.25, desc: 'Koop kant-en-klare chips. Duur, maar meteen beschikbaar.' },
   ];
+  G.OWN_CHAIN = [0, 1, 2, 3];
 
+  // litho = benodigde EUV-machines (eigen fabriek); de eerste generaties koop je gewoon in.
   G.CHIPS = [
-    { name: 'CPU',              node: '90 nm',   icon: '🔲', power: 1,     cost: 0,    time: 0,     litho: 0 },
-    { name: 'GPU',              node: '28 nm',   icon: '🎮', power: 8,     cost: 2e4,  time: 60,    litho: 5 },
-    { name: 'AI-versneller',    node: '7 nm',    icon: '⚡', power: 60,    cost: 1e6,  time: 180,   litho: 15 },
-    { name: 'Tensor-chip',      node: '3 nm',    icon: '🧮', power: 500,   cost: 5e7,  time: 480,   litho: 30 },
-    { name: 'Wafer-scale chip', node: '2 nm',    icon: '🟪', power: 4000,  cost: 2e9,  time: 1200,  litho: 50 },
-    { name: 'Fotonische chip',  node: 'licht',   icon: '🌈', power: 3.5e4, cost: 1e11, time: 2700,  litho: 75 },
-    { name: 'Neuromorfe chip',  node: 'synaps',  icon: '🧬', power: 3e5,   cost: 5e12, time: 5400,  litho: 100 },
-    { name: 'Quantumchip',      node: 'qubit',   icon: '⚛️', power: 3e6,   cost: 2e14, time: 10800, litho: 130 },
+    { name: 'CPU',              node: '90 nm',  icon: '🔲', power: 1,     cost: 0,    time: 0,     litho: 0,   desc: 'Een gewone processor. Traag voor neurale netwerken.' },
+    { name: 'GPU',              node: '28 nm',  icon: '🎮', power: 8,     cost: 2e4,  time: 60,    litho: 0,   desc: 'Gemaakt voor games. In 2012 bleek hij perfect voor deep learning.' },
+    { name: 'AI-versneller',    node: '7 nm',   icon: '⚡', power: 60,    cost: 1e6,  time: 180,   litho: 0,   desc: 'Datacenterkaarten speciaal voor het trainen van AI.' },
+    { name: 'Tensor-chip',      node: '3 nm',   icon: '🧮', power: 500,   cost: 5e7,  time: 480,   litho: 5,   desc: '2016: je eigen chip, gebouwd voor matrixberekeningen.' },
+    { name: 'Wafer-scale chip', node: '2 nm',   icon: '🟪', power: 4000,  cost: 2e9,  time: 1200,  litho: 20,  desc: 'Eén chip zo groot als een hele wafer.' },
+    { name: 'Fotonische chip',  node: 'licht',  icon: '🌈', power: 3.5e4, cost: 1e11, time: 2700,  litho: 45,  desc: 'Toekomst: rekent met licht in plaats van elektronen.' },
+    { name: 'Neuromorfe chip',  node: 'synaps', icon: '🧬', power: 3e5,   cost: 5e12, time: 5400,  litho: 75,  desc: 'Toekomst: werkt als echte neuronen.' },
+    { name: 'Quantumchip',      node: 'qubit',  icon: '⚛️', power: 3e6,   cost: 2e14, time: 10800, litho: 110, desc: 'Toekomst: duizenden stabiele qubits.' },
   ];
 
   // model = index in G.GENS, n = benodigd aantal
   G.APPS = [
-    { id: 'chat',    name: 'Praatbot',           icon: '💬', model: 1,  n: 1,  cost: 2000,   time: 20,   cap: 1000,  rev: 0.03, desc: 'Een chatbot die vooral "interessant!" zegt.' },
-    { id: 'trans',   name: 'Vertaal-app',        icon: '🌍', model: 2,  n: 5,  cost: 3e4,    time: 45,   cap: 1e4,   rev: 0.06, desc: 'Vertaalt menu\'s, soms correct.' },
-    { id: 'voice',   name: 'Spraakassistent',    icon: '🎙️', model: 3,  n: 10, cost: 4e5,    time: 90,   cap: 5e4,   rev: 0.15, desc: '"Ik heb drie timers voor je gezet."' },
-    { id: 'vision',  name: 'Fotoherkenning',     icon: '📷', model: 4,  n: 10, cost: 5e6,    time: 120,  cap: 2e5,   rev: 0.3,  desc: 'Weet precies welke plant er in je tuin staat.' },
-    { id: 'code',    name: 'Code-copiloot',      icon: '👨‍💻', model: 5,  n: 10, cost: 6e7,    time: 180,  cap: 1e6,   rev: 0.6,  desc: 'Schrijft code mee terwijl jij koffie haalt.' },
-    { id: 'image',   name: 'Beeldgenerator',     icon: '🎨', model: 6,  n: 10, cost: 8e8,    time: 240,  cap: 5e6,   rev: 0.9,  desc: 'Tekent alles, behalve handen.' },
-    { id: 'video',   name: 'Videostudio',        icon: '🎬', model: 7,  n: 10, cost: 1e10,   time: 360,  cap: 2e7,   rev: 1.5,  desc: 'Maakt films op basis van één zin.' },
-    { id: 'agent',   name: 'Persoonlijke agent', icon: '🤖', model: 8,  n: 10, cost: 1.5e11, time: 480,  cap: 1e8,   rev: 2.4,  desc: 'Regelt je agenda, belastingaangifte en verjaardagscadeaus.' },
-    { id: 'science', name: 'Wetenschapper-AI',   icon: '🔬', model: 9,  n: 10, cost: 2e12,   time: 720,  cap: 3e8,   rev: 6,    desc: 'Publiceert elke dag tien papers.' },
-    { id: 'robot',   name: 'Robot-butler',       icon: '🦾', model: 10, n: 10, cost: 3e13,   time: 1200, cap: 1e9,   rev: 12,    desc: 'Vouwt eindelijk de was op.' },
+    { id: 'chat',    name: 'Praatbot',           icon: '💬', model: 1,  n: 1,  cost: 2000,   time: 20,   cap: 1000,  rev: 0.03, desc: 'Zoals ELIZA in 1966: doet alsof ze luistert.' },
+    { id: 'trans',   name: 'Vertaal-app',        icon: '🌍', model: 2,  n: 5,  cost: 3e4,    time: 45,   cap: 1e4,   rev: 0.06, desc: 'Jaren 2000: statistische vertaling, soms verrassend goed.' },
+    { id: 'voice',   name: 'Spraakassistent',    icon: '🎙️', model: 3,  n: 10, cost: 4e5,    time: 90,   cap: 5e4,   rev: 0.15, desc: '2011: een assistent in je telefoon die je stem verstaat.' },
+    { id: 'vision',  name: 'Fotoherkenning',     icon: '📷', model: 4,  n: 10, cost: 5e6,    time: 120,  cap: 2e5,   rev: 0.3,  desc: '2012+: herkent wat er op je foto\'s staat.' },
+    { id: 'code',    name: 'Code-copiloot',      icon: '👨‍💻', model: 5,  n: 10, cost: 6e7,    time: 180,  cap: 1e6,   rev: 0.6,  desc: '2021: schrijft code mee terwijl jij koffie haalt.' },
+    { id: 'image',   name: 'Beeldgenerator',     icon: '🎨', model: 6,  n: 10, cost: 8e8,    time: 240,  cap: 5e6,   rev: 0.9,  desc: '2022: tekent alles uit één zin, behalve handen.' },
+    { id: 'video',   name: 'Videostudio',        icon: '🎬', model: 7,  n: 10, cost: 1e10,   time: 360,  cap: 2e7,   rev: 1.5,  desc: '2024: video\'s uit een paar woorden.' },
+    { id: 'agent',   name: 'Persoonlijke agent', icon: '🤖', model: 8,  n: 10, cost: 1.5e11, time: 480,  cap: 1e8,   rev: 2.4,  desc: '2025: regelt je agenda, mail en boodschappen.' },
+    { id: 'science', name: 'Wetenschapper-AI',   icon: '🔬', model: 9,  n: 10, cost: 2e12,   time: 720,  cap: 3e8,   rev: 6,    desc: 'Toekomst: bedenkt en test zelf hypotheses.' },
+    { id: 'robot',   name: 'Robot-butler',       icon: '🦾', model: 10, n: 10, cost: 3e13,   time: 1200, cap: 1e9,   rev: 12,    desc: 'Toekomst: een lichaam voor je AI. Vouwt eindelijk de was op.' },
   ];
 
   // eff krijgt het effectieve niveau (niveau × rangbonus), l het echte niveau.
@@ -87,7 +92,7 @@
 
   // ---------- staat ----------
   G.industryDefaults = () => ({
-    chain: G.CHAIN.map(() => 0), chips: 0, chipGen: 0, rnd: null,
+    chain: G.CHAIN.map(() => 0), chips: 0, chipsCur: 0, oldPower: 1, chipGen: 0, rnd: null,
     apps: {}, helpers: {}, quest: 0, mktAuto: 0, risk: 0, backlashes: 0, riskWarn: 0, trend: null, lab: {}, story: {},
   });
 
@@ -115,6 +120,7 @@
   // ---------- keten ----------
   G.chainCost = i => G.CHAIN[i].cost * Math.pow(G.CHAIN[i].grow, G.S.chain[i]);
   G.buyChain = i => {
+    if (i < 4 && !G.ownFab()) return false;
     const c = G.chainCost(i);
     if (G.S.tokens < c) return false;
     G.S.tokens -= c;
@@ -131,7 +137,10 @@
     return ok;
   })(G.buyChain);
   G.stageCap = i => G.S.chain[i] * G.CHAIN[i].cap * Math.pow(2, G.stageMs(i)) * G.mods.chain;
-  G.chipRate = () => Math.min(G.stageCap(0), G.stageCap(1), G.stageCap(2), G.stageCap(3));
+  G.ownFab = () => !G.labDone || G.labDone('lab_eng');
+  G.ownChainActive = () => G.ownFab() && G.OWN_CHAIN.every(i => G.S.chain[i] > 0);
+  G.ownRate = () => (G.ownChainActive() ? Math.min(G.stageCap(0), G.stageCap(1), G.stageCap(2), G.stageCap(3)) : 0);
+  G.chipRate = () => G.stageCap(5) + G.ownRate();
   G.bottleneck = () => {
     let b = 0;
     for (let i = 1; i < 4; i++) if (G.stageCap(i) < G.stageCap(b)) b = i;
@@ -139,7 +148,9 @@
   };
   G.slots = () => G.S.chain[4] * G.CHAIN[4].slots * Math.pow(2, G.stageMs(4)) * G.mods.slots;
   G.chip = () => G.CHIPS[G.S.chipGen];
-  G.compute = () => G.S.chips * G.chip().power;
+  // Nieuwe chips vervangen oude geleidelijk: chipsCur zijn van de huidige generatie.
+  G.compute = () => G.S.chipsCur * G.chip().power + (G.S.chips - G.S.chipsCur) * G.S.oldPower;
+  G.newShare = () => (G.S.chips ? G.S.chipsCur / G.S.chips : 1);
   // Logaritmisch: elke 10× meer rekenkracht geeft een vaste stap erbij, zonder dat het ontspoort.
   G.computeBonus = () => 1 + Math.log10(1 + G.compute()) * 0.25;
   G.chipsFull = () => G.S.chain[4] > 0 && G.S.chips >= G.slots() - 1e-9;
@@ -273,7 +284,9 @@
     const S = G.S, now = Date.now();
 
     if (S.rnd && now >= S.rnd.end) {
+      S.oldPower = S.chips ? G.compute() / S.chips : 1;
       S.chipGen = S.rnd.gen;
+      S.chipsCur = 0;
       S.rnd = null;
       G.emit('chipDone', G.chip());
     }
@@ -287,7 +300,12 @@
     const h = dt / steps;
     for (let k = 0; k < steps; k++) {
       const rate = G.chipRate();
-      if (S.chain[4] > 0) S.chips = Math.min(G.slots(), S.chips + rate * h);
+      if (S.chain[4] > 0) {
+        let made = rate * h;
+        const room = Math.max(0, G.slots() - S.chips), add = Math.min(room, made);
+        S.chips += add; S.chipsCur += add; made -= add;
+        S.chipsCur = Math.min(S.chips, S.chipsCur + made); // de rest vervangt oude chips
+      }
 
       for (const a of G.APPS) {
         const s = S.apps[a.id];
@@ -324,29 +342,38 @@
 
   // ---------- opdrachten van Ada ----------
   const own = (i, n) => s => [Math.min(s.owned[i], n), n];
+  const lab = (id, name) => ({ text: `Lab: open de afdeling ${name}`, goal: s => [s.lab && s.lab[id] ? 1 : 0, 1], reward: 300, tab: 'research', tree: 'lab' });
+  const tech = (id, name, tree) => ({ text: `Onderzoek ${name}`, goal: s => [s.upgrades[id] ? 1 : 0, 1], reward: 300, tab: 'research', tree });
   G.QUESTS = [
-    { text: 'Tik 10 keer op de kern',                     goal: s => [Math.min(s.clicks, 10), 10], reward: 15 },
-    { text: 'Koop je eerste Perceptron',                   goal: own(0, 1), reward: 20 },
-    { text: 'Bezit 10 Perceptrons',                        goal: own(0, 10), reward: 100 },
-    { text: 'Koop een Markov-keten',                       goal: own(1, 1), reward: 150 },
-    { text: 'Bouw je eerste app: de Praatbot',             goal: s => [G.appsLive() >= 1 ? 1 : 0, 1], reward: 600, tab: 'apps' },
-    { text: 'Bouw een Zandgroeve',                         goal: s => [Math.min(s.chain[0], 1), 1], reward: 400, tab: 'chips' },
-    { text: 'Bouw alle vijf schakels van de keten',        goal: s => [s.chain.filter(x => x > 0).length, 5], reward: 3000, tab: 'chips' },
-    { text: 'Neem een Stagiair aan',                       goal: s => [Math.min(G.hl('intern'), 1), 1], reward: 2000, tab: 'team' },
-    { text: 'Neem een Safety-engineer aan',                goal: s => [Math.min(G.hl('safety'), 1), 1], reward: 3000, tab: 'team' },
-    { text: 'Vul je datacenter helemaal met chips',        goal: s => [G.chipsFull() ? 1 : 0, 1], reward: 5000, tab: 'chips' },
-    { text: 'Ontwikkel de GPU',                            goal: s => [Math.min(s.chipGen, 1), 1], reward: 3e4, tab: 'chips' },
-    { text: 'Bezit 25 N-gram modellen',                    goal: own(2, 25), reward: 5e4 },
+    { text: 'Tik 10 keer op de kern',                      goal: s => [Math.min(s.clicks, 10), 10], reward: 15 },
+    { text: 'Koop je eerste Perceptron',                    goal: own(0, 1), reward: 20 },
+    { text: 'Bezit 10 Perceptrons',                         goal: own(0, 10), reward: 100 },
+    { text: 'Koop een Markov-keten',                        goal: own(1, 1), reward: 150 },
+    tech('tm2', 'Statistische taalmodellen', 'models'),
+    { text: 'Koop een N-gram model',                        goal: own(2, 1), reward: 500 },
+    lab('lab_product', 'Productteam'),
+    { text: 'Lanceer je eerste app: de Praatbot',           goal: s => [G.appsLive() >= 1 ? 1 : 0, 1], reward: 800, tab: 'apps' },
+    { text: 'Koop je eerste RNN',                           goal: own(3, 1), reward: 2000 },
+    lab('lab_hardware', 'Datacenter'),
+    { text: 'Bouw een datacenter en koop chips in',         goal: s => [(s.chain[4] > 0 ? 1 : 0) + (s.chain[5] > 0 ? 1 : 0), 2], reward: 5000, tab: 'chips' },
+    { text: 'Ontwikkel de GPU',                             goal: s => [Math.min(s.chipGen, 1), 1], reward: 2e4, tab: 'chips' },
+    lab('lab_hr', 'HR-afdeling'),
+    { text: 'Neem een Stagiair aan',                        goal: s => [Math.min(G.hl('intern'), 1), 1], reward: 4e4, tab: 'team' },
     { text: 'Laat de Praatbot groeien tot 1.000 gebruikers', goal: s => [Math.min(Math.floor((s.apps.chat || {}).u || 0), 1000), 1000], reward: 8e4, tab: 'apps' },
-    { text: 'Koop 15 onderzoeken',                         goal: s => [Math.min(Object.keys(s.upgrades).length, 15), 15], reward: 2e5, tab: 'research' },
-    { text: 'Ontwikkel de AI-versneller',                  goal: s => [Math.min(s.chipGen, 2), 2], reward: 2e6, tab: 'chips' },
-    { text: 'Bouw de Code-copiloot',                       goal: s => [(s.apps.code || {}).v > 0 ? 1 : 0, 1], reward: 1e8, tab: 'apps' },
-    { text: 'Maak je stagiair Junior-onderzoeker',         goal: s => [Math.min(G.rank(G.HELPERS[0]), 1), 1], reward: 1e7, tab: 'team' },
-    { text: 'Neem 5 verschillende helpers aan',            goal: s => [Math.min(Object.keys(s.helpers).length, 5), 5], reward: 3e8, tab: 'team' },
-    { text: 'Ontwikkel de Wafer-scale chip',               goal: s => [Math.min(s.chipGen, 4), 4], reward: 4e9, tab: 'chips' },
-    { text: 'Bouw een Persoonlijke agent',                 goal: s => [(s.apps.agent || {}).v > 0 ? 1 : 0, 1], reward: 3e11, tab: 'apps' },
-    { text: 'Ontwikkel de Quantumchip',                    goal: s => [Math.min(s.chipGen, 7), 7], reward: 4e14, tab: 'chips' },
-    { text: 'Bouw AGI',                                    goal: s => [Math.min(s.agiCount, 1), 1], reward: 1e16, tab: 'more' },
+    lab('lab_safety', 'Veiligheidsteam'),
+    { text: 'Neem een Safety-engineer aan',                 goal: s => [Math.min(G.hl('safety'), 1), 1], reward: 3e5, tab: 'team' },
+    { text: 'Koop een Transformer',                         goal: own(5, 1), reward: 1e6 },
+    { text: 'Ontwikkel de AI-versneller',                   goal: s => [Math.min(s.chipGen, 2), 2], reward: 2e6, tab: 'chips' },
+    lab('lab_design', 'Chipontwerpstudio'),
+    { text: 'Bouw de Code-copiloot',                        goal: s => [(s.apps.code || {}).v > 0 ? 1 : 0, 1], reward: 1e8, tab: 'apps' },
+    { text: 'Maak je stagiair Junior-onderzoeker',          goal: s => [Math.min(G.rank(G.HELPERS[0]), 1), 1], reward: 1e8, tab: 'team' },
+    { text: 'Ontwikkel de Tensor-chip',                     goal: s => [Math.min(s.chipGen, 3), 3], reward: 5e8, tab: 'chips' },
+    lab('lab_eng', 'Eigen chipfabriek'),
+    { text: 'Bouw alle vier schakels van je eigen fabriek', goal: s => [G.OWN_CHAIN.filter(i => s.chain[i] > 0).length, 4], reward: 1e10, tab: 'chips' },
+    { text: 'Bouw een Persoonlijke agent',                  goal: s => [(s.apps.agent || {}).v > 0 ? 1 : 0, 1], reward: 3e11, tab: 'apps' },
+    { text: 'Ontwikkel de Wafer-scale chip',                goal: s => [Math.min(s.chipGen, 4), 4], reward: 1e12, tab: 'chips' },
+    { text: 'Ontwikkel de Quantumchip',                     goal: s => [Math.min(s.chipGen, 7), 7], reward: 4e14, tab: 'chips' },
+    { text: 'Bouw AGI',                                     goal: s => [Math.min(s.agiCount, 1), 1], reward: 1e16, tab: 'more' },
   ];
   G.questNow = () => G.QUESTS[G.S.quest] || null;
   // Een minuut van je gewone inkomen (zonder tijdelijke bonussen), zodat beloningen niet stapelen tot een lawine.

@@ -103,15 +103,17 @@ function act() {
     break;
   }
 
-  // supply chain
+  // chips: inkopen + datacenter, later de eigen fabriek
   if (G.tabUnlocked('chips')) {
-    for (let i = 0; i < 4; i++) if (!S.chain[i] && affordableWithin(G.chainCost(i), 120)) G.buyChain(i);
     if (!S.chain[4] && affordableWithin(G.chainCost(4), 120)) G.buyChain(4);
-    if (S.chain.every(x => x > 0)) {
-      const nx = G.nextChip();
-      const target = nx && S.chain[2] < nx.litho && G.techDone('tc' + (S.chipGen + 1)) ? 2 : G.chipsFull() ? 4 : G.bottleneck();
-      if (affordableWithin(G.chainCost(target), 60)) G.buyChain(target);
-    }
+    if (!S.chain[5] && affordableWithin(G.chainCost(5), 120)) G.buyChain(5);
+    if (G.ownFab()) for (const i of G.OWN_CHAIN) if (!S.chain[i] && affordableWithin(G.chainCost(i), 180)) G.buyChain(i);
+    const nx = G.nextChip();
+    let target;
+    if (nx && nx.litho && S.chain[2] < nx.litho && G.ownFab() && G.techDone('tc' + (S.chipGen + 1))) target = 2;
+    else if (G.chipsFull() && G.newShare() > 0.99) target = 4;
+    else target = G.ownChainActive() && G.stageCap(5) > G.ownRate() * 0.2 ? G.bottleneck() : 5;
+    if (affordableWithin(G.chainCost(target), 60)) G.buyChain(target);
     if (G.canStartRnd() && affordableWithin(G.nextChip().cost, 180)) G.startRnd();
     if (S.rnd) G.boostRnd();
   }

@@ -25,7 +25,7 @@
       </button>
     </div>
     <div class="agi">
-      <span class="agi-ch" id="eraName">De garage</span>
+      <span class="agi-ch" id="eraName"></span>
       <div class="bar"><i id="agiBar"></i></div>
       <span class="agi-pct" id="agiPct">AGI 0%</span>
     </div>
@@ -49,6 +49,10 @@
             <stop offset=".25" style="stop-color:var(--c1)"/>
             <stop offset=".75" style="stop-color:var(--c2)"/>
             <stop offset="1" style="stop-color:#0a0f24"/>
+          </radialGradient>
+          <radialGradient id="orbGold" cx="45%" cy="38%" r="65%">
+            <stop offset="0" style="stop-color:#fffbe6"/><stop offset=".3" style="stop-color:#ffd95a"/>
+            <stop offset=".75" style="stop-color:#ff8a1e"/><stop offset="1" style="stop-color:#2a1300"/>
           </radialGradient>
           <filter id="glow" x="-50%" y="-50%" width="200%" height="200%">
             <feGaussianBlur stdDeviation="6" result="b"/>
@@ -165,6 +169,7 @@
 <script src="js/industry.js"></script>
 <script src="js/research.js"></script>
 <script src="js/story.js"></script>
+<script src="js/core-art.js"></script>
 <script src="js/fx.js"></script>
 <script src="js/ui-industry.js"></script>
 <script src="js/ui-research.js"></script>

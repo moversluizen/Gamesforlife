@@ -21,7 +21,7 @@ De mechanismen komen uit de populairste idle games (Cookie Clicker, AdVenture Ca
 | Eindbaas | Project AGI: permanent ×2, daarna elke keer 10× groter |
 | Prestaties | 80+ prestaties, elk +1% productie |
 | Sfeer | Nieuwsticker, kleuren per tijdperk, geanimeerd neuraal netwerk, gegenereerde ambient-muziek die meegroeit met het verhaal, geluid en trillen |
-| Productieketen | Supply chain voor chips: zandgroeve → waferfabriek → EUV-lithografie → chipfabriek → datacenter. De traagste schakel (bottleneck) bepaalt de output |
+| Chips | Eerst inkopen en een datacenter, later eigen chipontwerp en pas laat een eigen fabriek (zandgroeve → wafer → EUV → chipfabriek). Nieuwe chips vervangen oude geleidelijk |
 | Technologieboom | 8 chipgeneraties (CPU → GPU → … → Quantumchip) met ontwikkeltijd; tikken versnelt het onderzoek |
 | Versterkers | Modellen zijn de basis; chips (rekenkracht), apps (gebruikersdata), onderzoek en prestige vermenigvuldigen hun productie |
 | Apps | 10 apps (Praatbot → Code-copiloot → Robot-butler) met groeiende gebruikers, campagnes en versies |
@@ -32,7 +32,8 @@ De mechanismen komen uit de populairste idle games (Cookie Clicker, AdVenture Ca
 | Veiligheid | Slimmere modellen vragen veiligheid (safety-engineers, 8 veiligheidsonderzoeken). Loop je achter, dan stijgt het risico tot een backlash: productie −50% en gebruikers haken af |
 | Mijlpalen in de keten | Elke ketenschakel verdubbelt bij 10, 25, 50, 100 … niveaus |
 | Opdrachten | Ada, je AI-assistent, geeft 22 opdrachten met beloningen die je door het hele spel leiden |
-| Verhaallijn | Negen hoofdstukken (De garage → Kardashev → AGI) met korte verhaalmomenten van Ada |
+| Verhaallijn | Negen hoofdstukken die de echte AI-geschiedenis volgen (perceptron 1958 → gaming-GPU's 2012 → Transformer 2017 → chatbots → agents → AGI); de kern groeit visueel mee |
+| Organogram | Team toont je organisatie, die meegroeit met elke Lab-afdeling |
 | Balans | Getest met `scripts/sim.js`; tempo en kostenregels staan in `docs/balans.md` |
 
 ## Lokaal spelen
@@ -49,6 +50,7 @@ www/                 het spel (HTML/CSS/JS, geen build nodig)
   js/industry.js     supply chain, chips, apps, helpers, opdrachten
   js/research.js     onderzoeksbomen en de koppeling met modellen, chips en apps
   js/story.js        hoofdstukken van de verhaallijn
+  js/core-art.js     tekeningen in de kern per hoofdstuk
   js/ui-industry.js  interface voor chips, apps, team en opdrachten
   js/ui-research.js  interface voor de onderzoeksbomen
   js/ui.js           interface en spellus
