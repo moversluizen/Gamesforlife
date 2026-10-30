@@ -186,35 +186,58 @@
     return s.v ? 'live' + s.v : 'new';
   }
 
+  // Apps: overzichtskaart bovenaan, daaronder compacte kaarten per groep (zoals Chips en Team).
+  function appCard(a) {
+    const st = appStatus(a), s = G.S.apps[a.id] || {};
+    const icon = `<div class="gicon"><span>${a.icon}</span>${s.v ? `<span class="own">v${s.v}</span>` : ''}</div>`;
+    if (st === 'locked') {
+      const tech = G.appTech(a), known = !G.appNeedsTech(a), model = G.S.owned[a.model] >= a.n;
+      return `<div class="gen locked-h" ${known ? '' : `data-act="app-research" data-id="${a.id}"`}>${icon}
+        <div class="ginfo"><div class="gname">${a.name}</div>
+          <div class="grate eff">${known ? '✓' : '🔬'} ${tech.name} · ${model ? '✓' : '🔒'} ${a.n}× ${G.GENS[a.model].name}</div></div>
+        ${known ? '<span></span>' : `<button class="gbuy"><span class="q">onderzoeken</span><span class="c">${G.fmt(tech.cost)}</span></button>`}</div>`;
+    }
+    if (st === 'new') return `<div class="gen" data-act="app-build" data-id="${a.id}" data-f="ap-${a.id}">${icon}
+      <div class="ginfo"><div class="gname">${a.name}</div><div class="grate">${a.desc}</div>
+        <div class="mlabel">Bouwtijd ${G.fmtTime(a.time)} · tot ${G.fmt(a.cap)} gebruikers</div></div>
+      <button class="gbuy"><span class="q">bouwen</span><span class="c">${G.fmt(G.appCost(a))}</span></button></div>`;
+    if (st === 'building') return `<div class="gen">${icon}
+      <div class="ginfo"><div class="gname">${a.name}</div><div class="grate">👷 In aanbouw · <span data-f="bl-${a.id}"></span></div>
+        <div class="mbar"><i data-f="bb-${a.id}"></i></div></div><span></span></div>`;
+    return `<div class="gen app-live" data-f="ap-${a.id}">${icon}
+      <div class="ginfo"><div class="gname">${a.name} <span class="stars">${'★'.repeat(G.appStars(a))}</span> <span class="fire-badge" data-f="ht-${a.id}">🔥</span></div>
+        <div class="grate"><span data-f="au-${a.id}"></span> gebruikers · <b class="earn" data-f="ar-${a.id}"></b> data</div>
+        <div class="mbar users"><i data-f="ab-${a.id}"></i></div>
+        <div class="mlabel">v${s.v + 1}: ${G.appFeature(s.v + 1)} · 2× gebruikers en data</div></div>
+      <div class="app-actions">
+        <button class="gbuy" data-act="app-build" data-id="${a.id}"><span class="q">nieuwe versie</span><span class="c" data-f="avc-${a.id}"></span></button>
+        <button class="gbuy mkt" data-act="app-mkt" data-id="${a.id}" data-f="am-${a.id}"></button>
+      </div></div>`;
+  }
+
   function updateApps() {
     const list = $('appList'), S = G.S;
-    const shown = [];
-    for (const a of G.APPS) { shown.push(a); if (appStatus(a) === 'locked') break; }
-    const key = shown.map(a => a.id + ':' + appStatus(a) + (G.appNeedsTech(a) ? 't' : '')).join(',');
-    if (keyed(list, key, shown.map(a => {
-      const st = appStatus(a), s = G.S.apps[a.id] || {};
-      const head = `<div class="gicon"><span>${a.icon}</span>${s.v ? `<span class="own">v${s.v}</span>` : ''}</div>`;
-      if (st === 'locked') {
-        const tech = G.appTech(a), known = !G.appNeedsTech(a), model = G.S.owned[a.model] >= a.n;
-        return `<div class="app locked${known ? '' : ' needs'}"><div class="app-top">${head}<div class="ginfo"><div class="gname">${a.name}</div>
-          <div class="grate">${known ? '✓' : '🔬'} Onderzoek: ${tech.icon} ${tech.name}</div>
-          <div class="grate">${model ? '✓' : '🔒'} Vereist ${a.n}× ${G.GENS[a.model].name}</div></div>
-          ${known ? '' : `<button class="gbuy" data-act="app-research" data-id="${a.id}"><span class="q">onderzoeken</span><span class="c">${G.fmt(tech.cost)}</span></button>`}</div></div>`;
-      }
-      if (st === 'new') return `<div class="app" data-f="ap-${a.id}"><div class="app-top">${head}<div class="ginfo"><div class="gname">${a.name}</div>
-        <div class="grate">${a.desc}</div><div class="grate">Bouwtijd ${G.fmtTime(a.time)} · tot ${G.fmt(a.cap)} gebruikers</div></div>
-        <button class="gbuy" data-act="app-build" data-id="${a.id}"><span class="q">bouwen</span><span class="c">${G.fmt(G.appCost(a))}</span></button></div></div>`;
-      if (st === 'building') return `<div class="app"><div class="app-top">${head}<div class="ginfo"><div class="gname">${a.name}</div>
-        <div class="grate">👷 Wordt gebouwd… <span data-f="bl-${a.id}"></span></div><div class="bar"><i data-f="bb-${a.id}"></i></div></div></div></div>`;
-      return `<div class="app live" data-f="ap-${a.id}"><div class="app-top">${head}<div class="ginfo"><div class="gname">${a.name} <span class="ver">v${s.v}</span> <span class="stars">${'★'.repeat(G.appStars(a))}</span> <span class="fire-badge" data-f="ht-${a.id}">🔥</span></div>
-        <div class="grate"><span data-f="au-${a.id}"></span> gebruikers · <b class="earn" data-f="ar-${a.id}"></b> data</div>
-        <div class="bar users"><i data-f="ab-${a.id}"></i></div>
-        <div class="mlabel">Volgende versie: v${s.v + 1} ${G.appFeature(s.v + 1)} · 2× gebruikers en data</div></div>
-        <div class="app-actions">
-          <button class="gbuy" data-act="app-build" data-id="${a.id}" data-f="av-${a.id}"><span class="q">nieuwe versie</span><span class="c" data-f="avc-${a.id}"></span></button>
-          <button class="gbuy mkt" data-act="app-mkt" data-id="${a.id}" data-f="am-${a.id}"></button>
-        </div></div></div>`;
-    }).join(''))) {
+    const groups = { live: [], start: [], next: [] };
+    let lockedShown = false;
+    for (const a of G.APPS) {
+      const st = appStatus(a);
+      if (st.startsWith('live')) groups.live.push(a);
+      else if (st === 'new' || st === 'building') groups.start.push(a);
+      else if (!lockedShown) { groups.next.push(a); lockedShown = true; }
+    }
+    const key = G.APPS.map(a => appStatus(a) + (G.appNeedsTech(a) ? 't' : '')).join(',') + '|' + groups.next.map(a => a.id + G.S.owned[a.model]).join();
+    const section = (title, arr) => arr.length ? `<div class="subhead">${title}</div>${arr.map(appCard).join('')}` : '';
+    if (keyed(list, key, `
+      <div class="ind-card">
+        <div class="stats3">
+          <div><small>Gebruikers</small><b data-f="as-u"></b></div>
+          <div><small>Data-bonus</small><b data-f="as-d"></b></div>
+          <div><small>Apps live</small><b data-f="as-n"></b></div>
+        </div>
+        <div class="bar"><i data-f="as-bar"></i></div>
+        <p class="muted" data-f="as-st"></p>
+      </div>` +
+      section('Live', groups.live) + section('Nieuw en in aanbouw', groups.start) + section('Hierna', groups.next))) {
       if (!list.dataset.bound) {
         list.dataset.bound = '1';
         list.addEventListener('click', e => {
@@ -226,7 +249,7 @@
             const wasNew = !G.app(a.id).v;
             if (G.buildApp(a)) {
               G.sfx.upgrade(); G.haptic('MEDIUM');
-              if (!wasNew) G.ui.toast(a.icon, `${a.name} v${G.app(a.id).v}: ${G.appFeature(G.app(a.id).v)}`, 'Nieuwe functie: 2× gebruikers en 2× data per gebruiker.');
+              if (!wasNew) G.ui.toast(a.icon, `${a.name} v${G.app(a.id).v}: ${G.appFeature(G.app(a.id).v)}`, '2× gebruikers en 2× data per gebruiker.');
             } else G.sfx.error();
           } else if (t.dataset.act === 'app-mkt') {
             if (G.campaign(a)) { G.sfx.eureka(); G.haptic('MEDIUM'); floatText(e, '📣 +' + G.fmt(G.appCap(a) * 0.15 + 10)); }
@@ -237,28 +260,39 @@
       }
     }
     const now = Date.now();
-    let live = 0;
-    for (const a of shown) {
-      const s = G.S.apps[a.id] || {}, st = appStatus(a);
-      if (st === 'new') set(list, 'ap-' + a.id, { cls: { can: S.tokens >= G.appCost(a) } });
-      if (st === 'building') {
+    let users = 0;
+    for (const a of groups.start) {
+      const s = G.S.apps[a.id] || {};
+      if (s.b) {
         const left = Math.max(0, s.b - now);
         set(list, 'bl-' + a.id, 'nog ' + G.fmtTime(Math.ceil(left / 1000)));
         set(list, 'bb-' + a.id, { w: (100 * (1 - left / (a.time * 1000))) + '%' });
-      }
-      if (st.startsWith('live')) {
-        live++;
-        set(list, 'au-' + a.id, `${G.fmt(Math.floor(s.u))} / ${G.fmt(G.appCap(a))}`);
-        set(list, 'ar-' + a.id, G.fmt(G.appData(a)));
-        set(list, 'ab-' + a.id, { w: pct(s.u, G.appCap(a)) });
-        set(list, 'ht-' + a.id, { cls: { on: G.trending(a) } });
-        const cd = Math.max(0, (s.cd || 0) - now);
-        set(list, 'am-' + a.id, { t: cd ? `campagne · ${Math.ceil(cd / 1000)} s` : '📣 campagne', dis: cd > 0 });
-        set(list, 'avc-' + a.id, G.fmt(G.appCost(a)));
-        set(list, 'ap-' + a.id, { cls: { can: S.tokens >= G.appCost(a) } });
-      }
+      } else set(list, 'ap-' + a.id, { cls: { can: S.tokens >= G.appCost(a) } });
     }
-    $('appHead').textContent = live ? `${live} live · modellen ${G.fmtMult(G.dataBonus())}` : 'Apps leveren data voor je modellen';
+    for (const a of groups.live) {
+      const s = G.S.apps[a.id];
+      users += s.u;
+      set(list, 'au-' + a.id, `${G.fmt(Math.floor(s.u))} / ${G.fmt(G.appCap(a))}`);
+      set(list, 'ar-' + a.id, G.fmt(G.appData(a)));
+      set(list, 'ab-' + a.id, { w: pct(s.u, G.appCap(a)) });
+      set(list, 'ht-' + a.id, { cls: { on: G.trending(a) } });
+      const cd = Math.max(0, (s.cd || 0) - now);
+      set(list, 'am-' + a.id, { t: cd ? `📣 ${Math.ceil(cd / 1000)} s` : '📣 campagne', dis: cd > 0 });
+      set(list, 'avc-' + a.id, G.fmt(G.appCost(a)));
+      set(list, 'ap-' + a.id, { cls: { can: S.tokens >= G.appCost(a) } });
+    }
+    // Overzicht: de balk loopt naar de volgende stap van de data-bonus (elke 10× meer data).
+    const data = G.dataValue(), lg = Math.log10(1 + data), frac = lg % 1;
+    set(list, 'as-u', G.fmt(Math.floor(users)));
+    set(list, 'as-d', G.fmtMult(G.dataBonus()));
+    set(list, 'as-n', `${groups.live.length} / ${G.APPS.length}`);
+    set(list, 'as-bar', { w: (groups.live.length ? frac * 100 : 0) + '%' });
+    const tr = S.trend && S.trend.until > now ? G.APPS.find(a => a.id === S.trend.id) : null;
+    set(list, 'as-st', !groups.live.length ? 'Lanceer je eerste app. Gebruikers leveren data, en data maakt al je modellen sneller.'
+      : tr ? `🔥 ${tr.name} is trending · nog ${Math.ceil((S.trend.until - now) / 1000)} s`
+      : G.trendOffer ? `🔥 ${G.APPS.find(a => a.id === G.trendOffer.id).name} gaat viraal! Tik erop in de telefoon.`
+      : `Nog ${G.fmt(Math.pow(10, Math.floor(lg) + 1) - data)} data tot de volgende +0,20 bonus`);
+    $('appHead').textContent = '';
   }
 
   // ---------- apps-speelveld: een telefoon met je apps ----------

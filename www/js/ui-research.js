@@ -5,26 +5,49 @@
   const NAMES = { lab: 'Je lab: elke afdeling opent iets nieuws', models: 'Onderzoeksboom modellen', chips: 'Onderzoeksboom chips', apps: 'Onderzoeksboom apps', upg: 'Losse verbeteringen' };
   let seg = 'lab', lastKey = '', flashId = null;
 
-  function nodeHtml(u, side) {
-    if (!u) return `<div class="tcell ${side}"></div>`;
-    const st = G.techDone(u.id) ? 'done' : G.techAvailable(u) ? 'avail' : 'locked';
-    return `<div class="tcell ${side}"><button class="tnode ${st}${u.kind === 'tech' ? ' spine' : ''}" data-id="${u.id}">
-      <span class="ti">${u.icon}</span><span class="tn">${u.name}</span>
-      <span class="tc">${st === 'done' ? '✓ onderzocht' : st === 'avail' ? G.fmt(u.cost) : '🔒'}</span></button></div>`;
+  // Onderzoek in dezelfde opbouw als Chips en Team: overzicht bovenaan, daaronder kaarten.
+  // Eén tik op een kaart onderzoekt meteen.
+  const nodesOf = tree => G.TREES[tree].flatMap(r => [r.spine, r.left, r.right].filter(Boolean));
+  function techCard(u, state) {
+    const spine = u.kind === 'tech' || u.kind === 'lab';
+    const eff = spine ? u.unlocks : u.desc;
+    const par = u.parent ? G.techById(u.parent) : null;
+    if (state === 'locked') return `<div class="gen locked-h res-card" data-id="${u.id}">
+      <div class="gicon"><span>${u.icon}</span></div>
+      <div class="ginfo"><div class="gname">${u.name}</div><div class="grate eff">${eff}</div>
+        <div class="mlabel">🔒 Eerst: ${par ? par.icon + ' ' + par.name : ''}</div></div><span></span></div>`;
+    return `<div class="gen res-card" data-act="tech" data-id="${u.id}">
+      <div class="gicon"><span>${u.icon}</span></div>
+      <div class="ginfo"><div class="gname">${u.name} <span class="tag">${spine ? 'hoofdlijn' : 'boost'}</span></div>
+        <div class="grate eff">${eff}</div>${spine ? `<div class="mlabel">${u.desc}</div>` : ''}</div>
+      <button class="gbuy"><span class="q">onderzoeken</span><span class="c">${G.fmt(u.cost)}</span></button></div>`;
   }
 
   function renderTree() {
-    const rows = G.TREES[seg];
-    const state = u => (u ? (G.techDone(u.id) ? 2 : G.techAvailable(u) ? 1 : 0) : '-');
-    const key = seg + '|' + rows.map(r => '' + state(r.left) + state(r.spine) + state(r.right)).join(',');
+    const rows = G.TREES[seg], all = nodesOf(seg);
+    const st = u => (G.techDone(u.id) ? 'done' : G.techAvailable(u) ? 'avail' : 'locked');
+    const key = seg + '|' + all.map(st).join(',');
     if (key === lastKey) return;
     lastKey = key;
-    $('treeBody').innerHTML = `<div class="tree tree-${seg}">${rows.map(r => {
-      const linked = !r.spine.parent || G.techDone(r.spine.parent);
-      return `<div class="trow${linked ? ' linked' : ''}${G.techDone(r.spine.id) ? ' done' : ''}${r.left ? ' has-l' : ''}${r.right ? ' has-r' : ''}">
-        ${nodeHtml(r.left, 'l')}${nodeHtml(r.spine, 'c')}${nodeHtml(r.right, 'r')}
-        <span class="tunlock">${r.spine.unlocks}</span></div>`;
-    }).join('')}</div>`;
+    const avail = all.filter(u => st(u) === 'avail').sort((a, b) => a.cost - b.cost);
+    const locked = all.filter(u => st(u) === 'locked').sort((a, b) => a.cost - b.cost).slice(0, 3);
+    const done = all.filter(u => st(u) === 'done');
+    const next = rows.find(r => !G.techDone(r.spine.id));
+    const track = rows.map(r => `<span class="${st(r.spine) === 'done' ? 'done' : st(r.spine) === 'avail' ? 'cur' : ''}" title="${r.spine.name}">${r.spine.icon}</span>`).join('<i></i>');
+    $('treeBody').innerHTML = `
+      <div class="ind-card">
+        <div class="stats3">
+          <div><small>Onderzocht</small><b>${done.length} / ${all.length}</b></div>
+          <div><small>Nu mogelijk</small><b>${avail.length}</b></div>
+          <div><small>Volgende stap</small><b class="ellip">${next ? next.spine.icon + ' ' + next.spine.name : '✓ alles'}</b></div>
+        </div>
+        <div class="track res-track">${track}</div>
+        <div class="bar"><i style="width:${done.length / all.length * 100}%"></i></div>
+        <p class="muted">${next ? next.spine.unlocks : 'Deze boom is helemaal onderzocht.'}</p>
+      </div>
+      ${avail.length ? `<div class="subhead">Nu te onderzoeken</div>${avail.map(u => techCard(u, 'avail')).join('')}` : ''}
+      ${locked.length ? `<div class="subhead">Daarna</div>${locked.map(u => techCard(u, 'locked')).join('')}` : ''}
+      ${done.length ? `<div class="subhead">Onderzocht</div><div class="done-row">${done.map(u => `<button class="done-chip" data-id="${u.id}" title="${u.name}">${u.icon}</button>`).join('')}</div>` : ''}`;
   }
 
   function dots() {
@@ -46,10 +69,12 @@
       done = own.filter(u => G.S.upgrades[u.id]).length; total = own.length;
     } else {
       renderTree();
-      for (const b of $('treeBody').querySelectorAll('.tnode.avail')) b.classList.toggle('can', G.S.tokens >= G.techById(b.dataset.id).cost);
+      for (const b of $('treeBody').querySelectorAll('[data-act="tech"]')) b.classList.toggle('can', G.S.tokens >= G.techById(b.dataset.id).cost);
       [done, total] = G.treeProgress(seg);
     }
     $('resTitle').textContent = NAMES[seg];
+    document.querySelector('#tab-research .res-head').classList.toggle('hidden', !list);
+    $('researchBar').parentElement.classList.toggle('hidden', !list);
     $('researchCount').textContent = `${done} / ${total}`;
     $('researchBar').style.width = (done / total * 100) + '%';
     if (flashId) {
@@ -82,15 +107,10 @@
   }
 
   $('treeBody').addEventListener('click', e => {
-    const b = e.target.closest('.tnode');
-    if (!b) return;
-    const u = G.techById(b.dataset.id), done = G.techDone(u.id), avail = G.techAvailable(u);
-    const par = u.parent ? G.techById(u.parent) : null;
-    let body = u.kind === 'tech' ? `${u.desc}<br><br><b>${u.unlocks}</b>` : `<b>${u.desc}</b>`;
-    if (!done && !avail && par) body += `<br><br>🔒 Eerst onderzoeken: ${par.icon} ${par.name}`;
-    const buttons = [{ label: done || !avail ? 'Sluiten' : 'Annuleren' }];
-    if (!done && avail) buttons.push({ label: `Onderzoek · ${G.fmt(u.cost)}`, cls: 'primary', onClick: () => buy(u) });
-    G.ui.modal(u.icon, u.name + (done ? ' ✓' : ''), body, buttons);
+    const card = e.target.closest('[data-act="tech"]');
+    if (card) { buy(G.techById(card.dataset.id)); return; }
+    const chip = e.target.closest('.done-chip');
+    if (chip) { const u = G.techById(chip.dataset.id); G.ui.toast(u.icon, `${u.name} ✓`, u.kind === 'tech' || u.kind === 'lab' ? u.unlocks : u.desc); }
   });
 
   G.uiRes = {
