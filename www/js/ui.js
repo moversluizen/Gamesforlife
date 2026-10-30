@@ -4,6 +4,7 @@
   const $ = id => document.getElementById(id);
   const el = (tag, cls, html) => { const e = document.createElement(tag); if (cls) e.className = cls; if (html != null) e.innerHTML = html; return e; };
 
+  const TEST_TOKENS = 1e30; // genoeg voor alles, zonder dat de getallen onleesbaar worden
   let currentTab = 'models', moreSub = 'sing';
   const genEls = [];
 
@@ -199,14 +200,22 @@
       <div class="row"><span>Muziek</span><button class="switch ${S.settings.music ? 'on' : ''}" data-set="music" aria-label="Muziek"></button></div>
       <div class="row"><span>Geluidseffecten</span><button class="switch ${S.settings.sound ? 'on' : ''}" data-set="sound" aria-label="Geluidseffecten"></button></div>
       <div class="row"><span>Trillen</span><button class="switch ${S.settings.haptics ? 'on' : ''}" data-set="haptics" aria-label="Trillen"></button></div>
+      <div class="section-title">Testen</div>
+      <div class="row"><span>Onbeperkt tokens<small class="row-sub">Om alles uit te proberen. Bij uitzetten krijg je je eigen tokens terug.</small></span><button class="switch ${S.settings.cheat ? 'on' : ''}" data-set="cheat" aria-label="Onbeperkt tokens"></button></div>
       <div class="section-title">Hoe speel je?</div>
-      <div class="small-print">Tik op de kern om tokens te verdienen. Koop modellen die automatisch tokens maken; bij 10, 25, 50, 100… stuks verdubbelt hun productie. Onderzoek geeft extra boosts. Chips geven rekenkracht die al je modellen sneller maakt: eerst koop je ze in en plaats je ze in een datacenter, later ontwerp je ze zelf en bouw je je eigen fabriek. Nieuwe chips vervangen de oude geleidelijk. Lanceer apps: hun gebruikers leveren trainingsdata die je modellen versterkt. Neem helpers aan die werk voor je doen. Veeg links of rechts over het paneel om van onderdeel te wisselen. Ada geeft je steeds een nieuwe opdracht met een beloning. Tik op een gouden 💡 voor een Eureka-moment. Bouw uiteindelijk AGI en activeer de singulariteit voor permanente bonussen. Ook als de app dicht is gaat de training door.</div>
+      <div class="small-print">Tik op de kern om tokens te verdienen. Koop modellen die automatisch tokens maken; bij 25, 50, 100… stuks verdubbelt hun productie. Onderzoek geeft extra boosts. Chips geven rekenkracht die al je modellen sneller maakt: eerst koop je ze in en plaats je ze in een datacenter, later ontwerp je ze zelf en bouw je je eigen fabriek. Nieuwe chips vervangen de oude geleidelijk. Lanceer apps: hun gebruikers leveren trainingsdata die je modellen versterkt. Neem helpers aan die werk voor je doen. Veeg links of rechts over het paneel om van onderdeel te wisselen. Ada geeft je steeds een nieuwe opdracht met een beloning. Tik op een gouden 💡 voor een Eureka-moment. Bouw uiteindelijk AGI en activeer de singulariteit voor permanente bonussen. Ook als de app dicht is gaat de training door.</div>
       <button class="danger" id="wipeBtn">Voortgang wissen</button>
       <div class="small-print">Road to AGI · versie 1.1<br>Dit spel verzamelt geen persoonsgegevens. Je voortgang wordt alleen op dit apparaat opgeslagen.</div>`;
     for (const sw of $('moreBody').querySelectorAll('.switch')) {
       sw.onclick = () => {
         const k = sw.dataset.set; S.settings[k] = !S.settings[k]; sw.classList.toggle('on', S.settings[k]); G.haptic(); G.save();
         if (k === 'music') S.settings.music ? G.music.start() : G.music.stop();
+        if (k === 'cheat') {
+          // Bewaar je echte tokens, zodat uitzetten je terugbrengt waar je was.
+          if (S.settings.cheat) { S.cheatBackup = S.tokens; S.tokens = TEST_TOKENS; toast('🧪', 'Testmodus aan', 'Onbeperkt tokens: probeer alles uit.'); }
+          else { S.tokens = S.cheatBackup || 0; delete S.cheatBackup; toast('🧪', 'Testmodus uit', 'Je eigen tokens zijn terug.'); }
+          refresh(true);
+        }
       };
     }
     $('wipeBtn').onclick = () => modal('⚠️', 'Alles wissen?', 'Al je voortgang, inzichten en prestaties worden definitief verwijderd.', [
@@ -627,6 +636,8 @@
     if (off) { showOffline(off); refresh(true); }
     G.fx.frame(dt, t);
     autoTaps(dt);
+    if (G.S.settings.cheat && G.S.tokens < TEST_TOKENS) G.S.tokens = TEST_TOKENS;
+    $('app').classList.toggle('cheat', !!G.S.settings.cheat);
     updateFlow(dt);
 
     uiTimer += dt; achTimer += dt; saveTimer += dt; newsTimer += dt;

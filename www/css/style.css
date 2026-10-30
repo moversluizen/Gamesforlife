@@ -942,3 +942,10 @@ button:focus-visible { outline: 2px solid var(--c1); outline-offset: 2px; }
 .org-dept.next::before { opacity: .25; }
 .org-cap { font-size: 10.5px; color: var(--mute); text-align: center; margin: 8px 0 0; }
 .stats3 b { white-space: nowrap; font-size: 15px; }
+
+/* testmodus */
+.row-sub { display: block; font-size: 11px; color: var(--mute); margin-top: 2px; max-width: 260px; }
+#app.cheat .tokens::after {
+  content: 'TEST'; margin-left: 6px; padding: 1px 6px; border-radius: 6px; vertical-align: middle;
+  font-size: 10px; font-weight: 800; letter-spacing: .5px; color: #2a1c00; background: var(--gold);
+}
