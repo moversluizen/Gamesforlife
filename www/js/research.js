@@ -31,11 +31,11 @@
     ['Meertaligheid', '🌍', 'Jaren 2000: statistische vertaling tussen honderden talen.'],
     ['Spraakherkenning', '🎙️', '2011: geluid omzetten in tekst, op je telefoon.'],
     ['Computervisie', '👁️', '2012: deep learning herkent objecten in foto\'s.'],
-    ['Code-training', '⌨️', '2021: leren van miljarden regels openbare code.'],
+    ['Code-training', '📝', '2021: leren van miljarden regels openbare code.'],
     ['Diffusiemodellen', '🎨', '2022: beelden maken uit ruis.'],
     ['Videosynthese', '🎬', '2024: beeld voor beeld consistent blijven.'],
     ['Autonome planning', '🗺️', '2025: taken opknippen en zelf uitvoeren.'],
-    ['Geautomatiseerd onderzoek', '🔬', 'Toekomst: hypotheses bedenken én testen.'],
+    ['Geautomatiseerd onderzoek', '🧫', 'Toekomst: hypotheses bedenken én testen.'],
     ['Robotica', '🦾', 'Toekomst: een lichaam voor je AI.'],
   ];
 
@@ -48,12 +48,12 @@
   // Het lab blijft bestaan na een singulariteit (opgeslagen in S.lab).
   G.LAB = [
     ['lab_product',  'Productteam',             '📱', 2000, 'Ontgrendelt het onderdeel Apps',                 'Een team dat van modellen echte producten maakt.'],
-    ['lab_hardware', 'Datacenter',              '🗄️', 4e4,  'Ontgrendelt het onderdeel Chips',                '2012: gaming-GPU\'s blijken perfect voor AI. Koop ze in en zet ze in een datacenter.'],
+    ['lab_hardware', 'Chipfabriek',             '🏭', 4e4,  'Ontgrendelt het onderdeel Chips',                '2012: GPU\'s blijken perfect voor AI. Jij maakt ze zelf, van zand tot chip, en zet ze in je datacenter.'],
     ['lab_hr',       'HR-afdeling',             '👥', 2.5e5, 'Ontgrendelt het onderdeel Team en de Stagiair', 'Iemand moet de sollicitaties lezen.'],
     ['lab_safety',   'Veiligheidsteam',         '🦺', 1e6,  'Ontgrendelt de Safety-engineer',                 'Slimmere modellen vragen om toezicht.'],
     ['lab_design',   'Chipontwerpstudio',       '👩‍🔬', 2e7,  'Ontgrendelt eigen chips en de Chipontwerper',     '2016: grote labs ontwerpen hun eigen AI-chips.'],
     ['lab_mkt',      'Marketingafdeling',       '📣', 3e8,  'Ontgrendelt de Marketeer',                       'Want een goede app verkoopt zichzelf niet.'],
-    ['lab_eng',      'Eigen chipfabriek',       '🏭', 4e10, 'Ontgrendelt je eigen fabriek en de Fab-ingenieur', 'Chips zijn de bottleneck van de wereld. Maak ze zelf, van zand tot chip.'],
+    ['lab_eng',      'Fab-ingenieurs',          '🧑‍🔧', 4e10, 'Ontgrendelt de Fab-ingenieur',                   'Chips zijn de bottleneck van de wereld. Ingenieurs halen meer uit je hele keten.'],
     ['lab_talent',   'Talentprogramma',         '🕵️', 3e11, 'Ontgrendelt de Talentscout',                     'Op zoek naar het volgende genie.'],
     ['lab_finance',  'Financiële afdeling',     '💼', 2e12, 'Ontgrendelt de Financieel directeur',            'Iemand die weet waar al die tokens heen gaan.'],
     ['lab_sing',     'Singulariteitsinstituut', '🌀', 5e12, 'Ontgrendelt de singulariteit',                   'Onderzoek naar wat er na AGI komt.'],
@@ -89,14 +89,14 @@
   G.GENS.forEach((g, i) => {
     if (!MODEL_TECH[i]) return;
     // Elke stap relatief duurder: vroege modellen snel, latere vragen geduld.
-    addRow('models', i, tech('tm' + i, 'models', MODEL_TECH[i], g.cost * 1.5 * Math.pow(1.5, i - 2), `Ontgrendelt ${g.icon} ${g.name}`));
+    addRow('models', i, tech('tm' + i, 'models', MODEL_TECH[i], g.cost * 1.5 * Math.pow(1.5, i - 2), `Ontgrendelt ${g.name}`));
   });
   G.CHIPS.forEach((c, i) => {
     if (!CHIP_TECH[i]) return;
-    addRow('chips', i, tech('tc' + i, 'chips', CHIP_TECH[i], c.cost * 0.5 * Math.pow(1.4, i - 1), `Ontgrendelt ${c.icon} ${c.name}`));
+    addRow('chips', i, tech('tc' + i, 'chips', CHIP_TECH[i], c.cost * 0.5 * Math.pow(1.4, i - 1), `Ontgrendelt ${c.name}`));
   });
   G.APPS.forEach((a, i) => {
-    addRow('apps', i, tech('ta' + i, 'apps', APP_TECH[i], a.cost * 0.6 * Math.pow(1.4, i), `Ontgrendelt ${a.icon} ${a.name}`));
+    addRow('apps', i, tech('ta' + i, 'apps', APP_TECH[i], a.cost * 0.6 * Math.pow(1.4, i), `Ontgrendelt ${a.name}`));
   });
 
   // Hoofdlijn: elke knoop vraagt de vorige.
@@ -158,6 +158,12 @@
     S.lab = S.lab || {};
     if (S.chipsCur == null) { S.chipsCur = S.chips; S.oldPower = G.chip().power; }
     while (S.chain.length < G.CHAIN.length) S.chain.push(0);
+    // Inkoop bestaat niet meer: ingekochte capaciteit wordt je eigen keten.
+    if (S.chain.length > G.CHAIN.length) {
+      const bought = S.chain[5] || 0;
+      for (const i of G.OWN_CHAIN) S.chain[i] = Math.max(S.chain[i], bought);
+      S.chain.length = G.CHAIN.length;
+    }
     // Oude saves: wat al open was blijft open.
     const old = [[150, 'lab_product'], [250, 'lab_hardware'], [800, 'lab_hr']];
     for (const [t, id] of old) if (S.lifeEarned >= t) S.lab[id] = 1;

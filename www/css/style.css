@@ -1044,3 +1044,26 @@ button:focus-visible { outline: 2px solid var(--c1); outline-offset: 2px; }
 .res-card .gname { white-space: normal; display: -webkit-box; -webkit-line-clamp: 2; -webkit-box-orient: vertical; overflow: hidden; line-height: 1.25; }
 .res-card .tag { display: inline-block; margin-left: 2px; }
 .as-u { font-size: clamp(7.5px, 6cqw, 11px); letter-spacing: -.2px; }
+
+/* ===== Eén ontwerp voor alle schermen (v4) =====
+   Maatstaf: Modellen en Chips.
+   1. Scherm = kop, één overzichtskaart (3 cijfers, 1 balk, 1 statusregel), daarna kaarten.
+   2. Kaart = icoon, naam, één effectregel, optioneel balk + label, één knop (werkwoord + prijs).
+   3. Elk icoon één keer per scherm; in tekst geen emoji.
+   4. Kleur alleen voor wat je nu kunt doen (knop) of wat misgaat (rood getal); geen gekleurde randen of labels.
+   5. Hoogstens drie regels tekst per kaart. */
+.gen .grate, .helper .eff, .res-card .grate { color: var(--mute); font-weight: 500; }
+.ind-card.safety, .ind-card.safety.bad, .ind-card.safety.ok { border-color: transparent; box-shadow: none; }
+.stats3 b.bad { color: var(--bad); }
+.ind-card .muted b { color: var(--fg); }
+.ind-card .muted .pill.mini { margin-left: 4px; }
+.gen.upg { display: grid; background: var(--card); border: 0; }
+.org-dept { padding: 7px 4px; gap: 1px; }
+.org-dept b { font-size: 12px; }
+.org-dept small { font-size: 11px; color: var(--mute); }
+.org { margin-bottom: 4px; }
+.rnd-row { gap: 0; }
+.track-label { margin-bottom: 6px; }
+.res-card .tag, .stars { display: none; }
+.res-card .mlabel { -webkit-line-clamp: 1; }
+#appList .gen .grate { white-space: normal; display: -webkit-box; -webkit-line-clamp: 1; -webkit-box-orient: vertical; overflow: hidden; }

@@ -42,7 +42,7 @@ G.GENS.forEach((g, i) => TIERS.forEach(([name, req, mul], t) => G.UPGRADES.push(
   [1e13, 'Neurale interface',      'Nog eens +2% van je productie per tik.', 'clickPct', 0.02, 2000],
   [1e15, 'Gedachtenlezen',         'Nog eens +3% van je productie per tik.', 'clickPct', 0.03, 3000],
 ].forEach(([cost, name, desc, kind, mult, clicks], n) => G.UPGRADES.push({
-  id: `c${n}`, icon: '👆', name, sub: 'Tikken', desc, cost, kind, mult,
+  id: `c${n}`, icon: ['👆', '⌨️', '✍️', '🃏', '🔗', '🪞', '🌳', '🔌', '🔮'][n], name, sub: 'Tikken', desc, cost, kind, mult,
   unlock: s => s.clicks >= clicks && s.runEarned >= cost * 0.2,
 }));
 
@@ -55,7 +55,7 @@ G.GENS.forEach((g, i) => TIERS.forEach(([name, req, mul], t) => G.UPGRADES.push(
   [5e14, 'Orbitale serverparken',   'Alle productie 3×.', 3],
   [5e16, 'Computronium',            'Alle productie 3×.', 3],
 ].forEach(([cost, name, desc, mult], n) => G.UPGRADES.push({
-  id: `x${n}`, icon: '🖥️', name, sub: 'Infrastructuur', desc, cost, kind: 'global', mult,
+  id: `x${n}`, icon: ['🖥️', '🧱', '🔩', '☢️', '💥', '🌌', '💠'][n], name, sub: 'Infrastructuur', desc, cost, kind: 'global', mult,
   unlock: s => s.runEarned >= cost * 0.25,
 }));
 

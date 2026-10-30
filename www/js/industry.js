@@ -3,25 +3,23 @@
   const G = window.G;
 
   // ---------- data ----------
-  // Schakels 0-3 bepalen samen de chipproductie (de traagste wint); 4 is opslag.
-  // Schakels 0-3 vormen je eigen fabriek (pas open met de afdeling Eigen chipfabriek; de traagste wint).
-  // 4 is het datacenter (ruimte), 5 is inkoop bij een leverancier: duur per chip, maar meteen beschikbaar.
+  // Alleen eigen chips: schakels 0-3 vormen je keten van zand tot chip (de traagste schakel bepaalt de output),
+  // 4 is het datacenter waar de chips draaien. Alles gaat tegelijk open met de afdeling Chipfabriek.
   G.CHAIN = [
-    { id: 'mine',  name: 'Zandgroeve',             icon: '⛏️', cost: 2e9,  grow: 1.18, cap: 60, desc: 'Haalt zuiver silicium uit zand.' },
-    { id: 'wafer', name: 'Waferfabriek',           icon: '💿', cost: 5e9,  grow: 1.18, cap: 50, desc: 'Zaagt siliciumstaven tot spiegelgladde wafers.' },
-    { id: 'litho', name: 'EUV-lithografie',        icon: '🔦', cost: 2e10, grow: 1.18, cap: 30, desc: 'Belicht chippatronen met extreem UV-licht. De moeilijkste machine ter wereld.' },
-    { id: 'fab',   name: 'Chipfabriek',            icon: '🏭', cost: 1e10, grow: 1.18, cap: 40, desc: 'Etst, test en verpakt de chips.' },
-    { id: 'dc',    name: 'Datacenter',             icon: '🗄️', cost: 1500, grow: 1.22, slots: 25, desc: 'Ruimte voor 25 extra chips per uitbreiding.' },
-    { id: 'buy',   name: 'Inkoop bij leverancier', icon: '🛒', cost: 3000, grow: 1.22, cap: 0.25, desc: 'Koop kant-en-klare chips. Duur, maar meteen beschikbaar.' },
+    { id: 'mine',  name: 'Zandgroeve',      icon: '⛏️', cost: 500,  grow: 1.2,  cap: 0.6, desc: 'Haalt zuiver silicium uit zand.' },
+    { id: 'wafer', name: 'Waferfabriek',    icon: '💿', cost: 1000, grow: 1.2,  cap: 0.5, desc: 'Zaagt siliciumstaven tot spiegelgladde wafers.' },
+    { id: 'litho', name: 'EUV-lithografie', icon: '🔦', cost: 3000, grow: 1.25, cap: 0.3, desc: 'Belicht chippatronen met extreem UV-licht. De moeilijkste machine ter wereld.' },
+    { id: 'fab',   name: 'Chipfabriek',     icon: '🏭', cost: 2000, grow: 1.2,  cap: 0.4, desc: 'Etst, test en verpakt de chips.' },
+    { id: 'dc',    name: 'Datacenter',      icon: '🗄️', cost: 1500, grow: 1.22, slots: 25, desc: 'Ruimte voor 25 extra chips per uitbreiding.' },
   ];
   G.OWN_CHAIN = [0, 1, 2, 3];
 
-  // litho = benodigde EUV-machines (eigen fabriek); de eerste generaties koop je gewoon in.
+  // litho = benodigde EUV-machines in je keten.
   G.CHIPS = [
     { name: 'CPU',              node: '90 nm',  icon: '🔲', power: 1,     cost: 0,    time: 0,     litho: 0,   desc: 'Een gewone processor. Traag voor neurale netwerken.' },
     { name: 'GPU',              node: '28 nm',  icon: '🎮', power: 8,     cost: 2e4,  time: 60,    litho: 0,   desc: 'Gemaakt voor games. In 2012 bleek hij perfect voor deep learning.' },
-    { name: 'AI-versneller',    node: '7 nm',   icon: '⚡', power: 60,    cost: 1e6,  time: 180,   litho: 0,   desc: 'Datacenterkaarten speciaal voor het trainen van AI.' },
-    { name: 'Tensor-chip',      node: '3 nm',   icon: '🧮', power: 500,   cost: 5e7,  time: 480,   litho: 5,   desc: '2016: je eigen chip, gebouwd voor matrixberekeningen.' },
+    { name: 'AI-versneller',    node: '7 nm',   icon: '⚡', power: 60,    cost: 1e6,  time: 180,   litho: 3,   desc: 'Datacenterkaarten speciaal voor het trainen van AI.' },
+    { name: 'Tensor-chip',      node: '3 nm',   icon: '🧮', power: 500,   cost: 5e7,  time: 480,   litho: 8,   desc: '2016: je eigen chip, gebouwd voor matrixberekeningen.' },
     { name: 'Wafer-scale chip', node: '2 nm',   icon: '🟪', power: 4000,  cost: 2e9,  time: 1200,  litho: 20,  desc: 'Eén chip zo groot als een hele wafer.' },
     { name: 'Fotonische chip',  node: 'licht',  icon: '🌈', power: 3.5e4, cost: 1e11, time: 2700,  litho: 45,  desc: 'Toekomst: rekent met licht in plaats van elektronen.' },
     { name: 'Neuromorfe chip',  node: 'synaps', icon: '🧬', power: 3e5,   cost: 5e12, time: 5400,  litho: 75,  desc: 'Toekomst: werkt als echte neuronen.' },
@@ -80,8 +78,8 @@
     { id: 'ch0', icon: '🏭', name: 'Hogere yield',         sub: 'Keten',      desc: 'Hele keten 2× capaciteit.', cost: 5e4,  kind: 'chain', mult: 2, unlock: s => s.chain[3] >= 10 },
     { id: 'ch1', icon: '🔦', name: 'High-NA EUV',          sub: 'Keten',      desc: 'Hele keten 2× capaciteit.', cost: 5e7,  kind: 'chain', mult: 2, unlock: s => s.chain[2] >= 30 },
     { id: 'ch2', icon: '🧩', name: 'Chiplets',             sub: 'Keten',      desc: 'Hele keten 2× capaciteit.', cost: 5e9,  kind: 'chain', mult: 2, unlock: s => s.chain[3] >= 50 },
-    { id: 'ch3', icon: '🔬', name: 'Gate-all-around',      sub: 'Keten',      desc: 'Hele keten 3× capaciteit.', cost: 5e11, kind: 'chain', mult: 3, unlock: s => s.chain[2] >= 80 },
-    { id: 'sl0', icon: '❄️', name: 'Vloeistofkoeling',     sub: 'Datacenter', desc: 'Datacenters 2× zoveel ruimte.', cost: 1e5,  kind: 'slots', mult: 2, unlock: s => s.chain[4] >= 10 },
+    { id: 'ch3', icon: '🔍', name: 'Gate-all-around',      sub: 'Keten',      desc: 'Hele keten 3× capaciteit.', cost: 5e11, kind: 'chain', mult: 3, unlock: s => s.chain[2] >= 80 },
+    { id: 'sl0', icon: '🧊', name: 'Vloeistofkoeling',     sub: 'Datacenter', desc: 'Datacenters 2× zoveel ruimte.', cost: 1e5,  kind: 'slots', mult: 2, unlock: s => s.chain[4] >= 10 },
     { id: 'sl1', icon: '🌊', name: 'Onderzeese datacenters', sub: 'Datacenter', desc: 'Datacenters 2× zoveel ruimte.', cost: 1e9, kind: 'slots', mult: 2, unlock: s => s.chain[4] >= 40 },
     { id: 'sl2', icon: '🛰️', name: 'Orbitale racks',       sub: 'Datacenter', desc: 'Datacenters 3× zoveel ruimte.', cost: 1e13, kind: 'slots', mult: 3, unlock: s => s.chain[4] >= 80 },
     { id: 'ap0', icon: '📱', name: 'App-store-optimalisatie', sub: 'Apps',    desc: 'Alle apps leveren 2× zoveel data.', cost: 1e5,  kind: 'app', mult: 2, unlock: s => G.appsLive() >= 1 },
@@ -120,7 +118,6 @@
   // ---------- keten ----------
   G.chainCost = i => G.CHAIN[i].cost * Math.pow(G.CHAIN[i].grow, G.S.chain[i]);
   G.buyChain = i => {
-    if (i < 4 && !G.ownFab()) return false;
     const c = G.chainCost(i);
     if (G.S.tokens < c) return false;
     G.S.tokens -= c;
@@ -137,10 +134,8 @@
     return ok;
   })(G.buyChain);
   G.stageCap = i => G.S.chain[i] * G.CHAIN[i].cap * Math.pow(2, G.stageMs(i)) * G.mods.chain;
-  G.ownFab = () => !G.labDone || G.labDone('lab_eng');
-  G.ownChainActive = () => G.ownFab() && G.OWN_CHAIN.every(i => G.S.chain[i] > 0);
-  G.ownRate = () => (G.ownChainActive() ? Math.min(G.stageCap(0), G.stageCap(1), G.stageCap(2), G.stageCap(3)) : 0);
-  G.chipRate = () => G.stageCap(5) + G.ownRate();
+  G.ownChainActive = () => G.OWN_CHAIN.every(i => G.S.chain[i] > 0);
+  G.chipRate = () => (G.ownChainActive() ? Math.min(G.stageCap(0), G.stageCap(1), G.stageCap(2), G.stageCap(3)) : 0);
   G.bottleneck = () => {
     let b = 0;
     for (let i = 1; i < 4; i++) if (G.stageCap(i) < G.stageCap(b)) b = i;
@@ -355,7 +350,7 @@
     { text: 'Lanceer je eerste app: de Praatbot',           goal: s => [G.appsLive() >= 1 ? 1 : 0, 1], reward: 800, tab: 'apps' },
     { text: 'Koop je eerste RNN',                           goal: own(3, 1), reward: 2000 },
     lab('lab_hardware', 'Datacenter'),
-    { text: 'Bouw een datacenter en koop chips in',         goal: s => [(s.chain[4] > 0 ? 1 : 0) + (s.chain[5] > 0 ? 1 : 0), 2], reward: 5000, tab: 'chips' },
+    { text: 'Bouw je chipketen en een datacenter',          goal: s => [[0, 1, 2, 3, 4].filter(i => s.chain[i] > 0).length, 5], reward: 5000, tab: 'chips' },
     { text: 'Ontwikkel de GPU',                             goal: s => [Math.min(s.chipGen, 1), 1], reward: 2e4, tab: 'chips' },
     lab('lab_hr', 'HR-afdeling'),
     { text: 'Neem een Stagiair aan',                        goal: s => [Math.min(G.hl('intern'), 1), 1], reward: 4e4, tab: 'team' },
@@ -368,8 +363,8 @@
     { text: 'Bouw de Code-copiloot',                        goal: s => [(s.apps.code || {}).v > 0 ? 1 : 0, 1], reward: 1e8, tab: 'apps' },
     { text: 'Maak je stagiair Junior-onderzoeker',          goal: s => [Math.min(G.rank(G.HELPERS[0]), 1), 1], reward: 1e8, tab: 'team' },
     { text: 'Ontwikkel de Tensor-chip',                     goal: s => [Math.min(s.chipGen, 3), 3], reward: 5e8, tab: 'chips' },
-    lab('lab_eng', 'Eigen chipfabriek'),
-    { text: 'Bouw alle vier schakels van je eigen fabriek', goal: s => [G.OWN_CHAIN.filter(i => s.chain[i] > 0).length, 4], reward: 1e10, tab: 'chips' },
+    lab('lab_eng', 'Fab-ingenieurs'),
+    { text: 'Bouw 20 EUV-machines',                         goal: s => [Math.min(s.chain[2], 20), 20], reward: 1e10, tab: 'chips' },
     { text: 'Bouw een Persoonlijke agent',                  goal: s => [(s.apps.agent || {}).v > 0 ? 1 : 0, 1], reward: 3e11, tab: 'apps' },
     { text: 'Ontwikkel de Wafer-scale chip',                goal: s => [Math.min(s.chipGen, 4), 4], reward: 1e12, tab: 'chips' },
     { text: 'Ontwikkel de Quantumchip',                     goal: s => [Math.min(s.chipGen, 7), 7], reward: 4e14, tab: 'chips' },

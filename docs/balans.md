@@ -34,27 +34,27 @@ Grote sprongen komen uit: mijlpalen (×2), een nieuwe chipgeneratie, Eureka (Dat
 
 ## Lab-tijdlijn (eerste keer spelen)
 
-De volgorde volgt de geschiedenis: eerst producten, dan ingekochte GPU's in een datacenter (2012), eigen chipontwerp (2016), en pas veel later een eigen fabriek.
+De volgorde volgt de geschiedenis: eerst producten, dan GPU's in een datacenter (2012) en eigen chipontwerp (2016). Je maakt al je chips zelf.
 
 | Afdeling | Opent | Kosten | Simulatie |
 | --- | --- | --- | --- |
 | Productteam | Apps | 2 K | 3 min |
-| Datacenter | Chips (inkoop + datacenter) | 40 K | 10 min |
+| Chipfabriek | Chips (eigen keten + datacenter) | 40 K | 9–12 min |
 | HR-afdeling | Team, Stagiair | 250 K | 13 min |
 | Veiligheidsteam | Safety-engineer | 1 M | 19 min |
 | Chipontwerpstudio | Tensor-chip en verder, Chipontwerper | 20 M | 30 min |
 | Marketingafdeling | Marketeer | 300 M | 40 min |
-| Eigen chipfabriek | Zandgroeve, waferfabriek, EUV, chipfabriek, Fab-ingenieur | 40 B | ±80 min |
+| Fab-ingenieurs | Fab-ingenieur | 40 B | ±70–90 min |
 | Talentprogramma | Talentscout | 300 B | ±115 min |
 | Financiële afdeling | Financieel directeur | 2 T | ±145 min |
 | Singulariteitsinstituut | Singulariteit | 5 T | ±160 min |
 
 ## Chips: geleidelijk profijt
 
-- Eerst **inkopen** (duur per chip) en een **datacenter** voor ruimte.
+- Alleen **eigen chips**: zandgroeve → waferfabriek → EUV → chipfabriek. Pas als alle vier schakels draaien komen er chips uit, en de traagste schakel bepaalt de output.
+- Een **datacenter** geeft ruimte; zonder ruimte geen extra rekenkracht.
 - Een nieuwe chipgeneratie **vervangt je oude chips geleidelijk**, op het tempo van je productie. Je rekenkracht stijgt dus niet meteen.
-- De **eigen fabriek** is veel productiever, maar kost bij opening al tientallen miljarden; de traagste schakel bepaalt de output.
-- Vanaf de Wafer-scale chip zijn EUV-machines uit je eigen fabriek nodig.
+- Vanaf de AI-versneller vraagt elke generatie meer EUV-machines (3, 8, 20, 45, 75, 110).
 
 ## Verhaallijn
 
@@ -64,15 +64,23 @@ Negen hoofdstukken, gekoppeld aan je slimste model. Elk hoofdstuk opent met een 
 | --- | --- | --- |
 | 1. De garage | 1958, de perceptron | Modellen, onderzoek |
 | 2. Statistiek en stof | jaren 90, het web en woordtellingen | Apps (Praatbot, Vertaal-app) |
-| 3. De neurale lente | 2012, deep learning op gaming-GPU's | Chips (inkoop, datacenter), Team |
+| 3. De neurale lente | 2012, deep learning op gaming-GPU's | Chips (eigen keten, datacenter), Team |
 | 4. Attention | 2017, de Transformer | Eigen chipontwerp, veiligheid |
 | 5. Het taalmodel-tijdperk | 2020–2023, de chatbot-boom | Marketing |
-| 6. Agents en redeneren | 2024–2026, agents en chips als bottleneck | Eigen chipfabriek |
+| 6. Agents en redeneren | 2024–2026, agents en chips als bottleneck | Fab-ingenieurs, 20 EUV-machines |
 | 7. De intelligentie-explosie | toekomst | Zelfverbeterende AI, quantum |
 | 8. Kardashev | verre toekomst | Dyson-datacenter, Project AGI |
 | 9. AGI | ? | Singulariteit en opnieuw beginnen |
 
 De kern groeit mee: één neuron, staafdiagram, lagen, attention, dicht netwerk, agents, recursieve vormen, een ster, en een gouden AGI-ster.
+
+## Ontwerpregels (maatstaf: Modellen en Chips)
+
+1. Elk scherm: kop, één overzichtskaart (3 cijfers, 1 balk, 1 statusregel), daarna kaarten.
+2. Elke kaart: icoon, naam, één effectregel, optioneel balk + label, één knop (werkwoord + prijs).
+3. Elk icoon één keer per scherm; geen emoji in lopende tekst.
+4. Kleur alleen voor wat je nu kunt doen (knop) of wat misgaat (rood getal); geen gekleurde randen of labels.
+5. Hoogstens drie regels tekst per kaart.
 
 ## Schrijfwijze
 

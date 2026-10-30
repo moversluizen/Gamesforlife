@@ -2,7 +2,6 @@
 (function () {
   const G = window.G;
   const $ = id => document.getElementById(id);
-  const NAMES = { lab: 'Je lab: elke afdeling opent iets nieuws', models: 'Onderzoeksboom modellen', chips: 'Onderzoeksboom chips', apps: 'Onderzoeksboom apps', upg: 'Losse verbeteringen' };
   let seg = 'lab', lastKey = '', flashId = null;
 
   // Onderzoek in dezelfde opbouw als Chips en Team: overzicht bovenaan, daaronder kaarten.
@@ -14,12 +13,12 @@
     const par = u.parent ? G.techById(u.parent) : null;
     if (state === 'locked') return `<div class="gen locked-h res-card" data-id="${u.id}">
       <div class="gicon"><span>${u.icon}</span></div>
-      <div class="ginfo"><div class="gname">${u.name}</div><div class="grate eff">${eff}</div>
+      <div class="ginfo"><div class="gname">${u.name}</div><div class="grate">${eff}</div>
         <div class="mlabel">Eerst: ${par ? par.name : ''}</div></div><span></span></div>`;
     return `<div class="gen res-card" data-act="tech" data-id="${u.id}">
       <div class="gicon"><span>${u.icon}</span></div>
-      <div class="ginfo"><div class="gname">${u.name} <span class="tag">${spine ? 'hoofdlijn' : 'boost'}</span></div>
-        <div class="grate eff">${eff}</div>${spine ? `<div class="mlabel">${u.desc}</div>` : ''}</div>
+      <div class="ginfo"><div class="gname">${u.name}</div>
+        <div class="grate">${eff}</div>${spine ? `<div class="mlabel">${u.desc}</div>` : ''}</div>
       <button class="gbuy"><span class="q">onderzoeken</span><span class="c">${G.fmt(u.cost)}</span></button></div>`;
   }
 
@@ -70,10 +69,13 @@
       for (const b of $('treeBody').querySelectorAll('[data-act="tech"]')) b.classList.toggle('can', G.S.tokens >= G.techById(b.dataset.id).cost);
       [done, total] = G.treeProgress(seg);
     }
-    $('resTitle').textContent = NAMES[seg];
-    document.querySelector('#tab-research .res-head').classList.toggle('hidden', !list);
-    $('researchBar').parentElement.classList.toggle('hidden', !list);
+    $('upgSum').classList.toggle('hidden', !list);
     $('researchCount').textContent = `${done} / ${total}`;
+    if (list) {
+      const rows = [...$('upgList').querySelectorAll('.upg')].map(r => G.techById(r.dataset.id));
+      $('upgAvail').textContent = rows.length;
+      $('upgNext').textContent = rows.length ? G.fmt(Math.min(...rows.map(u => u.cost))) : '–';
+    }
     $('researchBar').style.width = (done / total * 100) + '%';
     if (flashId) {
       const el = $('treeBody').querySelector(`[data-id="${flashId}"]`);
@@ -107,8 +109,6 @@
   $('treeBody').addEventListener('click', e => {
     const card = e.target.closest('[data-act="tech"]');
     if (card) { buy(G.techById(card.dataset.id)); return; }
-    const chip = e.target.closest('.done-chip');
-    if (chip) { const u = G.techById(chip.dataset.id); G.ui.toast(u.icon, `${u.name} ✓`, u.kind === 'tech' || u.kind === 'lab' ? u.unlocks : u.desc); }
   });
 
   G.uiRes = {

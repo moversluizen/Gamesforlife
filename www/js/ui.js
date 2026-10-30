@@ -54,7 +54,7 @@
       e.own.style.display = S.owned[i] ? '' : 'none';
       e.name.textContent = rev ? g.name : '???';
       if (!rev) e.rate.textContent = 'Nog niet ontdekt';
-      else if (tech) e.rate.textContent = `🔬 Eerst onderzoeken: ${tech.icon} ${tech.name}`;
+      else if (tech) e.rate.textContent = `Eerst onderzoeken: ${tech.name}`;
       else if (S.owned[i]) {
         const r = G.genRate(i);
         e.rate.textContent = `${G.fmtRate(r)} · ${Math.round(r / tps * 100)}% van totaal`;
@@ -72,7 +72,9 @@
   // ---------- onderzoek ----------
   let lastUpgKey = '';
   function updateResearch(force) {
-    const avail = G.availableUpgrades();
+    // Eén kaart per icoon: alleen de goedkoopste van elke soort, zodat de lijst kort en rustig blijft.
+    const seen = new Set();
+    const avail = G.availableUpgrades().sort((x, y) => x.cost - y.cost).filter(u => !seen.has(u.icon) && seen.add(u.icon));
     const key = avail.map(u => u.id).join(',');
     const list = $('upgList');
     if (force || key !== lastUpgKey) {
@@ -80,10 +82,11 @@
       list.innerHTML = '';
       if (!avail.length) list.appendChild(el('div', 'empty', 'Nog geen onderzoek beschikbaar.<br>Koop meer modellen om nieuwe doorbraken te ontgrendelen.'));
       for (const u of avail) {
-        const row = el('div', 'upg');
+        // Zelfde kaart als in de bomen: één tik onderzoekt meteen.
+        const row = el('div', 'gen res-card upg');
         row.dataset.id = u.id;
-        row.innerHTML = `<div class="ui">${u.icon}</div><div><div class="us">${u.sub}</div><div class="un">${u.name}</div><div class="ud">${u.desc}</div></div><button>${G.fmt(u.cost)}</button>`;
-        row.querySelector('button').addEventListener('click', () => {
+        row.innerHTML = `<div class="gicon"><span>${u.icon}</span></div><div class="ginfo"><div class="gname">${u.name}</div><div class="grate">${u.desc}</div>${u.desc.includes(u.sub) ? '' : `<div class="mlabel">${u.sub}</div>`}</div><button class="gbuy"><span class="q">onderzoeken</span><span class="c">${G.fmt(u.cost)}</span></button>`;
+        row.addEventListener('click', () => {
           if (G.buyUpgrade(u.id)) { G.sfx.upgrade(); G.haptic('MEDIUM'); toast(u.icon, u.name, u.desc); refresh(true); }
           else G.sfx.error();
         });
@@ -119,7 +122,7 @@
         <div class="big-num">+${G.fmt(p)}</div>
         <p>${p >= 1 ? 'inzichten bij activeren' : `Volgend inzicht bij ${G.fmt(nextAt)} totaal verdiende tokens`}</p>
         ${G.labDone('lab_sing') ? `<button class="cta" id="singBtn" ${p >= 1 ? '' : 'disabled'}>Activeer singulariteit</button>`
-          : `<p>🔒 Onderzoek eerst het <b>Singulariteitsinstituut</b> in je Lab.</p><button class="cta" id="singLab">🔬 Naar het Lab</button>`}</div>`;
+          : `<p>Onderzoek eerst het <b>Singulariteitsinstituut</b> in je lab.</p><button class="cta" id="singLab">naar het lab</button>`}</div>`;
     const ab = $('agiBtn');
     if (ab) ab.onclick = buildAGI;
     if ($('singBtn')) $('singBtn').onclick = confirmPrestige;
@@ -203,7 +206,7 @@
       <div class="section-title">Testen</div>
       <div class="row"><span>Onbeperkt tokens<small class="row-sub">Om alles uit te proberen. Bij uitzetten krijg je je eigen tokens terug.</small></span><button class="switch ${S.settings.cheat ? 'on' : ''}" data-set="cheat" aria-label="Onbeperkt tokens"></button></div>
       <div class="section-title">Hoe speel je?</div>
-      <div class="small-print">Tik op de kern om tokens te verdienen. Koop modellen die automatisch tokens maken; bij 25, 50, 100… stuks verdubbelt hun productie. Onderzoek geeft extra boosts. Chips geven rekenkracht die al je modellen sneller maakt: eerst koop je ze in en plaats je ze in een datacenter, later ontwerp je ze zelf en bouw je je eigen fabriek. Nieuwe chips vervangen de oude geleidelijk. Lanceer apps: hun gebruikers leveren trainingsdata die je modellen versterkt. Neem helpers aan die werk voor je doen. Veeg links of rechts over het paneel om van onderdeel te wisselen. Ada geeft je steeds een nieuwe opdracht met een beloning. Tik op een gouden 💡 voor een Eureka-moment. Bouw uiteindelijk AGI en activeer de singulariteit voor permanente bonussen. Ook als de app dicht is gaat de training door.</div>
+      <div class="small-print">Tik op de kern om tokens te verdienen. Koop modellen die automatisch tokens maken; bij 25, 50, 100… stuks verdubbelt hun productie. Onderzoek geeft extra boosts. Chips geven rekenkracht die al je modellen sneller maakt: je maakt ze zelf in je eigen keten, van zand tot chip, en zet ze in je datacenter. Nieuwe chips vervangen de oude geleidelijk. Lanceer apps: hun gebruikers leveren trainingsdata die je modellen versterkt. Neem helpers aan die werk voor je doen. Veeg links of rechts over het paneel om van onderdeel te wisselen. Ada geeft je steeds een nieuwe opdracht met een beloning. Tik op een gouden 💡 voor een Eureka-moment. Bouw uiteindelijk AGI en activeer de singulariteit voor permanente bonussen. Ook als de app dicht is gaat de training door.</div>
       <button class="danger" id="wipeBtn">Voortgang wissen</button>
       <div class="small-print">Road to AGI · versie 1.1<br>Dit spel verzamelt geen persoonsgegevens. Je voortgang wordt alleen op dit apparaat opgeslagen.</div>`;
     for (const sw of $('moreBody').querySelectorAll('.switch')) {
@@ -230,7 +233,7 @@
     models:   ['🧠', 'Modellen', 'De basis: je modellen maken tokens'],
     chips:    ['💾', 'Chips', 'Rekenkracht die al je modellen versnelt'],
     apps:     ['📱', 'Apps', 'Gebruikers leveren data voor je modellen'],
-    research: ['🔬', 'Onderzoek', 'Hier ontgrendel je alles: afdelingen, modellen, chips en apps'],
+    research: ['🔬', 'Onderzoek', 'Elke stap opent iets nieuws'],
     team:     ['👥', 'Team', 'Helpers die het werk voor je doen'],
     more:     ['🌀', 'Meer', 'Singulariteit, prestaties en instellingen'],
   };
@@ -251,7 +254,7 @@
       const lock = G.tabLock(t);
       modal(TAB_META[t][0], `${TAB_NAMES[t]} is nog op slot`,
         `Open dit onderdeel door in je <b>Lab</b> de afdeling <b>${lock.icon} ${lock.name}</b> te onderzoeken (${G.fmt(lock.cost)} tokens).`,
-        [{ label: 'Later' }, { label: '🔬 Naar het Lab', cls: 'primary', onClick: () => G.uiRes.open('lab', lock.id) }]);
+        [{ label: 'Later' }, { label: 'Naar het lab', cls: 'primary', onClick: () => G.uiRes.open('lab', lock.id) }]);
       return;
     }
     if (t === 'more' && currentTab !== 'more') prevTab = currentTab;
@@ -331,7 +334,7 @@
   function updateBoosts() {
     const tiles = [
       { tab: 'research', icon: '🔬', label: 'Onderzoek', v: G.mods.global },
-      { tab: 'chips', icon: '⚡', label: 'Chips', v: G.computeBonus() },
+      { tab: 'chips', icon: '💾', label: 'Chips', v: G.computeBonus() },
       { tab: 'apps', icon: '📊', label: 'Data', v: G.dataBonus() },
       { tab: 'more', icon: '🌀', label: 'Bonus', v: G.mods.perm * G.buffMult('prod') },
       { tab: 'team', icon: '🛡️', label: 'Veilig', v: null },

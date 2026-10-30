@@ -21,7 +21,7 @@ De mechanismen komen uit de populairste idle games (Cookie Clicker, AdVenture Ca
 | Eindbaas | Project AGI: permanent ×2, daarna elke keer 10× groter |
 | Prestaties | 80+ prestaties, elk +1% productie |
 | Sfeer | Nieuwsticker, kleuren per tijdperk, geanimeerd neuraal netwerk, gegenereerde ambient-muziek die meegroeit met het verhaal, geluid en trillen |
-| Chips | Eerst inkopen en een datacenter, later eigen chipontwerp en pas laat een eigen fabriek (zandgroeve → wafer → EUV → chipfabriek). Nieuwe chips vervangen oude geleidelijk |
+| Chips | Alleen eigen chips: een keten van zandgroeve → wafer → EUV → chipfabriek (de traagste schakel bepaalt de output) en een datacenter voor ruimte. Nieuwe chips vervangen oude geleidelijk |
 | Technologieboom | 8 chipgeneraties (CPU → GPU → … → Quantumchip) met ontwikkeltijd; tikken versnelt het onderzoek |
 | Versterkers | Modellen zijn de basis; chips (rekenkracht), apps (gebruikersdata), onderzoek en prestige vermenigvuldigen hun productie |
 | Apps | 10 apps (Praatbot → Code-copiloot → Robot-butler) met groeiende gebruikers, campagnes en versies |
