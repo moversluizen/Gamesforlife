@@ -74,14 +74,13 @@
     ['Modellen', u => u.kind === 'gen'],
     ['Tikken', u => u.kind === 'click' || u.kind === 'clickPct'],
     ['Infrastructuur', u => u.kind === 'global'],
-    ['Veiligheid', u => u.kind === 'safety'],
     ['Eureka en offline', u => /^eureka|^offline/.test(u.kind)],
   ];
   const boostName = u => (u.kind === 'gen' ? `${u.sub}: ${u.name.toLowerCase()}` : u.name);
   const boostDesc = u => (u.kind === 'gen' ? '2× productie van dit model.' : u.desc);
   function updateResearch(force) {
-    const all = G.UPGRADES.filter(u => !u.tree);
-    const avail = G.availableUpgrades().sort((x, y) => x.cost - y.cost);
+    const all = G.UPGRADES.filter(u => !u.tree && !u.safetyTab);
+    const avail = G.availableUpgrades().filter(u => !u.safetyTab).sort((x, y) => x.cost - y.cost);
     const groups = BOOST_GROUPS.map(([title, f]) => {
       const seen = new Set();
       const list = avail.filter(f).filter(u => { const k = u.kind === 'gen' ? u.gen : u.kind; return !seen.has(k) && seen.add(k); });
@@ -245,19 +244,20 @@
   }
 
   // ---------- tabs ----------
-  const TAB_ORDER = ['models', 'chips', 'apps', 'research', 'team'];
+  const TAB_ORDER = ['models', 'chips', 'apps', 'research', 'team', 'safety'];
   const TAB_META = {
     models:   ['🧠', 'Modellen', 'Je modellen maken tokens'],
     chips:    ['💾', 'Chips', 'Rekenkracht voor je modellen'],
     apps:     ['📱', 'Apps', 'Gebruikers leveren data'],
     research: ['🔬', 'Onderzoek', 'Elke stap opent iets nieuws'],
     team:     ['👥', 'Team', 'Helpers die voor je werken'],
+    safety:   ['🛡️', 'Veiligheid', 'Bouw verantwoord, voorkom backlash'],
     more:     ['☰', 'Menu', 'Singulariteit en instellingen'],
   };
   let prevTab = 'models';
   // Modellen, Chips en Apps hebben een eigen speelveld; de rest is een volledig scherm.
   const SCREENS = { models: 'models', chips: 'chips', apps: 'apps' };
-  const TAB_NAMES = { models: 'Modellen', research: 'Onderzoek', chips: 'Chips', apps: 'Apps', team: 'Team', more: 'Menu' };
+  const TAB_NAMES = { models: 'Modellen', research: 'Onderzoek', chips: 'Chips', apps: 'Apps', team: 'Team', safety: 'Veiligheid', more: 'Menu' };
   // Volgende (dir 1) of vorige (dir -1) tab die al open is.
   function neighbor(dir) {
     if (currentTab === 'more') return null;
@@ -355,7 +355,7 @@
       { tab: 'chips', icon: '💾', label: 'Chips', v: G.computeBonus() },
       { tab: 'apps', icon: '📊', label: 'Data', v: G.dataBonus() },
       { tab: 'more', icon: '🌀', label: 'Bonus', v: G.mods.perm * G.buffMult('prod') },
-      { tab: 'team', icon: '🛡️', label: 'Veilig', v: null },
+      { tab: 'safety', icon: '🛡️', label: 'Veilig', v: null },
     ];
     const box = $('boosts');
     if (!box.children.length) {
@@ -549,7 +549,7 @@
     const active = S.buffs.filter(b => b.until > now);
     const def = G.safetyDeficit();
     const html = active.map(b => `<span class="buff${b.mult < 1 ? ' bad' : ''}">${b.name} ×${String(b.mult).replace('.', ',')} · ${Math.ceil((b.until - now) / 1000)}s</span>`).join('')
-      + (def && S.risk >= 10 ? `<button class="buff risk" id="riskPill">⚠️ Risico ${Math.floor(S.risk)}%</button>` : '');
+      + (def && S.risk >= 50 ? `<button class="buff risk" id="riskPill">Risico ${Math.floor(S.risk)}%</button>` : '');
     if ($('buffs').innerHTML !== html) $('buffs').innerHTML = html;
   }
 
@@ -593,20 +593,24 @@
     G.sfx.milestone(); G.haptic('HEAVY');
     toast(a.icon, `${a.name} is live!`, 'Gebruikers leveren nu trainingsdata voor je modellen.');
   });
-  $('buffs').addEventListener('click', e => { if (e.target.closest('#riskPill')) switchTab('team'); });
+  $('buffs').addEventListener('click', e => { if (e.target.closest('#riskPill')) switchTab('safety'); });
   G.on('chainMilestone', i => {
     G.sfx.milestone();
     toast(G.CHAIN[i].icon, `${G.CHAIN[i].name} ×2!`, `Mijlpaal bereikt: niveau ${G.S.chain[i]}`);
   });
   G.on('safetyWarn', w => {
     G.sfx.error(); G.haptic('MEDIUM');
-    toast('⚠️', `Veiligheidsrisico ${w}%`, 'Neem safety-engineers aan of koop veiligheidsonderzoek, anders volgt een backlash.');
+    toast('⚠️', `Veiligheidsrisico ${w}%`, 'Kijk in Veiligheid: neem safety-engineers aan of onderzoek veiligheid.');
   });
+  // Een backlash is zeldzaam (daarna volgt een rustperiode). Alleen de eerste keer een groot venster.
   G.on('backlash', ([title, text]) => {
     G.sfx.error(); G.haptic('HEAVY');
-    document.getElementById('app').animate([{ transform: 'translateX(-8px)' }, { transform: 'translateX(8px)' }, { transform: 'translateX(0)' }], { duration: 300, iterations: 2 });
-    modal('📰', `Backlash: ${title}`, `${text}<br><br><b style="color:var(--bad)">Productie −50% voor 2 minuten</b> en je apps verliezen 30% van hun gebruikers.<br><br>Investeer in veiligheid om dit te voorkomen.`,
-      [{ label: 'Later' }, { label: 'Naar Team', cls: 'primary', onClick: () => switchTab('team') }]);
+    const effect = `Productie −50% voor ${G.fmtTime(G.backlashDuration())}, apps verliezen ${Math.round(G.backlashUserLoss() * 100)}% van hun gebruikers.`;
+    if (G.S.backlashes === 1) {
+      document.getElementById('app').animate([{ transform: 'translateX(-8px)' }, { transform: 'translateX(8px)' }, { transform: 'translateX(0)' }], { duration: 300, iterations: 2 });
+      modal('📰', `Backlash: ${title}`, `${text}<br><br><b style="color:var(--bad)">${effect}</b><br><br>Daarna heb je ${G.fmtTime(G.calmDuration())} rust om je veiligheid op orde te brengen.`,
+        [{ label: 'Later' }, { label: 'Naar Veiligheid', cls: 'primary', onClick: () => switchTab('safety') }]);
+    } else toast('📰', `Backlash: ${title}`, effect);
   });
   G.on('trendOffer', o => {
     const a = G.APPS.find(x => x.id === o.id);
@@ -632,14 +636,14 @@
   G.on('labDone', u => {
     G.sfx.big(); G.fx.wave();
     const h = G.HELPERS.find(x => G.HELPER_LAB[x.id] === u.id);
-    if (h && u.id !== 'lab_hr') toast(h.icon, `Nieuwe helper: ${h.name}`, 'Je vindt deze helper in Team.');
+    if (h && u.id !== 'lab_hr' && h.id !== 'safety') toast(h.icon, `Nieuwe helper: ${h.name}`, 'Je vindt deze helper in Team.');
     updatePager();
   });
   const seenTabs = {};
   function checkUnlocks() {
     for (const t of Object.keys(G.TAB_UNLOCK)) {
       const u = G.tabUnlocked(t);
-      if (u && seenTabs[t] === false) { G.sfx.achievement(); toast('🔓', `Nieuw: ${TAB_NAMES[t]}!`, { chips: 'Bouw je eigen chipketen en een datacenter.', apps: 'Bouw apps met je modellen.', team: 'Neem helpers aan.' }[t]); }
+      if (u && seenTabs[t] === false) { G.sfx.achievement(); toast('🔓', `Nieuw: ${TAB_NAMES[t]}!`, { chips: 'Bouw je eigen chipketen en een datacenter.', apps: 'Bouw apps met je modellen.', team: 'Neem helpers aan.', safety: 'Houd je modellen veilig en voorkom backlash.' }[t]); }
       if (u !== seenTabs[t]) updatePager();
       seenTabs[t] = u;
     }

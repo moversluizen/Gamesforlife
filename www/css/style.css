@@ -1170,3 +1170,28 @@ button:focus-visible { outline: 2px solid var(--c1); outline-offset: 2px; }
 @media (min-width: 900px), (orientation: landscape) and (min-width: 640px) {
   #app { grid-template-rows: auto 1fr auto; }
 }
+
+/* ===== Veiligheid als eigen tab, knoppen die opvallen (v6) ===== */
+#tabs { grid-template-columns: repeat(6, minmax(0, 1fr)) !important; }
+#tabs button .lb { font-size: 11px; letter-spacing: -.2px; white-space: nowrap; }
+#tabs button.on .ic { color: #fff; }
+
+/* Koopknoppen: fel groen met donkere tekst als je het kunt betalen, rustig grijs met witte prijs als dat (nog) niet kan. */
+:root { --buy: linear-gradient(180deg, #8dffb4, #2fd06b); --buy-ink: #03230f; }
+.gbuy { background: rgba(255, 255, 255, .09); color: #fff; box-shadow: inset 0 0 0 1px rgba(255, 255, 255, .08); }
+.gbuy .q { color: #c3c9e6; }
+.gbuy .c { color: #fff; }
+.gen.can .gbuy, .res-card.can .gbuy, .app-live.can [data-act="app-build"], .gen.upg.can .gbuy, .app.can .gbuy {
+  background: var(--buy); color: var(--buy-ink); box-shadow: 0 3px 0 #13843f, 0 0 14px rgba(77, 240, 140, .35); }
+.gen.can .gbuy .q, .res-card.can .gbuy .q, .app-live.can [data-act="app-build"] .q, .app.can .gbuy .q { color: rgba(3, 35, 15, .75); }
+.gen.can .gbuy .c, .res-card.can .gbuy .c, .app-live.can [data-act="app-build"] .c, .app.can .gbuy .c { color: var(--buy-ink); }
+.gen.can:active .gbuy { transform: translateY(2px); box-shadow: 0 1px 0 #13843f; }
+/* Op slot / eerst onderzoeken: goud omlijnd, goed leesbaar */
+.locked-h .gbuy, .gen.needs .gbuy, .res-card:not(.can) .gbuy { background: rgba(255, 207, 74, .12); box-shadow: inset 0 0 0 1px rgba(255, 207, 74, .45); }
+.locked-h .gbuy .q, .locked-h .gbuy .c, .gen.needs .gbuy .q, .gen.needs .gbuy .c, .res-card:not(.can) .gbuy .q, .res-card:not(.can) .gbuy .c { color: var(--gold); }
+.cta:not(:disabled), .as-mkt:not(:disabled) { background: var(--buy); color: var(--buy-ink); box-shadow: 0 3px 0 #13843f, 0 0 14px rgba(77, 240, 140, .3); }
+.cta:disabled { background: rgba(255, 255, 255, .09); color: #c3c9e6; opacity: 1; box-shadow: none; }
+.sh-act { background: rgba(255, 255, 255, .12); color: #fff; box-shadow: inset 0 0 0 1.5px rgba(255, 255, 255, .5); }
+#quest.done .qr { background: var(--buy); color: var(--buy-ink); }
+.stats3 b.bad { color: var(--bad); }
+#safetyBody .grate { white-space: normal; display: -webkit-box; -webkit-line-clamp: 2; -webkit-box-orient: vertical; overflow: hidden; }

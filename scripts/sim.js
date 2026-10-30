@@ -18,7 +18,7 @@ const ctx = { console, Math, JSON, Object, Array, Number, String, Promise, setTi
 ctx.window = ctx;
 ctx.localStorage = { getItem: () => null, setItem() {}, removeItem() {} };
 vm.createContext(ctx);
-for (const f of ['data.js', 'engine.js', 'industry.js', 'research.js']) {
+for (const f of ['data.js', 'engine.js', 'industry.js', 'research.js', 'safety.js']) {
   vm.runInContext(fs.readFileSync(path.join(__dirname, '..', 'www', 'js', f), 'utf8'), ctx, { filename: f });
 }
 const G = ctx.G;
@@ -80,7 +80,7 @@ function act() {
   }
 
   // veiligheid eerst als je achterloopt
-  if (G.safetyDeficit() > 0) {
+  if (G.safetyDeficit() > 0 && !process.argv.includes('--no-safety')) {
     const h = G.HELPERS.find(x => x.id === 'safety');
     if (G.helperUnlocked(h) && S.tokens >= G.helperCost(h)) G.hire(h);
     for (const u of G.availableUpgrades()) if (u.kind === 'safety' && S.tokens >= u.cost) G.buyUpgrade(u.id);
@@ -93,7 +93,7 @@ function act() {
     const c = G.costOf(i, 1);
     opts.push({ c, gain: genGain(i), buy: () => { if (G.buyGen(i)) { if (!seen.gen.has(i)) { seen.gen.add(i); ev('model', g.name); } } } });
   });
-  for (const u of G.availableUpgrades()) opts.push({ c: u.cost, gain: upgGain(u), buy: () => G.buyUpgrade(u.id) });
+  for (const u of G.availableUpgrades()) if (!(u.safetyTab && process.argv.includes('--no-safety'))) opts.push({ c: u.cost, gain: upgGain(u), buy: () => G.buyUpgrade(u.id) });
   for (const o of opts) o.score = o.c / Math.max(o.gain, 1e-9) + o.c / Math.max(inc, 1e-9);
   opts.sort((a, b) => a.score - b.score);
   for (let k = 0; k < 20; k++) {
@@ -129,7 +129,7 @@ function act() {
   // helpers
   if (G.tabUnlocked('team')) {
     for (const h of G.HELPERS) {
-      if (!G.helperUnlocked(h) || G.hl(h.id) >= h.max) continue;
+      if (!G.helperUnlocked(h) || G.hl(h.id) >= h.max || (h.id === 'safety' && process.argv.includes('--no-safety'))) continue;
       if (affordableWithin(G.helperCost(h), h.id === 'intern' ? 60 : 45) && G.hire(h)) {
         if (!lastHelper[h.id]) { lastHelper[h.id] = 1; ev('helper', h.name); }
       }

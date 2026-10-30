@@ -12,9 +12,9 @@ De mechanismen komen uit de populairste idle games (Cookie Clicker, AdVenture Ca
 | Generatoren met exponentiële kosten (×1,15) | 13 AI-modellen, van Perceptron tot Dyson-datacenter |
 | Mijlpalen | Bij 10, 25, 50, 100 … stuks verdubbelt de productie van een model |
 | Kooptoggle | ×1 / ×10 / ×100 / Max |
-| Lab | Je organisatie: elke afdeling (Productteam, Eigen hardware, HR, Veiligheid, …) ontgrendelt een onderdeel of helper; blijft na een singulariteit |
+| Lab | Je organisatie: elke afdeling (Productteam, Chipfabriek, HR, Veiligheidsteam, …) ontgrendelt een onderdeel of helper; blijft na een singulariteit |
 | Onderzoeksbomen | Drie bomen (modellen, chips, apps): de hoofdlijn ontgrendelt elk volgend model, elke chipgeneratie en elke app; zijtakken geven boosts |
-| Upgrades | 120+ losse verbeteringen (per model, voor tikken, Eureka, offline, veiligheid) |
+| Boosts | 110+ losse verbeteringen (per model, voor tikken, infrastructuur, Eureka, offline), per soort gegroepeerd |
 | Gouden bonus | 💡 Eureka-momenten: Doorbraak, Datastorm (×7) of Klikstorm (×77) |
 | Offline-opbrengst | Tot 8 uur, 50% → 100% met upgrades |
 | Prestige | Singulariteit: reset voor Inzichten (+2% productie per stuk) |
@@ -25,11 +25,11 @@ De mechanismen komen uit de populairste idle games (Cookie Clicker, AdVenture Ca
 | Technologieboom | 8 chipgeneraties (CPU → GPU → … → Quantumchip) met ontwikkeltijd; tikken versnelt het onderzoek |
 | Versterkers | Modellen zijn de basis; chips (rekenkracht), apps (gebruikersdata), onderzoek en prestige vermenigvuldigen hun productie |
 | Apps | 10 apps (Praatbot → Code-copiloot → Robot-butler) met groeiende gebruikers, campagnes en versies |
-| Drie speelvelden | Modellen (kern), Chips (supply chain en chip) en Apps (telefoon met je apps) hebben elk een eigen tikscherm; Onderzoek, Team en Meer zijn volledige schermen |
+| Drie speelvelden | Modellen (kern), Chips (supply chain en chip) en Apps (telefoon met je apps) hebben elk een eigen tikscherm; Onderzoek, Team, Veiligheid en het menu zijn volledige schermen |
 | Apps | Trending-momenten (🔥 5× groei), een functie per versie, sterren en gebruikersreviews |
 | Navigatie | Vijf vaste onderdelen in de menubalk, een kop met uitleg per scherm, Meer rechtsboven; veeg tussen de onderdelen |
 | Managers | 7 helpers met rangen (Junior → Legende); de stagiair groeit door tot AI-collega en tikt per rang 2× zo sterk |
-| Veiligheid | Slimmere modellen vragen veiligheid (safety-engineers, 8 veiligheidsonderzoeken). Loop je achter, dan stijgt het risico tot een backlash: productie −50% en gebruikers haken af |
+| Veiligheid | Eigen tab (opent met het Veiligheidsteam): safety-engineer, 8 veiligheidsonderzoeken en 6 protocollen uit de echte geschiedenis (2016–2024 en verder). Loop je achter, dan stijgt het risico rustig tot een backlash (productie −50%, gebruikers haken af), gevolgd door 5 minuten rust |
 | Mijlpalen in de keten | Elke ketenschakel verdubbelt bij 10, 25, 50, 100 … niveaus |
 | Opdrachten | Ada, je AI-assistent, geeft 22 opdrachten met beloningen die je door het hele spel leiden |
 | Verhaallijn | Negen hoofdstukken die de echte AI-geschiedenis volgen (perceptron 1958 → gaming-GPU's 2012 → Transformer 2017 → chatbots → agents → AGI); de kern groeit visueel mee |

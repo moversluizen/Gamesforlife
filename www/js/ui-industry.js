@@ -374,53 +374,62 @@
   }
 
   // ---------- team ----------
-  function updateTeam() {
-    const list = $('teamList'), S = G.S;
-    const key = G.HELPERS.map(h => G.hl(h.id) + (G.helperUnlocked(h) ? '' : 'x')).join(',') + '|' + G.S.chipGen;
-    if (keyed(list, key + '|' + Object.keys(S.lab).length, `<div class="ind-card safety" data-f="safety"></div>
-      <div class="subhead">Helpers</div>` + G.HELPERS.map(h => {
-      if (!G.helperUnlocked(h)) {
-        const lab = G.techById(G.HELPER_LAB[h.id]);
-        return `<div class="gen helper locked-h" data-act="helper-lab" data-id="${lab.id}">
-          <div class="gicon"><span>${h.icon}</span></div>
-          <div class="ginfo"><div class="gname">${h.name}</div>
-            <div class="grate">Eerst: lab ${lab.name}</div></div>
-          <button class="gbuy"><span class="q">onderzoeken</span><span class="c">${G.fmt(lab.cost)}</span></button></div>`;
-      }
-      const l = G.hl(h.id), max = l >= h.max, r = G.rank(h), lv = G.rankLevels(h);
-      const next = lv[r + 1], prev = lv[r];
-      const nextTxt = next == null ? 'Hoogste rang bereikt' : `${h.ranks ? G.rankName(h, r + 1) : G.RANK_TITLES[r]} bij niveau ${next}`;
-      return `<div class="gen helper" data-act="hire" data-id="${h.id}" data-f="hc-${h.id}">
-        <div class="gicon"><span>${G.rankIcon(h)}</span>${l ? `<span class="own">${l}</span>` : ''}</div>
-        <div class="ginfo"><div class="gname">${l ? G.rankName(h) : h.name}</div>
-          <div class="grate">${l ? h.eff(G.effAt(h, l), l) : h.eff(G.effAt(h, 1), 1)}</div>
-          <div class="mbar"><i style="width:${next == null ? 100 : (l - prev) / (next - prev) * 100}%"></i></div>
-          <div class="mlabel">${nextTxt}</div></div>
-        <button class="gbuy"${max ? ' disabled' : ''}><span class="q">${max ? 'maximaal' : l ? 'promoveren' + (next === l + 1 ? ' ⭐' : '') : 'aannemen'}</span><span class="c">${max ? '–' : G.fmt(G.helperCost(h))}</span></button>
-      </div>`;
-    }).join('') + `<div class="subhead">Organogram</div>${orgChart()}`)) {
-      if (!list.dataset.bound) {
-        list.dataset.bound = '1';
-        list.addEventListener('click', e => {
-          if (e.target.closest('[data-act="to-research"]')) { G.uiRes.open('upg'); return; }
-          const lk = e.target.closest('[data-act="helper-lab"]');
-          if (lk) { G.uiRes.open('lab', lk.dataset.id); return; }
-          const t = e.target.closest('[data-act="hire"]');
-          if (!t) return;
-          const h = G.HELPERS.find(x => x.id === t.dataset.id), first = !G.hl(h.id), r0 = G.rank(h);
-          if (G.hire(h)) {
-            G.sfx.milestone(); G.haptic('MEDIUM');
-            const l = G.hl(h.id);
-            if (G.rank(h) > r0) { G.sfx.big(); G.fx.wave(); G.ui.toast(G.rankIcon(h), `Promotie: ${G.rankName(h)}!`, h.eff(G.effAt(h, l), l)); }
-            else G.ui.toast(G.rankIcon(h), first ? `${h.name} aangenomen!` : `${G.rankName(h)} → niveau ${l}`, h.eff(G.effAt(h, l), l));
-            buildOrbit(true);
-          } else G.sfx.error();
-          G.uiRefresh(true);
-        });
-      }
+  // Eén helperkaart, gebruikt in Team en (voor de safety-engineer) in Veiligheid.
+  function helperCard(h) {
+    if (!G.helperUnlocked(h)) {
+      const lab = G.techById(G.HELPER_LAB[h.id]);
+      return `<div class="gen helper locked-h" data-act="helper-lab" data-id="${lab.id}">
+        <div class="gicon"><span>${h.icon}</span></div>
+        <div class="ginfo"><div class="gname">${h.name}</div>
+          <div class="grate">Eerst: lab ${lab.name}</div></div>
+        <button class="gbuy"><span class="q">onderzoeken</span><span class="c">${G.fmt(lab.cost)}</span></button></div>`;
     }
-    for (const h of G.HELPERS) set(list, 'hc-' + h.id, { cls: { can: G.hl(h.id) < h.max && S.tokens >= G.helperCost(h) } });
-    updateSafetyCard(list.querySelector('[data-f="safety"]'));
+    const l = G.hl(h.id), max = l >= h.max, r = G.rank(h), lv = G.rankLevels(h);
+    const next = lv[r + 1], prev = lv[r];
+    return `<div class="gen helper" data-act="hire" data-id="${h.id}" data-f="hc-${h.id}">
+      <div class="gicon"><span>${G.rankIcon(h)}</span>${l ? `<span class="own">${l}</span>` : ''}</div>
+      <div class="ginfo"><div class="gname">${l ? G.rankName(h) : h.name}</div>
+        <div class="grate">${l ? h.eff(G.effAt(h, l), l) : h.eff(G.effAt(h, 1), 1)}</div>
+        <div class="mbar"><i style="width:${next == null ? 100 : (l - prev) / (next - prev) * 100}%"></i></div></div>
+      <button class="gbuy"${max ? ' disabled' : ''}><span class="q">${max ? 'maximaal' : l ? 'promoveren' + (next === l + 1 ? ' ⭐' : '') : 'aannemen'}</span><span class="c">${max ? '–' : G.fmt(G.helperCost(h))}</span></button>
+    </div>`;
+  }
+  function onHelperClick(e) {
+    const lk = e.target.closest('[data-act="helper-lab"]');
+    if (lk) { G.uiRes.open('lab', lk.dataset.id); return true; }
+    const t = e.target.closest('[data-act="hire"]');
+    if (!t) return false;
+    const h = G.HELPERS.find(x => x.id === t.dataset.id), first = !G.hl(h.id), r0 = G.rank(h);
+    if (G.hire(h)) {
+      G.sfx.milestone(); G.haptic('MEDIUM');
+      const l = G.hl(h.id);
+      if (G.rank(h) > r0) { G.sfx.big(); G.fx.wave(); G.ui.toast(G.rankIcon(h), `Promotie: ${G.rankName(h)}!`, h.eff(G.effAt(h, l), l)); }
+      else G.ui.toast(G.rankIcon(h), first ? `${h.name} aangenomen!` : `${G.rankName(h)} → niveau ${l}`, h.eff(G.effAt(h, l), l));
+      buildOrbit(true);
+    } else G.sfx.error();
+    G.uiRefresh(true);
+    return true;
+  }
+
+  // Team: alle helpers behalve de safety-engineer (die zit in Veiligheid).
+  const TEAM = () => G.HELPERS.filter(h => h.id !== 'safety');
+  function updateTeam() {
+    const list = $('teamList'), S = G.S, team = TEAM();
+    const key = team.map(h => G.hl(h.id) + (G.helperUnlocked(h) ? '' : 'x')).join(',') + '|' + Object.keys(S.lab).length;
+    const roles = team.filter(h => G.hl(h.id)).length, levels = team.reduce((t, h) => t + G.hl(h.id), 0), depts = G.LAB.filter(([id]) => G.labDone(id)).length;
+    if (keyed(list, key, `<div class="ind-card">
+        <div class="stats3">
+          <div><small>Helpers</small><b>${roles} / ${team.length}</b></div>
+          <div><small>Niveaus</small><b>${levels}</b></div>
+          <div><small>Afdelingen</small><b>${depts} / ${G.LAB.length}</b></div>
+        </div>
+        <div class="bar"><i style="width:${depts / G.LAB.length * 100}%"></i></div>
+      </div>
+      <div class="subhead">Helpers</div>${team.map(helperCard).join('')}
+      <div class="subhead">Organogram</div>${orgChart()}`)) {
+      if (!list.dataset.bound) { list.dataset.bound = '1'; list.addEventListener('click', onHelperClick); }
+    }
+    for (const h of team) set(list, 'hc-' + h.id, { cls: { can: G.hl(h.id) < h.max && S.tokens >= G.helperCost(h) } });
     $('teamHead').textContent = '';
   }
 
@@ -452,32 +461,65 @@
   }
 
   // Overzicht van Team, in dezelfde opbouw als Chips: drie cijfers, een balk (risico) en één statusregel.
-  function updateSafetyCard(el) {
-    const S = G.S, need = G.safetyNeed(), pts = G.safetyPoints(), def = G.safetyDeficit();
-    const state = need === 0 ? 'none' : def ? 'bad' : 'ok';
-    const levels = G.HELPERS.reduce((t, h) => t + G.hl(h.id), 0), roles = G.HELPERS.filter(h => G.hl(h.id)).length;
-    const k = [state, Math.round(pts * 10), need, levels, roles].join('|');
-    const risk = () => {
-      el.querySelector('.bar i').style.width = (state === 'none' ? roles / G.HELPERS.length * 100 : S.risk) + '%';
-      const rk = el.querySelector('[data-f="rk"]');
-      if (rk) rk.textContent = Math.floor(S.risk) + '%';
-    };
-    if (el.dataset.k === k) { risk(); return; }
-    el.dataset.k = k;
-    el.className = 'ind-card safety ' + state;
-    const msg = state === 'none' ? ''
-      : def ? `<p class="muted">Risico <b data-f="rk"></b>: bij 100% volgt een backlash. Neem safety-engineers aan of onderzoek veiligheid.</p>
-        <button class="req-row" data-act="to-research"><span>Veiligheid onderzoeken</span><i>›</i></button>`
-      : '<p class="muted">Veiligheid op orde.</p>';
-    el.innerHTML = `
-      <div class="stats3">
-        <div><small>Helpers</small><b>${roles} / ${G.HELPERS.length}</b></div>
-        <div><small>Niveaus</small><b>${levels}</b></div>
-        <div><small>Veiligheid</small><b class="${state === 'bad' ? 'bad' : ''}">${G.fmt(pts)} / ${G.fmt(need)}</b></div>
+  // ---------- veiligheid ----------
+  // Overzicht (veiligheid, risico, backlashes), dan de safety-engineer, veiligheidsonderzoek en protocollen.
+  const SAFETY_RES = () => G.UPGRADES.filter(u => u.kind === 'safety');
+  function safetyItemCard(u) {
+    const proto = u.kind === 'protocol';
+    return `<div class="gen res-card" data-act="sbuy" data-id="${u.id}" data-f="sb-${u.id}">
+      <div class="gicon"><span>${u.icon}</span></div>
+      <div class="ginfo"><div class="gname">${u.name}</div><div class="grate">${proto ? u.desc : `+${u.mult} veiligheid`}</div>
+        ${proto ? `<div class="mlabel">${u.year}</div>` : ''}</div>
+      <button class="gbuy"><span class="q">${proto ? 'invoeren' : 'onderzoeken'}</span><span class="c">${G.fmt(u.cost)}</span></button></div>`;
+  }
+  const lockedCard = (u, why) => `<div class="gen locked-h res-card"><div class="gicon"><span>${u.icon}</span></div>
+    <div class="ginfo"><div class="gname">${u.name}</div><div class="grate">${why}</div></div><span></span></div>`;
+  function updateSafety() {
+    const body = $('safetyBody'), S = G.S, sh = G.HELPERS.find(h => h.id === 'safety');
+    const open = arr => arr.filter(u => !S.upgrades[u.id] && u.unlock(S));
+    const res = SAFETY_RES(), resOpen = open(res), resNext = res.find(u => !S.upgrades[u.id] && !u.unlock(S));
+    const pro = G.UPGRADES.filter(u => u.kind === 'protocol'), proOpen = open(pro), proNext = pro.find(u => !S.upgrades[u.id] && !u.unlock(S));
+    const proDone = pro.filter(u => S.upgrades[u.id]);
+    const key = [G.hl('safety'), resOpen.map(u => u.id), proOpen.map(u => u.id), proDone.length, resNext && resNext.id, proNext && proNext.id].join('|');
+    if (keyed(body, key, `<div class="ind-card" data-f="sum">
+        <div class="stats3">
+          <div><small>Veiligheid</small><b data-f="pts"></b></div>
+          <div><small>Risico</small><b data-f="rk"></b></div>
+          <div><small>Backlashes</small><b data-f="bl"></b></div>
+        </div>
+        <div class="bar risk"><i data-f="rbar"></i></div>
+        <p class="muted" data-f="st"></p>
       </div>
-      <div class="bar ${state === 'none' ? '' : 'risk'}"><i></i></div>
-      ${msg}`;
-    risk();
+      <div class="subhead">Team</div>${helperCard(sh)}
+      <div class="subhead">Onderzoek <span class="muted">· ${res.filter(u => S.upgrades[u.id]).length} van ${res.length}</span></div>
+      ${resOpen.map(safetyItemCard).join('')}${resNext ? lockedCard(resNext, resNext.lockText) : ''}
+      <div class="subhead">Protocollen <span class="muted">· ${proDone.length} van ${pro.length}</span></div>
+      ${proOpen.map(safetyItemCard).join('')}${proNext ? lockedCard(proNext, proNext.lockText) : ''}
+      ${proDone.length ? `<p class="done-list">Ingevoerd: ${proDone.map(u => u.name).join(' · ')}</p>` : ''}`)) {
+      if (!body.dataset.bound) {
+        body.dataset.bound = '1';
+        body.addEventListener('click', e => {
+          if (onHelperClick(e)) return;
+          const t = e.target.closest('[data-act="sbuy"]');
+          if (!t) return;
+          const u = G.techById(t.dataset.id);
+          if (G.buyUpgrade(u.id)) { G.sfx.upgrade(); G.haptic('MEDIUM'); G.ui.toast(u.icon, u.name, u.kind === 'protocol' ? `${u.year}: ${u.story}` : `+${u.mult} veiligheid`); }
+          else G.sfx.error();
+          G.uiRefresh(true);
+        });
+      }
+    }
+    const need = G.safetyNeed(), pts = G.safetyPoints(), def = G.safetyDeficit(), calm = G.calmLeft();
+    set(body, 'pts', { t: `${G.fmt(pts)} / ${G.fmt(need)}`, cls: { bad: def > 0 } });
+    set(body, 'rk', { t: Math.floor(S.risk) + '%', cls: { bad: S.risk >= 50 } });
+    set(body, 'bl', S.backlashes);
+    set(body, 'rbar', { w: S.risk + '%' });
+    set(body, 'st', need === 0 ? 'Nog niet nodig. Vanaf de LSTM vragen je modellen om veiligheid.'
+      : calm && def ? `Rustperiode na de backlash: nog ${G.fmtTime(Math.ceil(calm))}. Werk je veiligheid nu bij.`
+      : def ? `${G.fmt(def)} veiligheid tekort: het risico stijgt ${(G.riskPerSec() * 60).toFixed(1).replace('.', ',')}% per minuut. Bij 100% volgt een backlash.`
+      : S.lastIncident ? `Veiligheid op orde. Laatste incident: ${S.lastIncident}.` : 'Veiligheid op orde: geen risico.');
+    set(body, 'hc-safety', { cls: { can: G.hl('safety') < sh.max && S.tokens >= G.helperCost(sh) } });
+    for (const u of [...resOpen, ...proOpen]) set(body, 'sb-' + u.id, { cls: { can: S.tokens >= u.cost } });
   }
 
   // ---------- helpers rond de kern ----------
@@ -529,7 +571,8 @@
     const S = G.S;
     $('dotChips').classList.toggle('show', G.tabUnlocked('chips') && (G.canStartRnd() || [0, 1, 2, 3, 4].some(i => !S.chain[i] && S.tokens >= G.chainCost(i))));
     $('dotApps').classList.toggle('show', G.tabUnlocked('apps') && G.APPS.some(a => !G.app(a.id).v && !G.app(a.id).b && G.appUnlocked(a) && S.tokens >= G.appCost(a)));
-    $('dotTeam').classList.toggle('show', G.tabUnlocked('team') && (G.safetyDeficit() > 0 || G.HELPERS.some(h => G.helperUnlocked(h) && !G.hl(h.id) && S.tokens >= G.helperCost(h))));
+    $('dotTeam').classList.toggle('show', G.tabUnlocked('team') && TEAM().some(h => G.helperUnlocked(h) && !G.hl(h.id) && S.tokens >= G.helperCost(h)));
+    $('dotSafety').classList.toggle('show', G.tabUnlocked('safety') && (G.safetyDeficit() > 0 || (!G.hl('safety') && S.tokens >= G.helperCost(G.HELPERS[1]))));
   }
 
   G.uiInd = {
@@ -540,6 +583,7 @@
       if (tab === 'chips') updateChips();
       if (tab === 'apps') { updateApps(); updateAppsStage(); }
       if (tab === 'team') updateTeam();
+      if (tab === 'safety') updateSafety();
     },
     reset() { for (const k in last) delete last[k]; orbitKey = ''; $('chipBody').removeAttribute('data-built'); buildOrbit(); },
     buildOrbit,

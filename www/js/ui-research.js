@@ -60,7 +60,7 @@
     $('upgList').classList.toggle('hidden', !list);
     let done, total;
     if (list) {
-      const own = G.UPGRADES.filter(u => !u.tree);
+      const own = G.UPGRADES.filter(u => !u.tree && !u.safetyTab);
       done = own.filter(u => G.S.upgrades[u.id]).length; total = own.length;
     } else {
       renderTree();

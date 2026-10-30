@@ -49,6 +49,13 @@ De volgorde volgt de geschiedenis: eerst producten, dan GPU's in een datacenter 
 | Financiële afdeling | Financieel directeur | 2 T | ±145 min |
 | Singulariteitsinstituut | Singulariteit | 5 T | ±160 min |
 
+## Veiligheid
+
+- Eigen tab, open met het Veiligheidsteam (±20 min). Daarvoor loopt er geen risico op.
+- Risico stijgt met (0,03 + 0,02 × tekort)% per seconde: bij 5 tekort ±13 min tot een backlash.
+- Na een backlash: risico terug naar 0 en 5 minuten rust. Wie veiligheid helemaal negeert, krijgt hoogstens elke ±10 minuten een backlash; alleen de eerste keer verschijnt een groot venster.
+- Protocollen (eenmalig, gekoppeld aan echte mijlpalen): risico langzamer, minder gebruikersverlies, kortere backlash, langere rust, extra veiligheid.
+
 ## Chips: geleidelijk profijt
 
 - Alleen **eigen chips**: zandgroeve → waferfabriek → EUV → chipfabriek. Pas als alle vier schakels draaien komen er chips uit, en de traagste schakel bepaalt de output.

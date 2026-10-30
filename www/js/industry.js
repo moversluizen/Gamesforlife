@@ -70,7 +70,8 @@
     [3e12, 'Formele verificatie',      6, 9],
     [1e14, 'Alignment-doorbraak',      8, 10],
   ].forEach(([cost, name, pts, model], n) => G.UPGRADES.push({
-    id: `sf${n}`, icon: '🛡️', name, sub: 'Veiligheid', desc: `+${pts} veiligheid voor je modellen.`, cost, kind: 'safety', mult: pts,
+    id: `sf${n}`, icon: ['👍', '🎭', '🔎', '📋', '📜', '🪜', '✅', '🧭'][n], name, sub: 'Veiligheid', desc: `+${pts} veiligheid voor je modellen.`, cost, kind: 'safety', mult: pts,
+    lockText: `Komt vrij bij 10× ${G.GENS[model - 1].name}`,
     unlock: s => s.owned[model] > 0 || s.owned[model - 1] >= 10,
   }));
 
@@ -91,7 +92,7 @@
   // ---------- staat ----------
   G.industryDefaults = () => ({
     chain: G.CHAIN.map(() => 0), chips: 0, chipsCur: 0, oldPower: 1, chipGen: 0, rnd: null,
-    apps: {}, helpers: {}, quest: 0, mktAuto: 0, risk: 0, backlashes: 0, riskWarn: 0, trend: null, lab: {}, story: {},
+    apps: {}, helpers: {}, quest: 0, mktAuto: 0, risk: 0, backlashes: 0, riskWarn: 0, calmUntil: 0, lastIncident: '', trend: null, lab: {}, story: {},
   });
 
   G.hl = id => G.S.helpers[id] || 0;
@@ -255,25 +256,6 @@
     ['Deepfake-rel', 'Je beeldmodel werd misbruikt voor nepnieuws.'],
     ['Klokkenluider', 'Medewerkers waarschuwen publiekelijk voor je onveilige modellen.'],
   ];
-  function safetyTick(dt) {
-    const S = G.S, def = G.safetyDeficit();
-    if (def > 0) {
-      const before = S.risk;
-      S.risk = Math.min(100, S.risk + 0.25 * def * dt);
-      for (const w of [50, 80]) if (before < w && S.risk >= w && S.riskWarn < w) { S.riskWarn = w; G.emit('safetyWarn', w); }
-      if (S.risk >= 100) {
-        const inc = G.INCIDENTS[(Math.random() * G.INCIDENTS.length) | 0];
-        S.buffs.push({ type: 'prod', mult: 0.5, until: Date.now() + 120000, name: 'Backlash' });
-        for (const a of G.APPS) { const s = S.apps[a.id]; if (s && s.v) s.u *= 0.7; }
-        S.risk = 35; S.riskWarn = 0; S.backlashes++;
-        G.emit('backlash', inc);
-      }
-    } else {
-      S.risk = Math.max(0, S.risk - dt);
-      if (S.risk < 50) S.riskWarn = 0;
-    }
-  }
-
   // ---------- tijd ----------
   G.industryTick = dt => {
     const S = G.S, now = Date.now();
@@ -318,7 +300,7 @@
     }
 
     // Risico loopt alleen op terwijl je speelt, niet offline.
-    if (dt < 5) safetyTick(dt);
+    if (dt < 5 && G.safetyTick) G.safetyTick(dt);
 
     const ml = G.hl('mkt');
     if (ml && dt < 5 && now >= S.mktAuto) {
