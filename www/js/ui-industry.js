@@ -192,9 +192,11 @@
       return `<div class="app live" data-f="ap-${a.id}"><div class="app-top">${head}<div class="ginfo"><div class="gname">${a.name} <span class="ver">v${s.v}</span> <span class="stars">${'★'.repeat(G.appStars(a))}</span> <span class="fire-badge" data-f="ht-${a.id}">🔥</span></div>
         <div class="grate"><span data-f="au-${a.id}"></span> gebruikers · <b class="earn" data-f="ar-${a.id}"></b> data</div>
         <div class="bar users"><i data-f="ab-${a.id}"></i></div>
-        <div class="mlabel">Volgende versie: v${s.v + 1} ${G.appFeature(s.v + 1)} · 2× gebruikers en data</div></div></div>
-        <div class="app-btns"><button class="pill" data-act="app-mkt" data-id="${a.id}" data-f="am-${a.id}"></button>
-        <button class="pill up" data-act="app-build" data-id="${a.id}" data-f="av-${a.id}"></button></div></div>`;
+        <div class="mlabel">Volgende versie: v${s.v + 1} ${G.appFeature(s.v + 1)} · 2× gebruikers en data</div></div>
+        <div class="app-actions">
+          <button class="gbuy" data-act="app-build" data-id="${a.id}" data-f="av-${a.id}"><span class="q">⬆ v${s.v + 1}</span><span class="c" data-f="avc-${a.id}"></span></button>
+          <button class="gbuy mkt" data-act="app-mkt" data-id="${a.id}" data-f="am-${a.id}"></button>
+        </div></div></div>`;
     }).join(''))) {
       if (!list.dataset.bound) {
         list.dataset.bound = '1';
@@ -234,8 +236,9 @@
         set(list, 'ab-' + a.id, { w: pct(s.u, G.appCap(a)) });
         set(list, 'ht-' + a.id, { cls: { on: G.trending(a) } });
         const cd = Math.max(0, (s.cd || 0) - now);
-        set(list, 'am-' + a.id, { t: cd ? `📣 ${Math.ceil(cd / 1000)} s` : '📣 Campagne', dis: cd > 0 });
-        set(list, 'av-' + a.id, { t: `⬆ v${s.v + 1} · ${G.fmt(G.appCost(a))}`, cls: { can: S.tokens >= G.appCost(a) } });
+        set(list, 'am-' + a.id, { t: cd ? `📣 ${Math.ceil(cd / 1000)} s` : '📣 campagne', dis: cd > 0 });
+        set(list, 'avc-' + a.id, G.fmt(G.appCost(a)));
+        set(list, 'ap-' + a.id, { cls: { can: S.tokens >= G.appCost(a) } });
       }
     }
     $('appHead').textContent = live ? `${live} live · modellen ×${G.dataBonus().toFixed(2).replace('.', ',')}` : 'Apps leveren data voor je modellen';

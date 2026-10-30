@@ -597,9 +597,9 @@ button:focus-visible { outline: 2px solid var(--c1); outline-offset: 2px; }
 #csHint { color: var(--mute); font-size: 11px; }
 
 /* apps-speelveld: een telefoon */
-#scrApps { align-items: center; justify-content: center; gap: 16px; padding: 10px 16px 28px; }
+#scrApps { align-items: center; justify-content: center; gap: 14px; padding: 10px 16px 28px; }
 .as-phone {
-  position: relative; flex: none; height: min(88cqh, 340px); aspect-ratio: 9 / 17; border-radius: 24px; padding: 20px 7px 8px;
+  position: relative; flex: none; height: min(88cqh, 340px); aspect-ratio: 10 / 16; border-radius: 24px; padding: 20px 7px 8px;
   background: linear-gradient(170deg, #0a1230, #04060f); border: 3px solid #2b3766;
   box-shadow: 0 0 34px hsla(var(--hue), 100%, 60%, .3), inset 0 0 0 2px #000;
 }
@@ -681,3 +681,34 @@ button:focus-visible { outline: 2px solid var(--c1); outline-offset: 2px; }
 .app.needs .gbuy { background: var(--gold); color: #2a1c00; }
 .app.needs .gbuy .q { color: rgba(42, 28, 0, .75); }
 @media (max-width: 370px) { .tnode .tn { font-size: 11px; } .trow { gap: 8px; } .trow.has-l .tcell.l::after { right: -8px; width: 8px; } .trow.has-r .tcell.r::before { left: -8px; width: 8px; } #resSeg button { font-size: 11px; } }
+
+/* ---------- apps-kaarten zoals de andere tabs ---------- */
+.app.live .app-top { align-items: start; }
+.app-actions { display: flex; flex-direction: column; gap: 6px; align-self: center; }
+.gbuy.mkt { min-height: 0; padding: 6px 8px; font-size: 12px; font-weight: 800; color: var(--fg); }
+.gbuy.mkt:disabled { opacity: .5; }
+.app.live.can [data-act="app-build"] { background: var(--c1); color: #061024; }
+.app.live.can [data-act="app-build"] .q { color: rgba(6, 16, 36, .7); }
+.app.live.can { background: linear-gradient(90deg, var(--card-hi), var(--card)); border-color: hsla(var(--hue), 100%, 60%, .35); }
+.app.live.can .gbuy.mkt { background: rgba(255, 255, 255, .08); color: var(--fg); }
+
+/* ---------- volledige schermen: alleen een slanke tokenregel bovenin ---------- */
+@media (max-width: 899px) and (orientation: portrait), (max-width: 639px) {
+  #app[data-screen="full"] #top { padding-top: calc(8px + var(--st)); padding-bottom: 6px; }
+  #app[data-screen="full"] :is(.agi, #quest) { display: none !important; }
+  #app[data-screen="full"] .bank { display: flex; align-items: baseline; justify-content: center; gap: 10px; }
+  #app[data-screen="full"] .tokens { font-size: 22px; }
+  #app[data-screen="full"] .tps { font-size: 12px; }
+  #app[data-screen="full"] #panel { border-radius: 18px 18px 0 0; }
+}
+
+/* ---------- telefoon in Apps: iconen schalen met de telefoon mee ---------- */
+.as-phone { container-type: size; }
+.as-grid { grid-template-rows: repeat(4, minmax(0, 1fr)); gap: 2cqh 2cqw; align-content: stretch; }
+.as-app { justify-content: center; gap: .6cqh; }
+.as-ic {
+  --ic: min(26cqw, calc(25cqh - 15px));
+  width: var(--ic); height: var(--ic); max-width: none; aspect-ratio: auto; font-size: calc(var(--ic) * .56); border-radius: 27%;
+}
+.as-u { font-size: clamp(7.5px, 6cqw, 10px); height: auto; line-height: 1.1; overflow: visible; }
+.as-fire { font-size: clamp(9px, 8cqw, 14px); top: -2px; right: 2%; }
