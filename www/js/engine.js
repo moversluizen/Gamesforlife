@@ -16,7 +16,7 @@
     buffs: [],
     started: Date.now(), runStarted: Date.now(), lastTick: Date.now(),
     buyMode: 1,
-    settings: { sound: true, haptics: true },
+    settings: { sound: true, haptics: true, music: true },
     ...(G.industryDefaults ? G.industryDefaults() : {}),
   });
 

@@ -130,6 +130,114 @@
     big() { [262, 330, 392, 523, 659, 784, 1047].forEach((f, i) => setTimeout(() => tone(f, 0.5, 'triangle', 0.06), i * 110)); },
   };
 
+  // ---------- achtergrondmuziek: gegenereerd met WebAudio, geen bestanden nodig ----------
+  // Rustige sci-fi-ambient: zwevende akkoorden, een zachte baslijn, een arpeggio met echo
+  // en af en toe een "data-bel". Hoe verder in het verhaal, hoe helderder en drukker.
+  const mtof = m => 440 * Math.pow(2, (m - 69) / 12);
+  const PROG = [
+    { bass: 45, pad: [57, 60, 64, 67, 71] }, // Am9
+    { bass: 41, pad: [53, 57, 60, 64, 67] }, // Fmaj9
+    { bass: 48, pad: [52, 55, 59, 62, 67] }, // Cmaj7/E
+    { bass: 43, pad: [55, 59, 62, 64, 69] }, // G6/9
+  ];
+  const PROG_AGI = [
+    { bass: 48, pad: [60, 64, 67, 71, 74] }, // Cmaj9
+    { bass: 45, pad: [57, 60, 64, 67, 71] }, // Am9
+    { bass: 41, pad: [57, 60, 64, 65, 69] }, // Fmaj7
+    { bass: 43, pad: [59, 62, 67, 69, 74] }, // G6/9
+  ];
+  const ARP = [0, 2, 1, 3, 2, 4, 3, 1];
+
+  // Maakt de muziek voor een (live of offline) AudioContext; schedule(t) plant noten tot tijd t.
+  G.createMusic = (ctx, dest) => {
+    const out = ctx.createGain();
+    out.gain.value = 0;
+    const comp = ctx.createDynamicsCompressor();
+    out.connect(comp).connect(dest);
+    // galm uit gegenereerde ruis
+    const len = Math.floor(ctx.sampleRate * 3.2), ir = ctx.createBuffer(2, len, ctx.sampleRate);
+    for (let c = 0; c < 2; c++) { const d = ir.getChannelData(c); for (let i = 0; i < len; i++) d[i] = (Math.random() * 2 - 1) * Math.pow(1 - i / len, 2.6); }
+    const rev = ctx.createConvolver(); rev.buffer = ir;
+    const revOut = ctx.createGain(); revOut.gain.value = 0.55; rev.connect(revOut).connect(out);
+    const dry = ctx.createGain(); dry.gain.value = 0.6; dry.connect(out); dry.connect(rev);
+    // echo voor het arpeggio
+    const beat = 60 / 78, eighth = beat / 2;
+    const delay = ctx.createDelay(2); delay.delayTime.value = eighth * 3;
+    const fb = ctx.createGain(); fb.gain.value = 0.38;
+    const dTone = ctx.createBiquadFilter(); dTone.type = 'lowpass'; dTone.frequency.value = 2400;
+    delay.connect(dTone).connect(fb).connect(delay); dTone.connect(rev); dTone.connect(out);
+    // akkoorden door een langzaam ademend filter
+    const padF = ctx.createBiquadFilter(); padF.type = 'lowpass'; padF.Q.value = 0.8; padF.frequency.value = 800; padF.connect(dry);
+    const lfo = ctx.createOscillator(), lfoG = ctx.createGain();
+    lfo.frequency.value = 0.06; lfoG.gain.value = 350; lfo.connect(lfoG).connect(padF.frequency); lfo.start();
+
+    const voice = (freq, t, dur, type, vol, to, attack = 0.01, release = 0.3, detune = 0) => {
+      const o = ctx.createOscillator(), g = ctx.createGain();
+      o.type = type; o.frequency.value = freq; o.detune.value = detune;
+      g.gain.setValueAtTime(0.0001, t);
+      g.gain.linearRampToValueAtTime(vol, t + attack);
+      g.gain.setTargetAtTime(0.0001, t + dur, release);
+      o.connect(g).connect(to);
+      o.start(t); o.stop(t + dur + release * 6);
+    };
+
+    let step = 0, next = ctx.currentTime + 0.1, level = 0, agi = false;
+    const m = {
+      out,
+      setLevel(chapter, isAgi) {
+        level = chapter; agi = isAgi;
+        padF.frequency.setTargetAtTime(650 + chapter * 140 + (isAgi ? 600 : 0), ctx.currentTime, 2);
+      },
+      schedule(until) {
+        while (next < until) {
+          const t = next, prog = agi ? PROG_AGI : PROG, chord = prog[Math.floor(step / 16) % prog.length];
+          if (step % 16 === 0) {
+            for (const n of chord.pad) {
+              voice(mtof(n), t, eighth * 15, 'sawtooth', 0.011, padF, 1.8, 1.6, -7);
+              voice(mtof(n), t, eighth * 15, 'sawtooth', 0.011, padF, 1.8, 1.6, 7);
+            }
+            voice(mtof(chord.pad[0] - 12), t, eighth * 15, 'sine', 0.03, dry, 2, 2);
+          }
+          if (step % 4 === 0) voice(mtof(chord.bass), t, beat * 1.2, 'sine', 0.07, dry, 0.02, 0.25);
+          if (step % 4 === 2 && level >= 2) voice(mtof(chord.bass + 12), t, beat * 0.4, 'triangle', 0.025, dry, 0.01, 0.12);
+          // arpeggio: drukker naarmate je verder komt
+          if (Math.random() < 0.35 + Math.min(level, 8) * 0.07) {
+            const n = chord.pad[ARP[step % 8]] + 12;
+            voice(mtof(n), t, eighth * 0.6, 'triangle', 0.032, dry, 0.005, 0.18);
+            voice(mtof(n), t, eighth * 0.6, 'sine', 0.02, delay, 0.005, 0.18);
+          }
+          // data-bel
+          if (Math.random() < 0.03 + (agi ? 0.05 : 0)) voice(mtof(chord.pad[(Math.random() * 5) | 0] + 24), t, 0.05, 'sine', 0.035, rev, 0.003, 0.9);
+          step++; next += eighth;
+        }
+      },
+    };
+    return m;
+  };
+
+  // Live muziek in het spel.
+  let live = null, liveTimer = null, liveLevel = [0, false];
+  const MUSIC_VOL = 1;
+  G.music = {
+    start() {
+      if (!G.S.settings.music || liveTimer) return;
+      try {
+        ac = ac || new (window.AudioContext || window.webkitAudioContext)();
+        if (ac.state === 'suspended') ac.resume();
+        if (!live) { live = G.createMusic(ac, ac.destination); live.setLevel(...liveLevel); }
+        live.out.gain.cancelScheduledValues(ac.currentTime);
+        live.out.gain.setTargetAtTime(MUSIC_VOL, ac.currentTime, 1.5);
+        liveTimer = setInterval(() => live.schedule(ac.currentTime + 0.6), 150);
+      } catch (e) {}
+    },
+    stop() {
+      if (!live || !liveTimer) return;
+      clearInterval(liveTimer); liveTimer = null;
+      try { live.out.gain.setTargetAtTime(0, ac.currentTime, 0.4); } catch (e) {}
+    },
+    setLevel(chapter, isAgi) { liveLevel = [chapter, isAgi]; if (live) live.setLevel(chapter, isAgi); },
+  };
+
   // ---------- trillen (Capacitor Haptics op iOS) ----------
   G.haptic = (style = 'LIGHT') => {
     if (!G.S.settings.haptics) return;

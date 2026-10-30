@@ -196,14 +196,18 @@
       <div class="row"><span>Offline productie</span><b>${Math.round(G.mods.offline * 100)}%</b></div>
       <div class="row"><span>Speeltijd</span><b>${G.fmtTime(played)}</b></div>
       <div class="section-title">Instellingen</div>
-      <div class="row"><span>Geluid</span><button class="switch ${S.settings.sound ? 'on' : ''}" data-set="sound" aria-label="Geluid"></button></div>
+      <div class="row"><span>Muziek</span><button class="switch ${S.settings.music ? 'on' : ''}" data-set="music" aria-label="Muziek"></button></div>
+      <div class="row"><span>Geluidseffecten</span><button class="switch ${S.settings.sound ? 'on' : ''}" data-set="sound" aria-label="Geluidseffecten"></button></div>
       <div class="row"><span>Trillen</span><button class="switch ${S.settings.haptics ? 'on' : ''}" data-set="haptics" aria-label="Trillen"></button></div>
       <div class="section-title">Hoe speel je?</div>
       <div class="small-print">Tik op de kern om tokens te verdienen. Koop modellen die automatisch tokens maken; bij 10, 25, 50, 100… stuks verdubbelt hun productie. Onderzoek geeft extra boosts. Bouw een supply chain voor chips: rekenkracht maakt al je modellen sneller, en de traagste schakel bepaalt hoeveel chips je maakt. Lanceer apps: hun gebruikers leveren trainingsdata die je modellen versterkt. Neem helpers aan die werk voor je doen. Veeg links of rechts over het paneel om van onderdeel te wisselen. Ada geeft je steeds een nieuwe opdracht met een beloning. Tik op een gouden 💡 voor een Eureka-moment. Bouw uiteindelijk AGI en activeer de singulariteit voor permanente bonussen. Ook als de app dicht is gaat de training door.</div>
       <button class="danger" id="wipeBtn">Voortgang wissen</button>
       <div class="small-print">Road to AGI · versie 1.1<br>Dit spel verzamelt geen persoonsgegevens. Je voortgang wordt alleen op dit apparaat opgeslagen.</div>`;
     for (const sw of $('moreBody').querySelectorAll('.switch')) {
-      sw.onclick = () => { const k = sw.dataset.set; S.settings[k] = !S.settings[k]; sw.classList.toggle('on', S.settings[k]); G.haptic(); G.save(); };
+      sw.onclick = () => {
+        const k = sw.dataset.set; S.settings[k] = !S.settings[k]; sw.classList.toggle('on', S.settings[k]); G.haptic(); G.save();
+        if (k === 'music') S.settings.music ? G.music.start() : G.music.stop();
+      };
     }
     $('wipeBtn').onclick = () => modal('⚠️', 'Alles wissen?', 'Al je voortgang, inzichten en prestaties worden definitief verwijderd.', [
       { label: 'Annuleren' },
@@ -485,7 +489,7 @@
     const ti = topIndex();
     core.dataset.era = Math.min(3, Math.floor((ti + 1) / 3));
     const ck = G.chapterIndex(), ch = G.CHAPTERS[ck];
-    if ($('eraName').textContent !== ch.title) { $('eraName').textContent = ch.title; $('chIcon').textContent = ch.icon; $('chNum').textContent = 'H' + (ck + 1); }
+    if ($('eraName').textContent !== ch.title) { $('eraName').textContent = ch.title; $('chIcon').textContent = ch.icon; $('chNum').textContent = 'H' + (ck + 1); G.music.setLevel(ck, !!S.agi); }
     const hue = S.agi ? 290 : 195 + Math.max(0, ti) * 9;
     document.documentElement.style.setProperty('--hue', hue % 360);
     G.fx.setHue(hue % 360);
@@ -627,7 +631,12 @@
     requestAnimationFrame(frame);
   }
 
-  document.addEventListener('visibilitychange', () => { if (document.hidden) G.save(); });
+  document.addEventListener('visibilitychange', () => {
+    if (document.hidden) { G.save(); G.music.stop(); } else if (heardTap) G.music.start();
+  });
+  // Muziek mag pas klinken na een aanraking; daarna start hij vanzelf.
+  let heardTap = false;
+  document.addEventListener('pointerdown', () => { heardTap = true; G.music.start(); });
   window.addEventListener('pagehide', () => G.save());
 
   // ---------- native (Capacitor) ----------

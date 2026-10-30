@@ -20,7 +20,7 @@ De mechanismen komen uit de populairste idle games (Cookie Clicker, AdVenture Ca
 | Prestige | Singulariteit: reset voor Inzichten (+2% productie per stuk) |
 | Eindbaas | Project AGI: permanent ×2, daarna elke keer 10× groter |
 | Prestaties | 80+ prestaties, elk +1% productie |
-| Sfeer | Nieuwsticker, kleuren per tijdperk, geanimeerd neuraal netwerk, geluid en trillen |
+| Sfeer | Nieuwsticker, kleuren per tijdperk, geanimeerd neuraal netwerk, gegenereerde ambient-muziek die meegroeit met het verhaal, geluid en trillen |
 | Productieketen | Supply chain voor chips: zandgroeve → waferfabriek → EUV-lithografie → chipfabriek → datacenter. De traagste schakel (bottleneck) bepaalt de output |
 | Technologieboom | 8 chipgeneraties (CPU → GPU → … → Quantumchip) met ontwikkeltijd; tikken versnelt het onderzoek |
 | Versterkers | Modellen zijn de basis; chips (rekenkracht), apps (gebruikersdata), onderzoek en prestige vermenigvuldigen hun productie |
