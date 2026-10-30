@@ -3,3 +3,4 @@ node_modules/
 ios/App/Pods/
 ios/App/App/public/
 android/app/src/main/assets/public/
+dist/

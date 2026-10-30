@@ -8,7 +8,8 @@
     "assets": "npx capacitor-assets generate --ios --android --iconBackgroundColor \"#060914\" --splashBackgroundColor \"#060914\"",
     "ios": "npx cap sync ios && npx cap open ios",
     "android": "npx cap sync android && npx cap open android",
-    "sync": "npx cap sync"
+    "sync": "npx cap sync",
+    "build:web": "node scripts/build-web.js"
   },
   "dependencies": {
     "@capacitor/app": "^7.1.2",
