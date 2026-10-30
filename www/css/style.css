@@ -969,3 +969,78 @@ button:focus-visible { outline: 2px solid var(--c1); outline-offset: 2px; }
 .mbar.users i { background: linear-gradient(90deg, var(--ok), var(--c1)); }
 .app-live .app-actions { gap: 5px; }
 .gen.can .gbuy.mkt, .gen .gbuy.mkt { background: rgba(255, 255, 255, .08); color: var(--fg); }
+
+/* =========================================================
+   Leesbaar, strak en rustig (v3)
+   ========================================================= */
+:root { --mute: #a7b0d6; --card: #131b36; --card-hi: #1a2448; --line: rgba(255, 255, 255, .07); }
+
+/* tekstgroottes: niets kleiner dan 11px, beschrijvingen mogen twee regels */
+.grate { font-size: 12.5px; line-height: 1.35; white-space: normal; display: -webkit-box; -webkit-line-clamp: 2; -webkit-box-orient: vertical; overflow: hidden; }
+.mlabel { font-size: 11.5px; line-height: 1.3; white-space: normal; display: -webkit-box; -webkit-line-clamp: 2; -webkit-box-orient: vertical; overflow: hidden; }
+.gname { font-size: 14.5px; }
+.gbuy .q { font-size: 11px; }
+.gbuy .c { font-size: 13.5px; }
+.stats3 small { font-size: 11.5px; }
+.stats3 b { font-size: 16px; }
+.stats3 b.ellip { font-size: 14px; }
+.ind-card .muted, .muted { font-size: 12.5px; }
+.subhead { font-size: 14px; margin: 18px 4px 8px; }
+.subhead .muted { font-size: 12px; }
+.tps { font-size: 13px; }
+.agi-ch, .agi-pct { font-size: 12px; }
+#quest .qt { font-size: 13px; }
+#quest .qt small { font-size: 10.5px; }
+#quest .qr { font-size: 12px; }
+.sh-txt small { font-size: 12px; }
+#tabs .lb { font-size: 11px; }
+.boost .bl { font-size: 11px; }
+.boost .bv { font-size: 14px; }
+.tag { font-size: 10.5px; }
+.toast { font-size: 13.5px; }
+.toast small { font-size: 12.5px; }
+.fnode small, .flow.big .fnode small { font-size: 10px; }
+.track-label { font-size: 12px; }
+.rnd-row small { font-size: 11.5px; }
+.rnd-row span { font-size: 12.5px; }
+.req { font-size: 13px; }
+.as-side small { font-size: 11px; }
+.as-u { font-size: clamp(9px, 6.5cqw, 11px); }
+#flowLbl { font-size: 12px; }
+#tapVal { font-size: 13px; }
+#ticker { font-size: 12px; }
+.row-sub { font-size: 12px; }
+.done-list { margin: 0 4px 10px; font-size: 12.5px; line-height: 1.6; color: var(--mute); }
+
+/* onderzoek-tabjes: alleen tekst */
+#resSeg button { flex-direction: row; font-size: 12.5px; padding: 7px 2px; }
+
+/* organogram: ruimer en leesbaar */
+.org-grid { grid-template-columns: repeat(auto-fill, minmax(66px, 1fr)); }
+.org-dept b { font-size: 11px; }
+.org-dept small { font-size: 10.5px; }
+.org-cap { font-size: 12px; }
+
+/* strakker: kaarten zonder randen, rustige accenten, minder knipperen */
+.gen, .upg, .app, .ind-card, .org, .boost { border-color: transparent; box-shadow: none; }
+.gen.can, .res-card.can, .app.can { border-color: transparent; background: var(--card-hi); }
+.locked-h { border: 1px dashed rgba(255, 255, 255, .12); }
+.boost.warn { border-color: var(--bad); }
+.ind-card.safety.bad { border-color: rgba(255, 90, 122, .55); }
+#core .net circle { animation: none; }
+.track span.busy, .rnd-row .ri.spin, .tapme { animation: none; }
+.org-dept { animation: none; }
+#panel { box-shadow: 0 -8px 30px rgba(0, 0, 0, .35); }
+
+/* rijkere icoontegels, zoals app-iconen */
+.gicon {
+  background: linear-gradient(150deg, hsla(var(--gh), 85%, 62%, .95), hsla(calc(var(--gh) + 35), 80%, 34%, .95));
+  box-shadow: inset 0 1px 0 rgba(255, 255, 255, .35), inset 0 -10px 16px rgba(0, 0, 0, .28), 0 4px 12px hsla(var(--gh), 90%, 45%, .25);
+}
+.gicon > span:first-child { filter: drop-shadow(0 2px 2px rgba(0, 0, 0, .4)); }
+.gicon .own { box-shadow: 0 2px 6px rgba(0, 0, 0, .4); }
+.locked-h .gicon, .app.locked .gicon, .gen.locked .gicon { background: rgba(255, 255, 255, .06); box-shadow: none; }
+#resSeg button.dot-on::after { position: static; display: inline-block; width: 6px; height: 6px; margin-left: 4px; vertical-align: 2px; }
+.res-card .gname { white-space: normal; display: -webkit-box; -webkit-line-clamp: 2; -webkit-box-orient: vertical; overflow: hidden; line-height: 1.25; }
+.res-card .tag { display: inline-block; margin-left: 2px; }
+.as-u { font-size: clamp(7.5px, 6cqw, 11px); letter-spacing: -.2px; }

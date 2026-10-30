@@ -15,7 +15,7 @@
     if (state === 'locked') return `<div class="gen locked-h res-card" data-id="${u.id}">
       <div class="gicon"><span>${u.icon}</span></div>
       <div class="ginfo"><div class="gname">${u.name}</div><div class="grate eff">${eff}</div>
-        <div class="mlabel">🔒 Eerst: ${par ? par.icon + ' ' + par.name : ''}</div></div><span></span></div>`;
+        <div class="mlabel">Eerst: ${par ? par.name : ''}</div></div><span></span></div>`;
     return `<div class="gen res-card" data-act="tech" data-id="${u.id}">
       <div class="gicon"><span>${u.icon}</span></div>
       <div class="ginfo"><div class="gname">${u.name} <span class="tag">${spine ? 'hoofdlijn' : 'boost'}</span></div>
@@ -33,21 +33,19 @@
     const locked = all.filter(u => st(u) === 'locked').sort((a, b) => a.cost - b.cost).slice(0, 3);
     const done = all.filter(u => st(u) === 'done');
     const next = rows.find(r => !G.techDone(r.spine.id));
-    const track = rows.map(r => `<span class="${st(r.spine) === 'done' ? 'done' : st(r.spine) === 'avail' ? 'cur' : ''}" title="${r.spine.name}">${r.spine.icon}</span>`).join('<i></i>');
     $('treeBody').innerHTML = `
       <div class="ind-card">
         <div class="stats3">
           <div><small>Onderzocht</small><b>${done.length} / ${all.length}</b></div>
           <div><small>Nu mogelijk</small><b>${avail.length}</b></div>
-          <div><small>Volgende stap</small><b class="ellip">${next ? next.spine.icon + ' ' + next.spine.name : '✓ alles'}</b></div>
+          <div><small>Volgende stap</small><b class="ellip">${next ? next.spine.name : 'Alles klaar'}</b></div>
         </div>
-        <div class="track res-track">${track}</div>
         <div class="bar"><i style="width:${done.length / all.length * 100}%"></i></div>
         <p class="muted">${next ? next.spine.unlocks : 'Deze boom is helemaal onderzocht.'}</p>
       </div>
       ${avail.length ? `<div class="subhead">Nu te onderzoeken</div>${avail.map(u => techCard(u, 'avail')).join('')}` : ''}
       ${locked.length ? `<div class="subhead">Daarna</div>${locked.map(u => techCard(u, 'locked')).join('')}` : ''}
-      ${done.length ? `<div class="subhead">Onderzocht</div><div class="done-row">${done.map(u => `<button class="done-chip" data-id="${u.id}" title="${u.name}">${u.icon}</button>`).join('')}</div>` : ''}`;
+      ${done.length ? `<div class="subhead">Onderzocht</div><p class="done-list">${done.map(u => u.name).join(' · ')}</p>` : ''}`;
   }
 
   function dots() {
